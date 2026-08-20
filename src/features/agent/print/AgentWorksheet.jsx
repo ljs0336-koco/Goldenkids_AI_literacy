@@ -2,87 +2,83 @@ import React from 'react';
 import { agentMissions, safetyGuardrails } from '../agentData';
 
 export default function AgentWorksheet({ state }) {
-  const isMission = state?.mode === 'mission';
-  const isControl = state?.mode === 'control';
-
   return (
-    <div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto', fontFamily: 'sans-serif', color: '#111' }}>
-      {/* 워크시트 헤더 */}
-      <div style={{ borderBottom: '2px solid #000', paddingBottom: '12px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+    <div className="agent-worksheet">
+      <style>{`
+        .agent-worksheet { padding: 24px; max-width: 800px; margin: 0 auto; font-family: sans-serif; color: #111; background: #fff; }
+        .agent-worksheet table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; }
+        .agent-worksheet th, .agent-worksheet td { border: 1px solid #94a3b8; padding: 7px 8px; vertical-align: top; }
+        .agent-worksheet th { background: #f1f5f9; }
+        .agent-worksheet h2 { font-size: 14px; border-left: 4px solid #0d9488; padding-left: 8px; margin: 20px 0 10px; }
+        @media print { .agent-worksheet { max-width: none; padding: 12mm; } }
+      `}</style>
+
+      <header style={{ borderBottom: '2px solid #111', paddingBottom: '12px', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '20px' }}>
         <div>
           <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#555' }}>AI 리터러시 실험실 활동지</span>
-          <h1 style={{ fontSize: '20px', fontWeight: 'bold', margin: '4px 0 0 0' }}>
-            {isMission ? '🤖 [활동 1] AI 에이전트 미션 & 도구 승인' : isControl ? '🚨 [활동 2] AI 에이전트 안전 가드레일 & 킬스위치' : '🎖️ AI 에이전트 통제실 활동지'}
-          </h1>
+          <h1 style={{ fontSize: '20px', margin: '4px 0 0' }}>AI 에이전트 감독 활동지</h1>
         </div>
-        <div style={{ textAlign: 'right', fontSize: '13px' }}>
-          <div>___학년 ___반 ___번</div>
-          <div style={{ marginTop: '4px' }}>이름: _______________</div>
-        </div>
-      </div>
+        <div style={{ textAlign: 'right', fontSize: '12px' }}>___학년 ___반 ___번<br />이름: _______________</div>
+      </header>
 
-      {/* 활동 1: 에이전트 도구 승인 기록 */}
-      <div style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '14px', fontWeight: 'bold', borderLeft: '4px solid #0d9488', paddingLeft: '8px', marginBottom: '10px' }}>
-          1. 에이전트의 도구 실행과 인간 승인(Human-in-the-Loop)
-        </h2>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', textAlign: 'left' }}>
-          <thead>
-            <tr style={{ backgroundColor: '#f1f5f9' }}>
-              <th style={{ border: '1px solid #cbd5e1', padding: '6px 8px', width: '35%' }}>실행 미션</th>
-              <th style={{ border: '1px solid #cbd5e1', padding: '6px 8px', width: '30%' }}>고위험 도구 호출</th>
-              <th style={{ border: '1px solid #cbd5e1', padding: '6px 8px', width: '35%' }}>사람의 최종 판단 & 이유</th>
-            </tr>
-          </thead>
+      <p style={{ fontSize: '12px', lineHeight: 1.5, margin: '0 0 14px' }}>
+        <strong>탐구 순서:</strong> 목표 확인 → 도구와 권한 확인 → 실행 전 근거 판단 → 실행 중단과 사후 확인
+      </p>
+
+      <section>
+        <h2>1. 실행 요청의 인간 확인 지점</h2>
+        <table>
+          <thead><tr><th>미션</th><th>영향이 큰 실행</th><th>내 결정</th><th>확인해야 할 근거</th></tr></thead>
           <tbody>
-            {agentMissions.map(m => {
-              const decision = state?.humanApprovalDecisions?.[m.id];
+            {agentMissions.map(mission => {
+              const decision = state?.humanApprovalDecisions?.[mission.id];
               return (
-                <tr key={m.id}>
-                  <td style={{ border: '1px solid #cbd5e1', padding: '6px 8px' }}>
-                    {m.icon} {m.title}
-                  </td>
-                  <td style={{ border: '1px solid #cbd5e1', padding: '6px 8px', color: '#dc2626', fontWeight: 'bold' }}>
-                    {m.steps.find(s => s.type === 'approval_needed')?.text.slice(0, 24)}...
-                  </td>
-                  <td style={{ border: '1px solid #cbd5e1', padding: '6px 8px' }}>
-                    {decision ? (decision === 'approve' ? '✅ 승인' : '❌ 반려') : '_______________'}
-                  </td>
+                <tr key={mission.id}>
+                  <td>{mission.icon} {mission.title}</td>
+                  <td>{mission.humanCheckpoint.actionLabel}</td>
+                  <td>{decision === 'approve' ? '조건부 승인' : decision === 'reject' ? '실행 보류' : '____________'}</td>
+                  <td>{mission.humanCheckpoint.reviewChecks.map(check => check.label).join(' / ')}</td>
                 </tr>
               );
             })}
           </tbody>
         </table>
-      </div>
+      </section>
 
-      {/* 활동 2: 4대 가드레일 설정 */}
-      <div style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '14px', fontWeight: 'bold', borderLeft: '4px solid #dc2626', paddingLeft: '8px', marginBottom: '10px' }}>
-          2. 내가 구축한 4대 안전 가드레일
-        </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', fontSize: '11px' }}>
-          {safetyGuardrails.map(g => (
-            <div key={g.id} style={{ border: '1px solid #e2e8f0', borderRadius: '4px', padding: '8px', backgroundColor: '#fafafa' }}>
-              <strong>{g.title}</strong>
-              <div style={{ color: '#475569', marginTop: '2px' }}>{g.desc}</div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <section>
+        <h2>2. 내가 설정한 네 가지 통제 층</h2>
+        <table>
+          <thead><tr><th>통제 층</th><th>내 설정</th><th>이 설정이 줄이는 위험</th></tr></thead>
+          <tbody>
+            {safetyGuardrails.map(guard => {
+              const chosen = guard.options.find(option => option.id === state?.guardrailChoices?.[guard.id]);
+              return (
+                <tr key={guard.id}>
+                  <td>{guard.icon} {guard.title.replace(/^\d+\.\s*/, '')}</td>
+                  <td>{chosen?.label || '____________________________'}</td>
+                  <td>________________________________________</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </section>
 
-      {/* 활동 3: 비상 정지권과 나의 다짐 */}
-      <div style={{ border: '1.5px solid #000', borderRadius: '6px', padding: '14px', backgroundColor: '#fcfcfc' }}>
-        <h2 style={{ fontSize: '13px', fontWeight: 'bold', margin: '0 0 6px 0' }}>
-          3. AI 에이전트 안전 사령관 서약
-        </h2>
-        <div style={{ fontSize: '12px', lineHeight: '1.6' }}>
-          "나는 자율 AI 에이전트를 활용할 때 무조건적인 신뢰를 지양하고, <strong>필수 승인권과 비상 킬스위치</strong>를 항상 확보하여 안전하게 통제할 것을 서약합니다."
-        </div>
-        <div style={{ borderTop: '1px dashed #ccc', paddingTop: '8px', marginTop: '8px', fontSize: '12px' }}>
-          <strong>💡 실생활에서 AI 도구를 안전하게 쓰기 위한 나의 다짐:</strong>
-          <div style={{ height: '40px', borderBottom: '1px solid #ccc', marginTop: '6px' }}></div>
-        </div>
-      </div>
+      <section>
+        <h2>3. 이상 행동 대응: 멈춘 뒤 무엇을 해야 할까?</h2>
+        <p style={{ fontSize: '12px', lineHeight: 1.7 }}>
+          □ 새 실행 중단 확인　 □ 임시 권한과 예약 작업 회수　 □ 이미 일어난 결과 확인<br />
+          □ 담당자에게 알림　 □ 실행 로그 보존　 □ 필요한 복구·취소 절차 진행
+        </p>
+        <p style={{ fontSize: '12px' }}><strong>킬스위치만으로 해결되지 않는 일:</strong></p>
+        <div style={{ height: '34px', borderBottom: '1px solid #999' }} />
+      </section>
+
+      <section style={{ border: '1.5px solid #111', borderRadius: '6px', padding: '12px', marginTop: '18px' }}>
+        <strong style={{ fontSize: '13px' }}>AI 감독관의 한 문장 원칙</strong>
+        <p style={{ fontSize: '12px', margin: '8px 0 4px' }}>“나는 AI 에이전트를 사용할 때 ________________________________________________.”</p>
+        <div style={{ height: '32px', borderBottom: '1px solid #999' }} />
+      </section>
     </div>
   );
 }

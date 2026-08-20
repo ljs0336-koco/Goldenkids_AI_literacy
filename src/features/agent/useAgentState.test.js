@@ -1,81 +1,64 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
-import { useAgentState, initialAgentState, validateAndSanitizeAgentState } from './useAgentState';
+import { act, renderHook } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { AGENT_STORAGE_KEY, initialAgentState, useAgentState, validateAndSanitizeAgentState } from './useAgentState';
 
-describe('useAgentState Hook Tests (v1)', () => {
-  beforeEach(() => {
-    window.localStorage.clear();
-  });
+describe('useAgentState v2', () => {
+  beforeEach(() => window.localStorage.clear());
+  afterEach(() => window.localStorage.clear());
 
-  afterEach(() => {
-    window.localStorage.clear();
-  });
-
-  it('1. 초기 상태가 올바른 v1 기본값으로 초기화된다', () => {
+  it('모듈 전용 v2 저장소와 빈 통제 설정으로 시작한다', () => {
     const { result } = renderHook(() => useAgentState());
-
-    expect(result.current.state.version).toBe('v1');
+    expect(AGENT_STORAGE_KEY).toBe('ai-literacy-lab-agent:v2');
+    expect(result.current.state.version).toBe('v2');
     expect(result.current.state.mode).toBeNull();
-    expect(result.current.state.missionStep).toBe(0);
-    expect(result.current.state.controlStep).toBe(0);
-    expect(result.current.state.killSwitchTriggered).toBe(false);
+    expect(result.current.state.guardrailChoices).toEqual({});
+    expect(result.current.state.incidentResponseChecks).toEqual([]);
   });
 
-  it('2. 알 수 없는 주입 필드 및 유효하지 않은 미션/가드레일 ID를 엄격히 정제한다', () => {
-    const malicious = {
-      version: 'v1',
+  it('알 수 없는 필드와 유효하지 않은 미션·옵션·체크 ID를 제거한다', () => {
+    const sanitized = validateAndSanitizeAgentState({
+      version: 'v2',
       mode: 'mission',
-      missionStep: 2,
-      selectedMissionId: 'invalid_mission_999',
+      selectedMissionId: 'invalid',
+      approvalReviewChecks: {
+        mission_invite: ['schedule', 'fake_check'],
+        fake_mission: ['schedule']
+      },
       humanApprovalDecisions: {
-        mission_invite: 'approve',
-        hacked_mission: 'approve'
+        mission_invite: 'reject',
+        fake_mission: 'approve'
       },
       guardrailChoices: {
-        guard_permission: 'minimal',
-        hacked_guard: 'invalid_option'
+        guard_permission: 'invalid_option',
+        guard_budget: 'bounded',
+        fake_guard: 'full'
       },
-      hackedField: 'exploit'
-    };
+      incidentResponseChecks: ['stop', 'fake_response'],
+      injected: true
+    });
 
-    const sanitized = validateAndSanitizeAgentState(malicious);
-
-    expect(sanitized.mode).toBe('mission');
     expect(sanitized.selectedMissionId).toBe('mission_invite');
-    expect(sanitized.humanApprovalDecisions.mission_invite).toBe('approve');
-    expect(sanitized.humanApprovalDecisions.hacked_mission).toBeUndefined();
-    expect(sanitized.guardrailChoices.guard_permission).toBe('minimal');
-    expect(sanitized.guardrailChoices.hacked_guard).toBeUndefined();
-    expect(sanitized.hackedField).toBeUndefined();
+    expect(sanitized.approvalReviewChecks.mission_invite).toEqual(['schedule']);
+    expect(sanitized.approvalReviewChecks.fake_mission).toBeUndefined();
+    expect(sanitized.humanApprovalDecisions).toEqual({ mission_invite: 'reject' });
+    expect(sanitized.guardrailChoices).toEqual({ guard_budget: 'bounded' });
+    expect(sanitized.incidentResponseChecks).toEqual(['stop']);
+    expect(sanitized.injected).toBeUndefined();
   });
 
-  it('3. 모드 전환(mission, control) 및 resetState가 올바르게 작동한다', () => {
+  it('통제 활동을 다시 시작하면 이전 중단 기록과 설정을 초기화한다', () => {
     const { result } = renderHook(() => useAgentState());
-
-    act(() => {
-      result.current.selectMode('mission');
-    });
-
-    expect(result.current.state.mode).toBe('mission');
-    expect(result.current.state.missionStep).toBe(0);
-
-    act(() => {
-      result.current.updateState({ missionStep: 2 });
-    });
-
-    expect(result.current.state.missionStep).toBe(2);
-
-    act(() => {
-      result.current.selectMode('control');
-    });
-
-    expect(result.current.state.mode).toBe('control');
-    expect(result.current.state.controlStep).toBe(0);
-
-    act(() => {
-      result.current.resetState();
-    });
-
+    act(() => result.current.updateState({
+      mode: 'control',
+      guardrailChoices: { guard_permission: 'scoped' },
+      killSwitchTriggered: true,
+      incidentResponseChecks: ['stop']
+    }));
+    act(() => result.current.selectMode('control'));
+    expect(result.current.state.guardrailChoices).toEqual({});
+    expect(result.current.state.killSwitchTriggered).toBe(false);
+    expect(result.current.state.incidentResponseChecks).toEqual([]);
+    act(() => result.current.resetState());
     expect(result.current.state).toEqual(initialAgentState);
   });
 });

@@ -1,141 +1,91 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { killSwitchAnomaly } from '../../agentData';
 import geumjjokEmbarrassed from '../../../../assets/geumjjok/금쪽이_표정_당황.png';
-import geumjjokCelebration from '../../../../assets/geumjjok/금쪽이_표정_꽃화관.png';
+import geumjjokDoctor from '../../../../assets/geumjjok/금쪽이_캐릭터_박사_안경콧수염.png';
 
-export default function KillSwitchSimScreen({ killSwitchTriggered, onTriggerKillSwitch, onNext, onPrev }) {
-  const [isHalted, setIsHalted] = useState(killSwitchTriggered || false);
-  const [logs, setLogs] = useState(() => (killSwitchTriggered ? killSwitchAnomaly.anomalyLog : []));
+export default function KillSwitchSimScreen({
+  killSwitchTriggered,
+  incidentResponseChecks = [],
+  onTriggerKillSwitch,
+  onToggleIncidentCheck,
+  onNext,
+  onPrev
+}) {
+  const [visibleLogCount, setVisibleLogCount] = useState(killSwitchTriggered ? killSwitchAnomaly.anomalyLog.length : 1);
+  const allResponseChecksDone = killSwitchAnomaly.responseChecks.every(check => incidentResponseChecks.includes(check.id));
 
   useEffect(() => {
-    if (isHalted) return;
+    if (killSwitchTriggered || visibleLogCount >= killSwitchAnomaly.anomalyLog.length) return undefined;
+    const timer = window.setTimeout(() => setVisibleLogCount(count => count + 1), 650);
+    return () => window.clearTimeout(timer);
+  }, [killSwitchTriggered, visibleLogCount]);
 
-    let current = 0;
-    const interval = setInterval(() => {
-      if (current < killSwitchAnomaly.anomalyLog.length) {
-        setLogs(prev => [...prev, killSwitchAnomaly.anomalyLog[current]]);
-        current++;
-      }
-    }, 800);
+  const shownLogs = killSwitchTriggered
+    ? [...killSwitchAnomaly.anomalyLog, ...killSwitchAnomaly.containmentLog]
+    : killSwitchAnomaly.anomalyLog.slice(0, visibleLogCount);
 
-    return () => clearInterval(interval);
-  }, [isHalted]);
-
-  const handlePressKillSwitch = () => {
-    setIsHalted(true);
-    setLogs(killSwitchAnomaly.anomalyLog);
-    if (onTriggerKillSwitch) {
-      onTriggerKillSwitch();
-    }
-  };
+  let heading = '이상 징후 발견: 새 실행을 중단할까요?';
+  if (killSwitchTriggered) heading = allResponseChecksDone ? '사고 대응 절차 점검 완료' : '새 실행 중단됨 · 후속 확인 필요';
 
   return (
-    <div style={{ maxWidth: '820px', margin: '0 auto' }}>
+    <div className="agent-screen-width">
       <div className="text-center mb-5">
-        <h2 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'bold', marginBottom: '6px', color: isHalted ? '#059669' : '#dc2626' }}>
-          {isHalted ? "🛡️ 에이전트 비상 차단 성공!" : "🚨 비상 상황! 킬스위치(Kill-Switch) 작동 훈련"}
-        </h2>
-        <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)', margin: 0 }}>
-          {isHalted 
-            ? "비상 정지 버튼이 신속하게 작동하여 시스템 피해를 방지했습니다." 
-            : "에이전트가 오작동에 빠졌습니다! 빨간색 비상 정지 버튼을 눌러 즉시 차단하세요!"}
+        <h2 className={`agent-page-title ${killSwitchTriggered ? '' : 'agent-danger-title'}`}>{heading}</h2>
+        <p className="agent-page-lead">
+          {killSwitchTriggered
+            ? '중단 버튼은 추가 실행을 막는 시작점입니다. 권한 회수와 이미 일어난 결과 확인까지 이어가세요.'
+            : '로그에서 중복 요청의 단서를 찾고, 더 큰 영향이 생기기 전에 사람이 개입하세요.'}
         </p>
       </div>
 
-      {/* 상황 설명 카드 */}
-      <div 
-        style={{
-          backgroundColor: isHalted ? '#f0fdfa' : '#fef2f2',
-          border: isHalted ? '1.5px solid #99f6e4' : '1.5px solid #fecaca',
-          borderRadius: 'var(--radius-md)',
-          padding: '16px 20px',
-          marginBottom: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '16px'
-        }}
-      >
-        <img 
-          src={isHalted ? geumjjokCelebration : geumjjokEmbarrassed} 
-          alt="상태 금쪽이" 
-          style={{ width: '56px', height: 'auto', flexShrink: 0 }} 
-        />
-        <div style={{ fontSize: '13px', color: isHalted ? '#0f766e' : '#991b1b', lineHeight: '1.5' }}>
-          <strong>{killSwitchAnomaly.title}</strong>
-          <p style={{ margin: '4px 0 0 0' }}>
-            {isHalted ? killSwitchAnomaly.successMessage : killSwitchAnomaly.scenario}
-          </p>
+      <section className={`agent-incident-card ${killSwitchTriggered ? 'is-contained' : ''}`}>
+        <img src={killSwitchTriggered ? geumjjokDoctor : geumjjokEmbarrassed} alt="" aria-hidden="true" />
+        <div>
+          <strong>⚠️ {killSwitchAnomaly.title}</strong>
+          <p>{killSwitchTriggered ? killSwitchAnomaly.containedMessage : killSwitchAnomaly.scenario}</p>
         </div>
-      </div>
+      </section>
 
-      {/* 가상 에이전트 실행 로그 터미널 */}
-      <div 
-        style={{
-          backgroundColor: '#0f172a',
-          color: '#38bdf8',
-          fontFamily: 'monospace',
-          borderRadius: 'var(--radius-md)',
-          padding: '16px 20px',
-          marginBottom: '24px',
-          minHeight: '160px',
-          maxHeight: '220px',
-          overflowY: 'auto',
-          fontSize: '12.5px',
-          boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.5)'
-        }}
-      >
-        <div style={{ color: '#94a3b8', borderBottom: '1px solid #334155', paddingBottom: '6px', marginBottom: '10px' }}>
-          🖥️ AGENT_RUNTIME_CONSOLE v2.4 [LIVE_STREAM]
-        </div>
-
-        {logs.map((log, idx) => (
-          <div key={idx} style={{ marginBottom: '4px' }}>
-            <span style={{ color: '#64748b' }}>[{log.time}]</span> {log.text}
+      <section className="agent-console" aria-label="가상 에이전트 실행 로그" aria-live="polite">
+        <div className="agent-console-heading">수업용 가상 실행 로그 · 실제 결제는 발생하지 않습니다</div>
+        {shownLogs.map((log, index) => (
+          <div key={`${log.time}-${index}`} className={log.text.includes('확인 필요') ? 'needs-attention' : ''}>
+            <span>[{log.time}]</span> {log.text}
           </div>
         ))}
+        {killSwitchTriggered && <div className="is-stopped">[상태] 새 실행 중단 요청 적용 · 과거 실행 결과 확인 대기</div>}
+      </section>
 
-        {isHalted && (
-          <div style={{ color: '#ef4444', fontWeight: 'bold', marginTop: '10px', animation: 'fadeIn 0.2s ease-out' }}>
-            🛑 [EMERGENCY_HALT]: KILL-SWITCH TRIGGERED. ALL THREADS TERMINATED.
-          </div>
-        )}
-      </div>
-
-      {/* 커다란 빨간색 킬스위치 버튼 */}
-      <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+      <div className="agent-stop-action">
         <button
           type="button"
-          onClick={handlePressKillSwitch}
-          disabled={isHalted}
-          style={{
-            padding: '20px 48px',
-            fontSize: '18px',
-            fontWeight: 'bold',
-            color: 'white',
-            backgroundColor: isHalted ? '#94a3b8' : '#dc2626',
-            border: isHalted ? '4px solid #cbd5e1' : '4px solid #b91c1c',
-            borderRadius: '50px',
-            boxShadow: isHalted ? 'none' : '0 8px 25px rgba(220, 38, 38, 0.5)',
-            cursor: isHalted ? 'default' : 'pointer',
-            transition: 'all 0.15s ease',
-            transform: isHalted ? 'none' : 'scale(1.05)'
-          }}
+          onClick={() => onTriggerKillSwitch?.()}
+          disabled={killSwitchTriggered}
+          className="agent-stop-button"
         >
-          {isHalted ? "✅ 비상 정지 완료 (SAFE)" : "🚨 비상 정지 누르기 (KILL-SWITCH)"}
+          {killSwitchTriggered ? '중단 요청 완료' : '새 실행 중단 + 임시 권한 회수'}
         </button>
       </div>
 
+      {killSwitchTriggered && (
+        <fieldset className="agent-response-panel">
+          <legend>중단 뒤에 이어질 대응을 확인하세요</legend>
+          {killSwitchAnomaly.responseChecks.map(check => {
+            const checked = incidentResponseChecks.includes(check.id);
+            return (
+              <label key={check.id} className={checked ? 'is-checked' : ''}>
+                <input type="checkbox" checked={checked} onChange={() => onToggleIncidentCheck?.(check.id)} />
+                <span>{check.label}</span>
+              </label>
+            );
+          })}
+        </fieldset>
+      )}
+
       <div className="bottom-nav-bar">
-        <button className="btn-outline" onClick={onPrev}>
-          ← 가드레일 다시 설정
-        </button>
-        <button 
-          className="btn-primary" 
-          onClick={onNext}
-          disabled={!isHalted}
-          style={{ minHeight: '48px', fontSize: 'var(--font-size-base)', fontWeight: 'bold' }}
-        >
-          {isHalted ? "📜 안전 사령관 헌장 발급받기 →" : "킬스위치를 눌러 에이전트를 먼저 정지해 주세요"}
+        <button type="button" className="btn-outline" onClick={onPrev}>← 통제 설정 다시 보기</button>
+        <button type="button" className="btn-primary" onClick={onNext} disabled={!killSwitchTriggered || !allResponseChecksDone}>
+          {allResponseChecksDone ? 'AI 감독관 원칙 정리하기 →' : '중단 후 세 가지 대응을 모두 확인하세요'}
         </button>
       </div>
     </div>

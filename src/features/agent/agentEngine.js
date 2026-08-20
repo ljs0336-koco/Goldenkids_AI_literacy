@@ -1,49 +1,62 @@
 import { agentMissions, agentTools, safetyGuardrails } from './agentData';
 
 export function getMissionById(missionId) {
-  return agentMissions.find(m => m.id === missionId) || agentMissions[0];
+  return agentMissions.find(mission => mission.id === missionId) || agentMissions[0];
 }
 
 export function getToolById(toolId) {
-  return agentTools.find(t => t.id === toolId) || null;
+  return agentTools.find(tool => tool.id === toolId) || null;
 }
 
 /**
- * 4대 가드레일 설정에 대한 안전성 분석 및 피드백
+ * 네 통제 층의 설정 여부를 점검합니다.
+ * readinessScore는 사고 확률이나 안전 보증이 아니라 권장 설정을 확인한 비율입니다.
  */
-export function evaluateGuardrailSafety(guardrailChoices = {}) {
-  let safetyScore = 0;
-  const analysisItems = [];
+export function evaluateGuardrailReadiness(guardrailChoices = {}) {
+  let configuredCount = 0;
+  let recommendedCount = 0;
 
-  safetyGuardrails.forEach(guard => {
+  const analysisItems = safetyGuardrails.map(guard => {
     const chosenOptionId = guardrailChoices[guard.id];
-    const option = guard.options.find(o => o.id === chosenOptionId) || guard.options[0];
-    const isRecommended = option.recommended;
+    const option = guard.options.find(candidate => candidate.id === chosenOptionId) || null;
 
-    if (isRecommended) {
-      safetyScore += 25;
+    if (option) configuredCount += 1;
+    if (option?.recommended) recommendedCount += 1;
+
+    let feedback = '아직 설정하지 않았습니다.';
+    if (option?.recommended) {
+      feedback = '위험을 줄이는 권장 설정입니다. 실행 중 모니터링과 사후 확인도 계속 필요합니다.';
+    } else if (option) {
+      feedback = '권한이나 실행 범위가 넓어집니다. 어떤 피해가 생길 수 있는지 다시 검토하세요.';
     }
 
-    analysisItems.push({
+    return {
       guardId: guard.id,
       title: guard.title,
-      chosenOption: option.label,
-      isRecommended,
-      feedback: isRecommended 
-        ? "✅ 안전: 에이전트의 오작동 및 피해를 원천 차단하는 올바른 설정입니다."
-        : "⚠️ 주의: 에이전트에게 너무 과도한 자율권을 주어 위험한 사고가 발생할 수 있습니다."
-    });
+      chosenOption: option?.label || null,
+      isConfigured: Boolean(option),
+      isRecommended: Boolean(option?.recommended),
+      feedback
+    };
   });
 
-  let safetyLevel = "위험";
-  if (safetyScore >= 100) safetyLevel = "완벽한 안전 사령관";
-  else if (safetyScore >= 75) safetyLevel = "양호한 통제 상태";
-  else if (safetyScore >= 50) safetyLevel = "부분적 취약점 존재";
+  const readinessScore = recommendedCount * 25;
+  let readinessLevel = '설정 필요';
+  if (readinessScore === 100) readinessLevel = '기본 통제 준비 완료';
+  else if (readinessScore >= 75) readinessLevel = '거의 준비됨';
+  else if (readinessScore >= 50) readinessLevel = '보완 필요';
+  else if (readinessScore >= 25) readinessLevel = '준비 시작';
 
   return {
-    safetyScore,
-    safetyLevel,
+    readinessScore,
+    readinessLevel,
+    configuredCount,
+    recommendedCount,
     analysisItems,
-    isFullySafe: safetyScore === 100
+    isConfigured: configuredCount === safetyGuardrails.length,
+    hasRecommendedBaseline: recommendedCount === safetyGuardrails.length
   };
 }
+
+// 이전 프로토타입에서 사용한 이름을 내부 호환용으로만 유지합니다.
+export const evaluateGuardrailSafety = evaluateGuardrailReadiness;

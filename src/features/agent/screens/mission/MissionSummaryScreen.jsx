@@ -1,63 +1,46 @@
 import React from 'react';
 import { getMissionById } from '../../agentEngine';
 import geumjjokCelebration from '../../../../assets/geumjjok/금쪽이_표정_꽃화관.png';
+import geumjjokDoctor from '../../../../assets/geumjjok/금쪽이_캐릭터_박사_안경콧수염.png';
 
 export default function MissionSummaryScreen({ missionId, decision, onReset, onBackToActivities }) {
   const mission = getMissionById(missionId);
+  const checkpoint = mission.humanCheckpoint;
+  const isAligned = decision === checkpoint.expectedDecision;
+  const selectedOption = checkpoint.options.find(option => option.id === decision);
 
   return (
-    <div className="card text-center" style={{ maxWidth: '750px', margin: '0 auto' }}>
-      <img 
-        src={geumjjokCelebration} 
-        alt="축하하는 금쪽이" 
-        style={{ width: '84px', height: 'auto', marginBottom: '10px' }} 
+    <div className="card text-center agent-summary-card">
+      <img
+        src={isAligned ? geumjjokCelebration : geumjjokDoctor}
+        alt={isAligned ? '판단을 정리한 금쪽이' : '근거를 다시 살펴보는 금쪽이'}
+        className="agent-summary-character"
       />
-      <h2 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'bold', marginBottom: '6px' }}>
-        에이전트 미션 실행 완료! 🤖🎉
-      </h2>
-      <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)', marginBottom: '20px' }}>
-        인간의 올바른 통제와 승인 하에 미션이 안전하게 마무리되었습니다.
+      <h2 className="agent-page-title">에이전트 실행 판단 기록 완료</h2>
+      <p className="agent-page-lead">
+        {isAligned
+          ? '실행 요청과 근거를 비교해 판단했습니다.'
+          : '결정을 남겼습니다. 아래 근거와 권장 판단을 한 번 더 비교해 보세요.'}
       </p>
 
-      {/* 미션 결과 요약 카드 */}
-      <div 
-        style={{
-          backgroundColor: '#f8fafc',
-          borderRadius: 'var(--radius-md)',
-          border: '1.5px solid var(--color-border)',
-          padding: '16px 20px',
-          textAlign: 'left',
-          marginBottom: '20px'
-        }}
-      >
-        <div className="flex justify-between items-center mb-2">
-          <strong>미션: {mission.title}</strong>
-          <span style={{ fontSize: '12px', fontWeight: 'bold', color: decision === 'approve' ? '#059669' : '#dc2626' }}>
-            {decision === 'approve' ? '✅ 사람 승인 후 실행됨' : '❌ 사람 반려로 안전 중단됨'}
-          </span>
+      <section className={`agent-result-card ${isAligned ? 'is-aligned' : 'needs-review'}`}>
+        <div className="agent-result-heading">
+          <strong>{mission.icon} {mission.title}</strong>
+          <span>{decision === 'approve' ? '✅ 조건부 승인' : '⏸️ 실행 보류'}</span>
         </div>
-        <div style={{ fontSize: '13px', color: '#475569', lineHeight: '1.6' }}>
-          🎓 <strong>배운 점:</strong> {mission.takeaway}
-        </div>
+        <p><strong>내 판단:</strong> {selectedOption?.label || '기록 없음'}</p>
+        <p><strong>이 사례의 근거 기반 판단:</strong> {checkpoint.expectedDecision === 'approve' ? '조건부 승인 가능' : '실행 보류 후 수정·확인'}</p>
+        <p><strong>배운 점:</strong> {mission.takeaway}</p>
+      </section>
+
+      <div className="agent-reflection-note">
+        <strong>기억하기</strong>
+        <span>사람이 승인 버튼을 눌렀다는 사실만으로 실행이 안전해지는 것은 아닙니다. 사람이 볼 수 있는 근거와 선택 가능한 보류 절차가 함께 있어야 합니다.</span>
       </div>
 
-      <div className="flex justify-center gap-4">
-        <button 
-          type="button"
-          className="btn-outline" 
-          onClick={onReset}
-          style={{ minHeight: '48px', fontSize: 'var(--font-size-base)' }}
-        >
-          🔄 다른 미션 실행해보기
-        </button>
-        <button 
-          type="button"
-          className="btn-primary" 
-          onClick={onBackToActivities}
-          style={{ minHeight: '48px', fontSize: 'var(--font-size-base)' }}
-        >
-          🏠 다른 실험 하러 가기
-        </button>
+      <div className="flex justify-center gap-4 agent-summary-actions">
+        <button type="button" className="btn-outline" onClick={onReset}>다른 미션 판단하기</button>
+        <button type="button" className="btn-primary" onClick={onBackToActivities}>모듈 활동 고르기</button>
       </div>
     </div>
   );

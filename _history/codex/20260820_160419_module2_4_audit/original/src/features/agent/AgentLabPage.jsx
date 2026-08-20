@@ -12,7 +12,6 @@ import KillSwitchSimScreen from './screens/control/KillSwitchSimScreen';
 import CharterSummaryScreen from './screens/control/CharterSummaryScreen';
 import AgentWorksheet from './print/AgentWorksheet';
 import WorksheetModal from '../../components/WorksheetModal';
-import './agent.css';
 
 export default function AgentLabPage() {
   const { state, updateState, selectMode, resetState } = useAgentState();
@@ -30,10 +29,10 @@ export default function AgentLabPage() {
 
   const getSteps = () => {
     if (state.mode === 'mission') {
-      return ['① 미션 선택', '② 실행 기록', '③ 근거 확인', '④ 판단 정리'];
+      return ['① 미션 선택', '② 도구 실행 관찰', '③ 인간 승인 검문소', '④ 미션 완료'];
     }
     if (state.mode === 'control') {
-      return ['① 통제 층 설정', '② 중단·복구 실험', '③ AI 감독관 원칙'];
+      return ['① 4대 가드레일', '② 킬스위치 실전 훈련', '③ 안전 사령관 헌장'];
     }
     return [];
   };
@@ -60,7 +59,7 @@ export default function AgentLabPage() {
 
   // Handlers
   const handleSelectMission = (missionId) => {
-    updateState({ selectedMissionId: missionId, missionStep: 1, isMissionCompleted: false });
+    updateState({ selectedMissionId: missionId, missionStep: 1 });
     scrollToTop();
   };
 
@@ -74,19 +73,6 @@ export default function AgentLabPage() {
       humanApprovalDecisions: {
         ...state.humanApprovalDecisions,
         [missionId]: decision
-      }
-    });
-  };
-
-  const handleToggleReviewCheck = (missionId, checkId) => {
-    const current = state.approvalReviewChecks[missionId] || [];
-    const next = current.includes(checkId)
-      ? current.filter(id => id !== checkId)
-      : [...current, checkId];
-    updateState({
-      approvalReviewChecks: {
-        ...state.approvalReviewChecks,
-        [missionId]: next
       }
     });
   };
@@ -106,19 +92,12 @@ export default function AgentLabPage() {
   };
 
   const handleGoToKillSwitch = () => {
-    updateState({ controlStep: 1, killSwitchTriggered: false, incidentResponseChecks: [] });
+    updateState({ controlStep: 1 });
     scrollToTop();
   };
 
   const handleTriggerKillSwitch = () => {
     updateState({ killSwitchTriggered: true });
-  };
-
-  const handleToggleIncidentCheck = (checkId) => {
-    const next = state.incidentResponseChecks.includes(checkId)
-      ? state.incidentResponseChecks.filter(id => id !== checkId)
-      : [...state.incidentResponseChecks, checkId];
-    updateState({ incidentResponseChecks: next });
   };
 
   const handleCompleteControl = () => {
@@ -128,7 +107,7 @@ export default function AgentLabPage() {
 
   const renderContent = () => {
     if (!state.mode) {
-      return <AgentModeSelectScreen onSelectMode={selectMode} />;
+      return <AgentModeSelectScreen onSelectMode={(mode) => selectMode(mode)} />;
     }
 
     if (state.mode === 'mission') {
@@ -154,8 +133,6 @@ export default function AgentLabPage() {
             <MissionApprovalScreen 
               missionId={state.selectedMissionId}
               decision={state.humanApprovalDecisions[state.selectedMissionId]}
-              reviewedCheckIds={state.approvalReviewChecks[state.selectedMissionId] || []}
-              onToggleReviewCheck={handleToggleReviewCheck}
               onDecide={handleApprovalDecision}
               onNext={handleCompleteMission}
               onPrev={() => updateState({ missionStep: 1 })}
@@ -190,11 +167,9 @@ export default function AgentLabPage() {
           return (
             <KillSwitchSimScreen 
               killSwitchTriggered={state.killSwitchTriggered}
-              incidentResponseChecks={state.incidentResponseChecks}
               onTriggerKillSwitch={handleTriggerKillSwitch}
-              onToggleIncidentCheck={handleToggleIncidentCheck}
               onNext={handleCompleteControl}
-              onPrev={() => updateState({ controlStep: 0, killSwitchTriggered: false, incidentResponseChecks: [] })}
+              onPrev={() => updateState({ controlStep: 0 })}
             />
           );
         case 2:
@@ -221,7 +196,7 @@ export default function AgentLabPage() {
   const stepperInfo = getStepperInfo();
 
   return (
-    <div className={`app-container agent-app ${isPresentation ? 'presentation-mode' : ''}`}>
+    <div className={`app-container ${isPresentation ? 'presentation-mode' : ''}`}>
       <AppHeader 
         title="AI 에이전트 통제실"
         showBackButton={state.mode !== null}

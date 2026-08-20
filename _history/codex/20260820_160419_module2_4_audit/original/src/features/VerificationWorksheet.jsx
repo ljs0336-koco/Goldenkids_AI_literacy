@@ -11,7 +11,7 @@ export default function VerificationWorksheet({ state }) {
   const selectedMediaCase = mediaCaseById[state.selectedMediaCaseId];
 
   return (
-    <div className="verification-print-only" style={{ padding: '20px', backgroundColor: '#fff' }}>
+    <div className="verification-print-only" style={{ display: 'none', padding: '20px' }}>
       <style>{`
         @media print {
           .verification-print-only { display: block !important; color: #111; }

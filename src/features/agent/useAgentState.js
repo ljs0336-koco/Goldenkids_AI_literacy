@@ -1,86 +1,107 @@
 import { useLocalStorage } from '../../hooks/useLocalStorage';
-import { agentMissions, safetyGuardrails } from './agentData';
+import { agentMissions, killSwitchAnomaly, safetyGuardrails } from './agentData';
 
-export const AGENT_STORAGE_KEY = 'ai-literacy-lab-agent:v1';
+export const AGENT_STORAGE_KEY = 'ai-literacy-lab-agent:v2';
 
 export const initialAgentState = {
-  version: 'v1',
-  mode: null, // 'mission' | 'control' | null
-  missionStep: 0, // 0: 미션 선택, 1: 생각/도구실행, 2: 인간 승인 검문소, 3: 완료
+  version: 'v2',
+  mode: null,
+  missionStep: 0,
   selectedMissionId: 'mission_invite',
-  humanApprovalDecisions: {}, // { [missionId]: 'approve' | 'reject' }
-  controlStep: 0, // 0: 가드레일 설정, 1: 킬스위치 시뮬레이터, 2: 안전 헌장 발급
-  guardrailChoices: {
-    guard_permission: 'minimal',
-    guard_budget: 'limit_10',
-    guard_hitl: 'hitl_strict',
-    guard_killswitch: 'kill_enabled'
-  },
+  approvalReviewChecks: {},
+  humanApprovalDecisions: {},
+  controlStep: 0,
+  guardrailChoices: {},
   killSwitchTriggered: false,
+  incidentResponseChecks: [],
   isMissionCompleted: false,
   isControlCompleted: false
 };
 
 const ALLOWED_KEYS = new Set(Object.keys(initialAgentState));
 const VALID_MODES = new Set(['mission', 'control', null]);
-const VALID_MISSION_IDS = new Set(agentMissions.map(m => m.id));
-const VALID_GUARD_IDS = new Set(safetyGuardrails.map(g => g.id));
+const VALID_MISSION_IDS = new Set(agentMissions.map(mission => mission.id));
+const VALID_GUARD_IDS = new Set(safetyGuardrails.map(guard => guard.id));
+const VALID_GUARD_OPTIONS = new Map(
+  safetyGuardrails.map(guard => [guard.id, new Set(guard.options.map(option => option.id))])
+);
+const VALID_REVIEW_CHECKS = new Map(
+  agentMissions.map(mission => [mission.id, new Set(mission.humanCheckpoint.reviewChecks.map(check => check.id))])
+);
+const VALID_RESPONSE_CHECKS = new Set(killSwitchAnomaly.responseChecks.map(check => check.id));
+
+function freshInitialState() {
+  return {
+    ...initialAgentState,
+    approvalReviewChecks: {},
+    humanApprovalDecisions: {},
+    guardrailChoices: {},
+    incidentResponseChecks: []
+  };
+}
 
 export function validateAndSanitizeAgentState(rawState) {
-  if (!rawState || typeof rawState !== 'object' || Array.isArray(rawState)) {
-    return { ...initialAgentState };
+  if (!rawState || typeof rawState !== 'object' || Array.isArray(rawState) || rawState.version !== 'v2') {
+    return freshInitialState();
   }
 
-  if (rawState.version !== 'v1') {
-    return { ...initialAgentState };
-  }
-
-  const sanitized = { ...initialAgentState };
+  const sanitized = freshInitialState();
 
   for (const key of Object.keys(rawState)) {
     if (!ALLOWED_KEYS.has(key)) continue;
-
-    const val = rawState[key];
+    const value = rawState[key];
 
     switch (key) {
+      case 'version':
+        break;
       case 'mode':
-        sanitized.mode = VALID_MODES.has(val) ? val : null;
+        sanitized.mode = VALID_MODES.has(value) ? value : null;
         break;
       case 'missionStep':
-        sanitized.missionStep = typeof val === 'number' && val >= 0 && val <= 3 ? val : 0;
+        sanitized.missionStep = Number.isInteger(value) && value >= 0 && value <= 3 ? value : 0;
         break;
       case 'selectedMissionId':
-        sanitized.selectedMissionId = typeof val === 'string' && VALID_MISSION_IDS.has(val) ? val : 'mission_invite';
+        sanitized.selectedMissionId = VALID_MISSION_IDS.has(value) ? value : 'mission_invite';
+        break;
+      case 'approvalReviewChecks':
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+          for (const [missionId, checkIds] of Object.entries(value)) {
+            if (!VALID_MISSION_IDS.has(missionId) || !Array.isArray(checkIds)) continue;
+            const allowed = VALID_REVIEW_CHECKS.get(missionId);
+            sanitized.approvalReviewChecks[missionId] = [...new Set(checkIds.filter(checkId => allowed.has(checkId)))];
+          }
+        }
         break;
       case 'humanApprovalDecisions':
-        if (val && typeof val === 'object' && !Array.isArray(val)) {
-          const decisions = {};
-          for (const [mId, dec] of Object.entries(val)) {
-            if (VALID_MISSION_IDS.has(mId) && (dec === 'approve' || dec === 'reject')) {
-              decisions[mId] = dec;
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+          for (const [missionId, decision] of Object.entries(value)) {
+            if (VALID_MISSION_IDS.has(missionId) && (decision === 'approve' || decision === 'reject')) {
+              sanitized.humanApprovalDecisions[missionId] = decision;
             }
           }
-          sanitized.humanApprovalDecisions = decisions;
         }
         break;
       case 'controlStep':
-        sanitized.controlStep = typeof val === 'number' && val >= 0 && val <= 2 ? val : 0;
+        sanitized.controlStep = Number.isInteger(value) && value >= 0 && value <= 2 ? value : 0;
         break;
       case 'guardrailChoices':
-        if (val && typeof val === 'object' && !Array.isArray(val)) {
-          const choices = { ...initialAgentState.guardrailChoices };
-          for (const [gId, optId] of Object.entries(val)) {
-            if (VALID_GUARD_IDS.has(gId) && typeof optId === 'string') {
-              choices[gId] = optId;
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+          for (const [guardId, optionId] of Object.entries(value)) {
+            if (VALID_GUARD_IDS.has(guardId) && VALID_GUARD_OPTIONS.get(guardId).has(optionId)) {
+              sanitized.guardrailChoices[guardId] = optionId;
             }
           }
-          sanitized.guardrailChoices = choices;
         }
         break;
       case 'killSwitchTriggered':
       case 'isMissionCompleted':
       case 'isControlCompleted':
-        sanitized[key] = Boolean(val);
+        sanitized[key] = Boolean(value);
+        break;
+      case 'incidentResponseChecks':
+        if (Array.isArray(value)) {
+          sanitized.incidentResponseChecks = [...new Set(value.filter(checkId => VALID_RESPONSE_CHECKS.has(checkId)))];
+        }
         break;
       default:
         break;
@@ -94,31 +115,28 @@ export function useAgentState() {
   const [rawState, setRawState] = useLocalStorage(AGENT_STORAGE_KEY, initialAgentState);
   const state = validateAndSanitizeAgentState(rawState);
 
-  const updateState = (updates) => {
-    setRawState(prev => {
-      const nextRaw = { ...prev, ...updates };
-      return validateAndSanitizeAgentState(nextRaw);
-    });
+  const updateState = updates => {
+    setRawState(previous => validateAndSanitizeAgentState({ ...previous, ...updates }));
   };
 
-  const selectMode = (mode) => {
+  const selectMode = mode => {
     if (mode === 'mission') {
-      updateState({ mode: 'mission', missionStep: 0 });
+      updateState({ mode: 'mission', missionStep: 0, isMissionCompleted: false });
     } else if (mode === 'control') {
-      updateState({ mode: 'control', controlStep: 0, killSwitchTriggered: false });
+      updateState({
+        mode: 'control',
+        controlStep: 0,
+        guardrailChoices: {},
+        killSwitchTriggered: false,
+        incidentResponseChecks: [],
+        isControlCompleted: false
+      });
     } else {
       updateState({ mode: null });
     }
   };
 
-  const resetState = () => {
-    setRawState(initialAgentState);
-  };
+  const resetState = () => setRawState(freshInitialState());
 
-  return {
-    state,
-    updateState,
-    selectMode,
-    resetState
-  };
+  return { state, updateState, selectMode, resetState };
 }

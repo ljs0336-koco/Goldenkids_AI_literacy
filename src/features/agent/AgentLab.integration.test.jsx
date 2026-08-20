@@ -1,140 +1,111 @@
-import React from 'react';
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import React, { useState } from 'react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import AgentLabPage from './AgentLabPage';
-import MissionSelectScreen from './screens/mission/MissionSelectScreen';
-import MissionPlanScreen from './screens/mission/MissionPlanScreen';
-import MissionApprovalScreen from './screens/mission/MissionApprovalScreen';
+import { agentMissions, killSwitchAnomaly } from './agentData';
+import AgentWorksheet from './print/AgentWorksheet';
 import GuardrailSetupScreen from './screens/control/GuardrailSetupScreen';
 import KillSwitchSimScreen from './screens/control/KillSwitchSimScreen';
-import AgentWorksheet from './print/AgentWorksheet';
+import MissionApprovalScreen from './screens/mission/MissionApprovalScreen';
+import MissionPlanScreen from './screens/mission/MissionPlanScreen';
 
-describe('AgentLab Module 4 UI & Flow Integration Tests', () => {
+function KillSwitchHarness() {
+  const [triggered, setTriggered] = useState(false);
+  const [checks, setChecks] = useState([]);
+  return (
+    <KillSwitchSimScreen
+      killSwitchTriggered={triggered}
+      incidentResponseChecks={checks}
+      onTriggerKillSwitch={() => setTriggered(true)}
+      onToggleIncidentCheck={id => setChecks(current => current.includes(id) ? current.filter(item => item !== id) : [...current, id])}
+      onNext={() => {}}
+      onPrev={() => {}}
+    />
+  );
+}
+
+describe('AgentLab module 4', () => {
   beforeEach(() => {
     window.localStorage.clear();
+    window.scrollTo = vi.fn();
   });
+  afterEach(() => window.localStorage.clear());
 
-  afterEach(() => {
-    window.localStorage.clear();
-  });
-
-  /* 1. 차시 표기 미노출 검증 */
-  it('1. [공통] 학생 화면 및 인쇄 활동지에 "7차시", "8차시" 등 차시 번호가 전혀 노출되지 않는다', () => {
+  it('학생 화면과 인쇄 활동지에 차시 번호를 노출하지 않는다', () => {
     render(<AgentLabPage />);
-
-    expect(screen.queryByText(/7차시/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/8차시/)).not.toBeInTheDocument();
-    expect(screen.getByText(/도구 실행 & 인간 승인 · 약 10분/)).toBeInTheDocument();
-    expect(screen.getByText(/가드레일 & 킬스위치 · 약 15분/)).toBeInTheDocument();
-
-    const { container } = render(<AgentWorksheet state={{ mode: 'mission' }} />);
-    expect(container.textContent).not.toContain('7차시');
-    expect(container.textContent).not.toContain('8차시');
+    expect(screen.getByText(/판단 미션 · 약 10분/)).toBeInTheDocument();
+    expect(screen.getByText(/안전 운영 실험 · 약 15분/)).toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(/[78]차시/);
+    const { container } = render(<AgentWorksheet state={{}} />);
+    expect(container.textContent).not.toMatch(/[78]차시/);
   });
 
-  /* 2. 메인 선택 화면 */
-  it('2. [선택 화면] 모듈 4 메인 선택 화면에 미션 실행소와 안전 통제실 카드가 렌더링된다', () => {
+  it('AI 에이전트를 목표·도구·여러 단계 수행으로 설명한다', () => {
     render(<AgentLabPage />);
-
-    expect(screen.getByText('AI 금쪽이와 함께하는 AI 에이전트 통제실')).toBeInTheDocument();
-    expect(screen.getByText('자율 에이전트의 도구 실행과 인간 승인')).toBeInTheDocument();
-    expect(screen.getByText('가드레일 설정과 비상 킬스위치(Kill-Switch)')).toBeInTheDocument();
+    expect(screen.getByText(/목표를 받아 다음 행동을 정하고, 허용된 도구를 사용해 여러 단계를 수행/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /에이전트의 실행 요청, 승인해도 될까/ })).toBeInTheDocument();
   });
 
-  /* 3. 미션 1단계: MissionSelectScreen */
-  it('3. [미션 1단계] MissionSelectScreen: 3가지 학급 에이전트 미션 카드가 렌더링된다', () => {
-    render(
-      <MissionSelectScreen 
-        selectedMissionId="mission_invite" 
-        onSelectMission={() => {}} 
-        onPrev={() => {}} 
-      />
-    );
-
-    expect(screen.getByText('자율 AI 에이전트 미션을 골라주세요 🤖')).toBeInTheDocument();
-    expect(screen.getByText('학예회 초대장 자동 발송 미션')).toBeInTheDocument();
-    expect(screen.getByText(/과학 탐구자료 자동 수집/)).toBeInTheDocument();
-    expect(screen.getByText(/우리 반 분실물 스마트 매칭/)).toBeInTheDocument();
+  it('실행 과정을 숨겨진 생각 대신 계획 요약·도구 요청·관찰 기록으로 보여 준다', () => {
+    render(<MissionPlanScreen missionId="mission_invite" onNext={() => {}} onPrev={() => {}} />);
+    expect(screen.getByText(/숨겨진 생각을 보여 주는 화면이 아니라/)).toBeInTheDocument();
+    expect(screen.getByText(/1\. 계획 요약/)).toBeInTheDocument();
+    expect(document.body.textContent).not.toContain('[생각]');
   });
 
-  /* 4. 미션 2단계: MissionPlanScreen & 도구 실행 루프 */
-  it('4. [미션 2단계] MissionPlanScreen: 에이전트의 단계별 생각 및 도구 호출 타임라인이 렌더링된다', () => {
-    render(
-      <MissionPlanScreen 
-        missionId="mission_invite" 
-        onNext={() => {}} 
-        onPrev={() => {}} 
+  it('근거를 모두 확인하기 전에는 승인과 보류를 선택할 수 없다', () => {
+    const mission = agentMissions[0];
+    const { rerender } = render(
+      <MissionApprovalScreen
+        missionId={mission.id}
+        reviewedCheckIds={[]}
+        onToggleReviewCheck={() => {}}
+        onDecide={() => {}}
+        onNext={() => {}}
+        onPrev={() => {}}
       />
     );
-
-    expect(screen.getByText('학예회 초대장 자동 발송 미션')).toBeInTheDocument();
-    expect(screen.getByText(/AI 에이전트의 자율 실행 루프/)).toBeInTheDocument();
-    expect(screen.getByText(/1단계 \[생각\]/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /발송 승인/ })).toBeDisabled();
+    rerender(
+      <MissionApprovalScreen
+        missionId={mission.id}
+        reviewedCheckIds={mission.humanCheckpoint.reviewChecks.map(check => check.id)}
+        onToggleReviewCheck={() => {}}
+        onDecide={() => {}}
+        onNext={() => {}}
+        onPrev={() => {}}
+      />
+    );
+    expect(screen.getByRole('button', { name: /발송 승인/ })).toBeEnabled();
+    fireEvent.click(screen.getByRole('button', { name: /발송 보류 후 수정/ }));
+    expect(screen.getByText(/근거와 일치하는 판단/)).toBeInTheDocument();
   });
 
-  /* 5. 미션 3단계: MissionApprovalScreen & 인간 승인 검문소 */
-  it('5. [미션 3단계] MissionApprovalScreen: 고위험 도구 호출 전 인간 승인/반려 인터랙션이 정상 작동한다', () => {
-    render(
-      <MissionApprovalScreen 
-        missionId="mission_invite" 
-        decision={null} 
-        onDecide={() => {}} 
-        onNext={() => {}} 
-        onPrev={() => {}} 
+  it('네 통제 층을 모두 고르기 전에는 다음 단계로 이동할 수 없다', () => {
+    const { rerender } = render(
+      <GuardrailSetupScreen guardrailChoices={{}} onSelectGuardrail={() => {}} onNext={() => {}} onPrev={() => {}} />
+    );
+    expect(screen.getByRole('button', { name: /4개 항목을 모두 설정하세요/ })).toBeDisabled();
+    rerender(
+      <GuardrailSetupScreen
+        guardrailChoices={{ guard_permission: 'scoped', guard_budget: 'bounded', guard_hitl: 'risk_based', guard_killswitch: 'containment' }}
+        onSelectGuardrail={() => {}}
+        onNext={() => {}}
+        onPrev={() => {}}
       />
     );
-
-    expect(screen.getByText(/인간 승인 검문소/)).toBeInTheDocument();
-    expect(screen.getByText(/발송을 최종 승인하시겠습니까/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /승인 또는 반려를 선택해 주세요/i })).toBeDisabled();
-
-    // Select approve
-    const approveBtn = screen.getByText(/내용 확인 완료: 발송 승인/);
-    fireEvent.click(approveBtn);
-
-    expect(screen.getByRole('button', { name: /미션 결과 요약 보기/i })).not.toBeDisabled();
+    expect(screen.getByText(/100% · 기본 통제 준비 완료/)).toBeInTheDocument();
+    expect(screen.getByText(/안전 확률이 아닙니다/)).toBeInTheDocument();
   });
 
-  /* 6. 통제 1단계: GuardrailSetupScreen */
-  it('6. [통제 1단계] GuardrailSetupScreen: 4대 안전 가드레일 설정 및 지수 집계가 렌더링된다', () => {
-    render(
-      <GuardrailSetupScreen 
-        guardrailChoices={{
-          guard_permission: 'minimal',
-          guard_budget: 'limit_10',
-          guard_hitl: 'hitl_strict',
-          guard_killswitch: 'kill_enabled'
-        }}
-        onSelectGuardrail={() => {}} 
-        onNext={() => {}} 
-        onPrev={() => {}} 
-      />
-    );
-
-    expect(screen.getByText(/4대 안전 가드레일/)).toBeInTheDocument();
-    expect(screen.getByText(/100점 \/ 100점 · 완벽한 안전 사령관/)).toBeInTheDocument();
-    expect(screen.getByText(/1. 권한 스코프 제한/)).toBeInTheDocument();
-  });
-
-  /* 7. 통제 2단계: KillSwitchSimScreen */
-  it('7. [통제 2단계] KillSwitchSimScreen: 비상 정지 킬스위치 버튼 클릭 시 차단 완료 상태로 전환된다', () => {
-    render(
-      <KillSwitchSimScreen 
-        killSwitchTriggered={false} 
-        onTriggerKillSwitch={() => {}} 
-        onNext={() => {}} 
-        onPrev={() => {}} 
-      />
-    );
-
-    expect(screen.getByText(/비상 상황! 킬스위치/)).toBeInTheDocument();
-    const killBtn = screen.getByRole('button', { name: /비상 정지 누르기 \(KILL-SWITCH\)/i });
-    expect(killBtn).toBeInTheDocument();
-
-    fireEvent.click(killBtn);
-
-    expect(screen.getByText(/에이전트 비상 차단 성공/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /안전 사령관 헌장 발급받기/i })).not.toBeDisabled();
+  it('중단 뒤 권한 회수와 결과 확인 절차까지 완료해야 다음으로 간다', () => {
+    render(<KillSwitchHarness />);
+    fireEvent.click(screen.getByRole('button', { name: /새 실행 중단 \+ 임시 권한 회수/ }));
+    const next = screen.getByRole('button', { name: /중단 후 세 가지 대응/ });
+    expect(next).toBeDisabled();
+    killSwitchAnomaly.responseChecks.forEach(check => fireEvent.click(screen.getByLabelText(check.label)));
+    expect(screen.getByRole('button', { name: /AI 감독관 원칙 정리하기/ })).toBeEnabled();
+    expect(screen.getByText(/과거의 실행 결과까지 되돌려 주지는 않습니다/)).toBeInTheDocument();
   });
 });

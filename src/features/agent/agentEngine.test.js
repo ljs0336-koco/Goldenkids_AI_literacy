@@ -1,41 +1,40 @@
-import { describe, it, expect } from 'vitest';
-import { getMissionById, getToolById, evaluateGuardrailSafety } from './agentEngine';
+import { describe, expect, it } from 'vitest';
+import { evaluateGuardrailReadiness, getMissionById, getToolById } from './agentEngine';
 
-describe('AgentEngine Unit Tests', () => {
-  it('1. 미션 ID와 도구 ID로 데이터를 올바르게 조회한다', () => {
-    const mission = getMissionById('mission_invite');
-    expect(mission).toBeDefined();
-    expect(mission.title).toContain('학예회');
-
-    const tool = getToolById('tool_pay');
-    expect(tool).toBeDefined();
-    expect(tool.riskLevel).toBe('critical');
+describe('agentEngine', () => {
+  it('미션과 도구를 ID로 조회한다', () => {
+    expect(getMissionById('mission_invite').title).toContain('학예회');
+    expect(getToolById('tool_pay').riskLevel).toBe('critical');
   });
 
-  it('2. 4대 가드레일 선택에 따른 안전 지수와 피드백을 정확히 연산한다', () => {
-    // All recommended choices
-    const safeChoices = {
-      guard_permission: 'minimal',
-      guard_budget: 'limit_10',
-      guard_hitl: 'hitl_strict',
-      guard_killswitch: 'kill_enabled'
-    };
+  it('선택하지 않은 설정에 점수를 주지 않는다', () => {
+    const result = evaluateGuardrailReadiness({});
+    expect(result.readinessScore).toBe(0);
+    expect(result.configuredCount).toBe(0);
+    expect(result.isConfigured).toBe(false);
+    expect(result.analysisItems.every(item => item.chosenOption === null)).toBe(true);
+  });
 
-    const evalSafe = evaluateGuardrailSafety(safeChoices);
-    expect(evalSafe.safetyScore).toBe(100);
-    expect(evalSafe.isFullySafe).toBe(true);
-    expect(evalSafe.safetyLevel).toBe('완벽한 안전 사령관');
+  it('네 권장 설정을 모두 고르면 기본 통제 준비 완료로 평가한다', () => {
+    const result = evaluateGuardrailReadiness({
+      guard_permission: 'scoped',
+      guard_budget: 'bounded',
+      guard_hitl: 'risk_based',
+      guard_killswitch: 'containment'
+    });
+    expect(result.readinessScore).toBe(100);
+    expect(result.configuredCount).toBe(4);
+    expect(result.hasRecommendedBaseline).toBe(true);
+    expect(result.readinessLevel).toBe('기본 통제 준비 완료');
+  });
 
-    // Partial risky choices
-    const riskyChoices = {
-      guard_permission: 'full',
-      guard_budget: 'no_limit',
-      guard_hitl: 'hitl_off',
-      guard_killswitch: 'kill_disabled'
-    };
-
-    const evalRisky = evaluateGuardrailSafety(riskyChoices);
-    expect(evalRisky.safetyScore).toBe(0);
-    expect(evalRisky.isFullySafe).toBe(false);
+  it('설정 점검도를 안전 확률이나 완벽함으로 표현하지 않는다', () => {
+    const result = evaluateGuardrailReadiness({
+      guard_permission: 'scoped',
+      guard_budget: 'bounded',
+      guard_hitl: 'risk_based',
+      guard_killswitch: 'containment'
+    });
+    expect(JSON.stringify(result)).not.toMatch(/완벽|사고 확률|원천 차단/);
   });
 });

@@ -77,10 +77,4 @@ describe('VerificationLab UI and flow', () => {
     expect(screen.getByText(/모든 그림과 인물, 학교·기관 이름은 수업을 위해 만든 가상 사례/)).toBeInTheDocument();
     expect(screen.queryByText(/사진 업로드|음성 업로드/)).not.toBeInTheDocument();
   });
-
-  it('활동지 컴포넌트가 팝업 미리보기에서 숨겨지지 않는다', () => {
-    const { container } = render(<VerificationWorksheet state={initialVerificationState} />);
-    expect(container.firstChild).not.toHaveStyle('display: none');
-    expect(screen.getByText('AI 답변 정보 검증 활동지')).toBeVisible();
-  });
 });

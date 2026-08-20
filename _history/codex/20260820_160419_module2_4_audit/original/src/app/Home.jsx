@@ -132,12 +132,12 @@ export default function Home() {
           </div>
         </Link>
 
-        {/* 모듈 4: 에이전트 통제실 */}
-        <Link to="/agent" style={{ textDecoration: 'none' }}>
-        <div
-          className="card interactive-card"
-          style={{
-            borderLeft: '6px solid #dc2626',
+        {/* 모듈 4: 에이전트 통제실 (준비 중) */}
+        <div 
+          className="card" 
+          style={{ 
+            opacity: 0.65, 
+            borderLeft: '6px solid var(--color-border)', 
             display: 'flex', 
             alignItems: 'center', 
             gap: '20px',
@@ -150,23 +150,17 @@ export default function Home() {
             style={{ width: '72px', height: '72px', borderRadius: 'var(--radius-md)', objectFit: 'cover', border: '1px solid var(--color-border)' }} 
           />
           <div style={{ flex: 1 }}>
-            <div className="flex justify-between items-center mb-1">
-              <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#dc2626' }}>
-                모듈 4 · 학습 가능
-              </span>
-              <span style={{ fontSize: '12px', backgroundColor: '#fef2f2', color: '#b91c1c', padding: '2px 8px', borderRadius: '10px', fontWeight: 'bold' }}>
-                체험 시작하기 →
-              </span>
-            </div>
-            <h2 style={{ color: 'var(--color-text-main)', fontSize: 'var(--font-size-lg)', margin: '0 0 4px 0', fontWeight: 'bold' }}>
+            <span style={{ fontSize: '13px', fontWeight: 'bold', color: 'var(--color-text-muted)' }}>
+              모듈 4 · 준비 중
+            </span>
+            <h2 style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-lg)', margin: '0 0 4px 0', fontWeight: 'bold' }}>
               4. 에이전트 통제실
             </h2>
             <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)', margin: 0 }}>
-              실행 전 근거를 확인하고 권한·한도·중단·복구 절차를 설계하며 AI 감독관의 역할을 익혀요.
+              자율적으로 행동하는 AI 에이전트를 인간이 안전하게 통제하는 규칙을 배웁니다.
             </p>
           </div>
         </div>
-        </Link>
       </div>
     </div>
   );

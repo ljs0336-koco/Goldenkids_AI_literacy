@@ -74,7 +74,26 @@ export default function AppHeader({
         </a>
       </div>
       
-      <div style={{ position: 'relative' }} ref={menuRef}>
+      <div className="flex items-center gap-2" style={{ position: 'relative' }} ref={menuRef}>
+        {onPrint && (
+          <button 
+            type="button"
+            className="btn-outline" 
+            onClick={onPrint}
+            style={{ 
+              minHeight: '38px', 
+              padding: '0 14px', 
+              fontSize: 'var(--font-size-sm)', 
+              fontWeight: 'bold',
+              color: 'var(--color-primary-hover)',
+              borderColor: '#99f6e4',
+              backgroundColor: '#f0fdfa'
+            }}
+          >
+            📄 활동지 인쇄/보기
+          </button>
+        )}
+
         <button 
           className="btn-outline" 
           onClick={() => setMenuOpen(!menuOpen)}

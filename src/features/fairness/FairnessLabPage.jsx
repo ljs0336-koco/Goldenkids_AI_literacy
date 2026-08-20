@@ -3,6 +3,7 @@ import AppHeader from '../../components/AppHeader';
 import ProgressStepper from '../../components/ProgressStepper';
 import { useFairnessState } from './useFairnessState';
 import FairnessWorksheet from './print/FairnessWorksheet';
+import WorksheetModal from '../../components/WorksheetModal';
 import ModeSelectScreen from './screens/ModeSelectScreen';
 
 // Activity recommendation screens (legacy Growth* filenames preserve the existing structure)
@@ -132,10 +133,6 @@ export default function FairnessLabPage() {
   const handleCompleteTeam = () => {
     updateState({ isTeamCompleted: true, teamStep: 6 });
     scrollToTop();
-  };
-
-  const handlePrint = () => {
-    window.print();
   };
 
   // Evaluate project team results
@@ -285,6 +282,16 @@ export default function FairnessLabPage() {
     }
   };
 
+  const [isWorksheetOpen, setIsWorksheetOpen] = useState(false);
+
+  const handleOpenWorksheet = () => {
+    setIsWorksheetOpen(true);
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
   const stepperInfo = getStepperInfo();
 
   return (
@@ -294,7 +301,7 @@ export default function FairnessLabPage() {
         showBackButton={state.mode !== null}
         onBackToActivities={() => selectMode(null)}
         onReset={resetState} 
-        onPrint={handlePrint} 
+        onPrint={handleOpenWorksheet} 
         isPresentation={isPresentation} 
         setIsPresentation={setIsPresentation} 
       />
@@ -309,7 +316,21 @@ export default function FairnessLabPage() {
         )}
         {renderContent()}
       </main>
-      <FairnessWorksheet state={state} />
+
+      {/* 활동지 전용 팝업 모달 */}
+      <WorksheetModal
+        isOpen={isWorksheetOpen}
+        onClose={() => setIsWorksheetOpen(false)}
+        onPrint={handlePrint}
+        title="공정한 AI 실험실 탐구 활동지"
+      >
+        <FairnessWorksheet state={state} />
+      </WorksheetModal>
+
+      {/* 인쇄 시에만 출력되는 영역 */}
+      <div className="print-only" style={{ display: 'none' }}>
+        <FairnessWorksheet state={state} />
+      </div>
     </div>
   );
 }

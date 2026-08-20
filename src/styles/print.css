@@ -1,7 +1,15 @@
+.print-only {
+  display: none;
+}
+
 @media print {
   /* Hide non-printable areas */
-  nav, header, footer, .no-print, button, .teacher-tools {
+  nav, header, footer, .no-print, button, .teacher-tools, .worksheet-modal-overlay {
     display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
   }
 
   /* Reset backgrounds and colors for print */
@@ -26,7 +34,7 @@
   /* Page setup */
   @page {
     size: A4 portrait;
-    margin: 2cm;
+    margin: 1.2cm;
   }
 
   /* Worksheet specific layout */

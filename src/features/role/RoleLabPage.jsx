@@ -11,10 +11,12 @@ import TaskClassifyScreen from './screens/task/TaskClassifyScreen';
 import TaskAnalysisScreen from './screens/task/TaskAnalysisScreen';
 import TaskSummaryScreen from './screens/task/TaskSummaryScreen';
 import RoleWorksheet from './print/RoleWorksheet';
+import WorksheetModal from '../../components/WorksheetModal';
 
 export default function RoleLabPage() {
   const { state, updateState, selectMode, resetState } = useRoleState();
   const [isPresentation, setIsPresentation] = useState(false);
+  const [isWorksheetOpen, setIsWorksheetOpen] = useState(false);
 
   const scrollToTop = () => {
     const prefersReducedMotion = typeof window !== 'undefined' && 
@@ -105,10 +107,6 @@ export default function RoleLabPage() {
     scrollToTop();
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
-
   const renderContent = () => {
     if (!state.mode) {
       return <RoleModeSelectScreen onSelectMode={(mode) => selectMode(mode)} />;
@@ -194,6 +192,14 @@ export default function RoleLabPage() {
     }
   };
 
+  const handleOpenWorksheet = () => {
+    setIsWorksheetOpen(true);
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
   const stepperInfo = getStepperInfo();
 
   return (
@@ -203,7 +209,7 @@ export default function RoleLabPage() {
         showBackButton={state.mode !== null}
         onBackToActivities={() => selectMode(null)}
         onReset={resetState} 
-        onPrint={handlePrint} 
+        onPrint={handleOpenWorksheet} 
         isPresentation={isPresentation} 
         setIsPresentation={setIsPresentation} 
       />
@@ -218,7 +224,21 @@ export default function RoleLabPage() {
         )}
         {renderContent()}
       </main>
-      <RoleWorksheet state={state} />
+
+      {/* 활동지 전용 팝업 모달 */}
+      <WorksheetModal
+        isOpen={isWorksheetOpen}
+        onClose={() => setIsWorksheetOpen(false)}
+        onPrint={handlePrint}
+        title="AI 역할 선택소 탐구 활동지"
+      >
+        <RoleWorksheet state={state} />
+      </WorksheetModal>
+
+      {/* 인쇄 시에만 출력되는 숨김 영역 */}
+      <div className="print-only" style={{ display: 'none' }}>
+        <RoleWorksheet state={state} />
+      </div>
     </div>
   );
 }

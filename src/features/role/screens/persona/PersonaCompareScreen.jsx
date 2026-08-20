@@ -40,18 +40,19 @@ export default function PersonaCompareScreen({ scenarioId, userChoice, onChooseP
           <span style={{ fontSize: '20px' }}>{scenario.icon}</span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-          <div style={{ fontSize: '24px' }}>🙋</div>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
+          <div style={{ fontSize: '28px', lineHeight: 1 }}>🙋</div>
           <div 
             style={{
               backgroundColor: 'white',
-              border: '1px solid #cbd5e1',
-              borderRadius: '0 16px 16px 16px',
-              padding: '12px 18px',
-              fontSize: 'var(--font-size-base)',
-              fontWeight: '600',
-              color: '#1e293b',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.03)'
+              border: '1.5px solid #cbd5e1',
+              borderRadius: '0 18px 18px 18px',
+              padding: '14px 20px',
+              fontSize: '18px',
+              fontWeight: '700',
+              color: '#0f172a',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+              lineHeight: '1.5'
             }}
           >
             "{scenario.userPrompt}"
@@ -60,8 +61,8 @@ export default function PersonaCompareScreen({ scenarioId, userChoice, onChooseP
       </div>
 
       {/* 4색 AI 금쪽이 응답 카드 목록 */}
-      <h3 style={{ fontSize: 'var(--font-size-base)', fontWeight: 'bold', marginBottom: '14px', color: 'var(--color-secondary)' }}>
-        💬 4색 AI 금쪽이의 응답 비교 (하나를 선택해 주세요)
+      <h3 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '16px', color: 'var(--color-secondary)' }}>
+        💬 4색 AI 금쪽이의 응답 비교 (가장 마음에 드는 역할을 클릭해 보세요)
       </h3>
 
       <div 
@@ -82,16 +83,17 @@ export default function PersonaCompareScreen({ scenarioId, userChoice, onChooseP
               onClick={() => handleSelect(persona.id)}
               className="card interactive-card"
               style={{
-                padding: '18px 20px',
-                borderRadius: 'var(--radius-md)',
-                border: isSelected ? `2.5px solid ${persona.color}` : `1.5px solid ${persona.border}`,
+                padding: '20px 22px',
+                borderRadius: '16px',
+                border: isSelected ? `3px solid ${persona.color}` : `1.5px solid ${persona.border}`,
                 backgroundColor: isSelected ? persona.bgLight : 'white',
                 marginBottom: 0,
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 cursor: 'pointer',
-                boxShadow: isSelected ? '0 4px 12px rgba(0,0,0,0.08)' : 'var(--shadow-sm)'
+                boxShadow: isSelected ? '0 6px 16px rgba(0,0,0,0.1)' : 'var(--shadow-sm)',
+                transform: isSelected ? 'scale(1.01)' : 'scale(1)'
               }}
               role="button"
               tabIndex={0}
@@ -100,14 +102,14 @@ export default function PersonaCompareScreen({ scenarioId, userChoice, onChooseP
             >
               <div>
                 <div className="flex justify-between items-center mb-3">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2.5">
                     <img 
                       src={persona.avatar} 
                       alt={persona.name} 
-                      style={{ width: '36px', height: 'auto' }} 
+                      style={{ width: '42px', height: 'auto' }} 
                     />
                     <div>
-                      <span style={{ fontWeight: 'bold', fontSize: '15px', color: persona.color }}>
+                      <span style={{ fontWeight: '800', fontSize: '18px', color: persona.color }}>
                         {persona.icon} {persona.name}
                       </span>
                     </div>
@@ -115,35 +117,36 @@ export default function PersonaCompareScreen({ scenarioId, userChoice, onChooseP
 
                   <span 
                     style={{
-                      fontSize: '12px',
-                      fontWeight: 'bold',
-                      padding: '3px 10px',
+                      fontSize: '13px',
+                      fontWeight: '800',
+                      padding: '5px 12px',
                       borderRadius: '12px',
                       backgroundColor: isSelected ? persona.color : '#f1f5f9',
                       color: isSelected ? 'white' : '#64748b'
                     }}
                   >
-                    {isSelected ? '✅ 선택됨' : '선택'}
+                    {isSelected ? '✅ 선택됨' : '선택하기'}
                   </span>
                 </div>
 
                 <div 
                   style={{
                     backgroundColor: 'white',
-                    border: `1px solid ${isSelected ? persona.border : '#e2e8f0'}`,
+                    border: `1.5px solid ${isSelected ? persona.border : '#e2e8f0'}`,
                     borderRadius: '12px',
-                    padding: '12px 14px',
-                    fontSize: '13.5px',
-                    lineHeight: '1.6',
-                    color: '#334155'
+                    padding: '14px 16px',
+                    fontSize: '16px',
+                    lineHeight: '1.7',
+                    color: '#1e293b',
+                    fontWeight: '500'
                   }}
                 >
                   {responseText}
                 </div>
               </div>
 
-              <div style={{ marginTop: '10px', fontSize: '11.5px', color: 'var(--color-text-muted)' }}>
-                💡 <strong>특징:</strong> {persona.tone}
+              <div style={{ marginTop: '12px', fontSize: '13px', color: '#64748b', fontWeight: '500' }}>
+                💡 <strong>역할 특징:</strong> {persona.tone}
               </div>
             </div>
           );

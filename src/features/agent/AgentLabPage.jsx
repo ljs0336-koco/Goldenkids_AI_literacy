@@ -11,10 +11,12 @@ import GuardrailSetupScreen from './screens/control/GuardrailSetupScreen';
 import KillSwitchSimScreen from './screens/control/KillSwitchSimScreen';
 import CharterSummaryScreen from './screens/control/CharterSummaryScreen';
 import AgentWorksheet from './print/AgentWorksheet';
+import WorksheetModal from '../../components/WorksheetModal';
 
 export default function AgentLabPage() {
   const { state, updateState, selectMode, resetState } = useAgentState();
   const [isPresentation, setIsPresentation] = useState(false);
+  const [isWorksheetOpen, setIsWorksheetOpen] = useState(false);
 
   const scrollToTop = () => {
     if (typeof window === 'undefined' || !window.scrollTo) return;
@@ -103,10 +105,6 @@ export default function AgentLabPage() {
     scrollToTop();
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
-
   const renderContent = () => {
     if (!state.mode) {
       return <AgentModeSelectScreen onSelectMode={(mode) => selectMode(mode)} />;
@@ -187,6 +185,14 @@ export default function AgentLabPage() {
     }
   };
 
+  const handleOpenWorksheet = () => {
+    setIsWorksheetOpen(true);
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
   const stepperInfo = getStepperInfo();
 
   return (
@@ -196,7 +202,7 @@ export default function AgentLabPage() {
         showBackButton={state.mode !== null}
         onBackToActivities={() => selectMode(null)}
         onReset={resetState} 
-        onPrint={handlePrint} 
+        onPrint={handleOpenWorksheet} 
         isPresentation={isPresentation} 
         setIsPresentation={setIsPresentation} 
       />
@@ -211,7 +217,21 @@ export default function AgentLabPage() {
         )}
         {renderContent()}
       </main>
-      <AgentWorksheet state={state} />
+
+      {/* 활동지 전용 팝업 모달 */}
+      <WorksheetModal
+        isOpen={isWorksheetOpen}
+        onClose={() => setIsWorksheetOpen(false)}
+        onPrint={handlePrint}
+        title="AI 에이전트 통제실 탐구 활동지"
+      >
+        <AgentWorksheet state={state} />
+      </WorksheetModal>
+
+      {/* 인쇄 시에만 출력되는 숨김 영역 */}
+      <div className="print-only" style={{ display: 'none' }}>
+        <AgentWorksheet state={state} />
+      </div>
     </div>
   );
 }

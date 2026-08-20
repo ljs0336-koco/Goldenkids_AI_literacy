@@ -141,95 +141,110 @@ export default function TaskClassifyScreen({ taskClassifications = {}, onClassif
         )}
 
         {/* 업무 아이콘 & 제목 */}
-        <div style={{ textAlign: 'center', margin: '8px 0 16px 0' }}>
-          <div style={{ fontSize: '48px', marginBottom: '8px', lineHeight: 1 }}>
+        <div style={{ textAlign: 'center', margin: '12px 0 22px 0' }}>
+          <div style={{ fontSize: '56px', marginBottom: '10px', lineHeight: 1 }}>
             {currentTask.icon}
           </div>
-          <h3 style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'bold', color: 'var(--color-text-main)', margin: '0 0 6px 0' }}>
+          <h3 style={{ fontSize: '26px', fontWeight: '800', color: '#0f172a', margin: '0 0 10px 0', letterSpacing: '-0.02em' }}>
             {currentTask.title}
           </h3>
-          <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', margin: '0 auto', maxWidth: '520px', lineHeight: '1.5' }}>
+          <p style={{ fontSize: '17px', color: '#334155', margin: '0 auto', maxWidth: '580px', lineHeight: '1.6', fontWeight: '500' }}>
             {currentTask.description}
           </p>
         </div>
 
-        {/* 3대 구역 선택 버튼 (크고 터치감 좋은 버튼) */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginTop: '16px' }}>
+        {/* 3대 구역 선택 버튼 (크고 터치감 좋은 시원한 버튼) */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px', marginTop: '20px' }}>
           <button
             type="button"
             onClick={() => handleZoneClick('ai_auto')}
             style={{
-              padding: '14px 10px',
-              border: userZone === 'ai_auto' ? '2.5px solid #2563eb' : '1.5px solid #bfdbfe',
-              backgroundColor: userZone === 'ai_auto' ? '#eff6ff' : '#fafafa',
-              borderRadius: 'var(--radius-md)',
+              minHeight: '125px',
+              padding: '18px 12px',
+              border: userZone === 'ai_auto' ? '3px solid #2563eb' : '2px solid #bfdbfe',
+              backgroundColor: userZone === 'ai_auto' ? '#eff6ff' : '#f8fafc',
+              borderRadius: '16px',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: '4px',
+              justifyContent: 'center',
+              gap: '6px',
               cursor: 'pointer',
               transition: 'all 0.15s ease',
-              transform: userZone === 'ai_auto' ? 'scale(1.02)' : 'scale(1)'
+              transform: userZone === 'ai_auto' ? 'scale(1.03)' : 'scale(1)',
+              boxShadow: userZone === 'ai_auto' ? '0 8px 16px rgba(37, 99, 235, 0.18)' : '0 2px 6px rgba(0,0,0,0.04)'
             }}
           >
-            <span style={{ fontSize: '26px' }}>🤖</span>
-            <strong style={{ fontSize: '13.5px', color: userZone === 'ai_auto' ? '#1d4ed8' : '#1e3a8a' }}>AI가 주로</strong>
-            <span style={{ fontSize: '11px', color: '#64748b' }}>단순 반복·규칙</span>
+            <span style={{ fontSize: '34px', lineHeight: 1 }}>🤖</span>
+            <strong style={{ fontSize: '19px', fontWeight: '800', color: userZone === 'ai_auto' ? '#1d4ed8' : '#1e3a8a' }}>AI가 주로</strong>
+            <span style={{ fontSize: '14px', fontWeight: '600', color: '#475569', backgroundColor: userZone === 'ai_auto' ? '#dbeafe' : '#e2e8f0', padding: '3px 10px', borderRadius: '8px' }}>
+              단순 반복·규칙
+            </span>
           </button>
 
           <button
             type="button"
             onClick={() => handleZoneClick('collaboration')}
             style={{
-              padding: '14px 10px',
-              border: userZone === 'collaboration' ? '2.5px solid var(--color-primary)' : '1.5px solid #99f6e4',
-              backgroundColor: userZone === 'collaboration' ? '#f0fdfa' : '#fafafa',
-              borderRadius: 'var(--radius-md)',
+              minHeight: '125px',
+              padding: '18px 12px',
+              border: userZone === 'collaboration' ? '3px solid var(--color-primary)' : '2px solid #99f6e4',
+              backgroundColor: userZone === 'collaboration' ? '#f0fdfa' : '#f8fafc',
+              borderRadius: '16px',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: '4px',
+              justifyContent: 'center',
+              gap: '6px',
               cursor: 'pointer',
               transition: 'all 0.15s ease',
-              transform: userZone === 'collaboration' ? 'scale(1.02)' : 'scale(1)'
+              transform: userZone === 'collaboration' ? 'scale(1.03)' : 'scale(1)',
+              boxShadow: userZone === 'collaboration' ? '0 8px 16px rgba(13, 148, 136, 0.18)' : '0 2px 6px rgba(0,0,0,0.04)'
             }}
           >
-            <span style={{ fontSize: '26px' }}>🤝</span>
-            <strong style={{ fontSize: '13.5px', color: userZone === 'collaboration' ? 'var(--color-primary-hover)' : '#0f766e' }}>둘이서 협업</strong>
-            <span style={{ fontSize: '11px', color: '#64748b' }}>초안·아이디어</span>
+            <span style={{ fontSize: '34px', lineHeight: 1 }}>🤝</span>
+            <strong style={{ fontSize: '19px', fontWeight: '800', color: userZone === 'collaboration' ? 'var(--color-primary-hover)' : '#0f766e' }}>둘이서 협업</strong>
+            <span style={{ fontSize: '14px', fontWeight: '600', color: '#475569', backgroundColor: userZone === 'collaboration' ? '#ccfbf1' : '#e2e8f0', padding: '3px 10px', borderRadius: '8px' }}>
+              초안·아이디어
+            </span>
           </button>
 
           <button
             type="button"
             onClick={() => handleZoneClick('human_lead')}
             style={{
-              padding: '14px 10px',
-              border: userZone === 'human_lead' ? '2.5px solid #7c3aed' : '1.5px solid #e9d5ff',
-              backgroundColor: userZone === 'human_lead' ? '#faf5ff' : '#fafafa',
-              borderRadius: 'var(--radius-md)',
+              minHeight: '125px',
+              padding: '18px 12px',
+              border: userZone === 'human_lead' ? '3px solid #7c3aed' : '2px solid #e9d5ff',
+              backgroundColor: userZone === 'human_lead' ? '#faf5ff' : '#f8fafc',
+              borderRadius: '16px',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: '4px',
+              justifyContent: 'center',
+              gap: '6px',
               cursor: 'pointer',
               transition: 'all 0.15s ease',
-              transform: userZone === 'human_lead' ? 'scale(1.02)' : 'scale(1)'
+              transform: userZone === 'human_lead' ? 'scale(1.03)' : 'scale(1)',
+              boxShadow: userZone === 'human_lead' ? '0 8px 16px rgba(124, 58, 237, 0.18)' : '0 2px 6px rgba(0,0,0,0.04)'
             }}
           >
-            <span style={{ fontSize: '26px' }}>👤</span>
-            <strong style={{ fontSize: '13.5px', color: userZone === 'human_lead' ? '#6d28d9' : '#7e22ce' }}>사람이 결정</strong>
-            <span style={{ fontSize: '11px', color: '#64748b' }}>공감·책임·도덕</span>
+            <span style={{ fontSize: '34px', lineHeight: 1 }}>👤</span>
+            <strong style={{ fontSize: '19px', fontWeight: '800', color: userZone === 'human_lead' ? '#6d28d9' : '#7e22ce' }}>사람이 결정</strong>
+            <span style={{ fontSize: '14px', fontWeight: '600', color: '#475569', backgroundColor: userZone === 'human_lead' ? '#ede9fe' : '#e2e8f0', padding: '3px 10px', borderRadius: '8px' }}>
+              공감·책임·도덕
+            </span>
           </button>
         </div>
       </div>
 
       {/* 12개 미니 번호 네비게이터 */}
-      <div className="flex justify-center items-center gap-1.5 mb-6" style={{ flexWrap: 'wrap' }}>
+      <div className="flex justify-center items-center gap-2 mb-6" style={{ flexWrap: 'wrap' }}>
         {workTasks.map((t, idx) => {
           const z = taskClassifications[t.id];
           const isCurr = idx === currentIndex;
           const bg = z === 'ai_auto' ? '#dbeafe' : z === 'collaboration' ? '#ccfbf1' : z === 'human_lead' ? '#ede9fe' : 'white';
-          const borderColor = isCurr ? 'var(--color-primary)' : z ? '#94a3b8' : '#e2e8f0';
+          const borderColor = isCurr ? 'var(--color-primary)' : z ? '#94a3b8' : '#cbd5e1';
 
           return (
             <button
@@ -237,15 +252,16 @@ export default function TaskClassifyScreen({ taskClassifications = {}, onClassif
               type="button"
               onClick={() => { setCurrentIndex(idx); setShowHint(false); }}
               style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '8px',
-                border: isCurr ? `2.5px solid ${borderColor}` : `1px solid ${borderColor}`,
+                width: '38px',
+                height: '38px',
+                borderRadius: '10px',
+                border: isCurr ? `3px solid ${borderColor}` : `1.5px solid ${borderColor}`,
                 backgroundColor: bg,
-                fontWeight: isCurr ? 'bold' : 'normal',
-                fontSize: '12px',
+                fontWeight: 'bold',
+                fontSize: '14px',
                 cursor: 'pointer',
-                transition: 'all 0.15s ease'
+                transition: 'all 0.15s ease',
+                transform: isCurr ? 'scale(1.12)' : 'scale(1)'
               }}
               title={t.title}
             >
@@ -257,14 +273,14 @@ export default function TaskClassifyScreen({ taskClassifications = {}, onClassif
 
       {/* 하단 내비게이션 바 */}
       <div className="bottom-nav-bar">
-        <button className="btn-outline" onClick={onPrev}>
+        <button className="btn-outline" onClick={onPrev} style={{ minHeight: '50px', fontSize: '15px' }}>
           ← 처음으로
         </button>
         <button 
           className="btn-primary" 
           onClick={onNext}
           disabled={!distribution.isAllClassified}
-          style={{ minHeight: '48px', fontSize: 'var(--font-size-base)', fontWeight: 'bold' }}
+          style={{ minHeight: '52px', fontSize: '16px', fontWeight: 'bold', padding: '0 24px' }}
         >
           {distribution.isAllClassified 
             ? "📊 분류 결과 & 가치 분석 보기 →" 

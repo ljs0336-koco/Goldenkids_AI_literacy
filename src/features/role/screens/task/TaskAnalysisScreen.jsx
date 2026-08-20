@@ -43,47 +43,47 @@ export default function TaskAnalysisScreen({ taskClassifications = {}, selectedP
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '12px',
-          marginBottom: '20px'
+          gap: '14px',
+          marginBottom: '22px'
         }}
       >
-        <div style={{ backgroundColor: '#eff6ff', padding: '14px', borderRadius: 'var(--radius-md)', border: '1.5px solid #bfdbfe', textAlign: 'center' }}>
-          <div style={{ fontSize: '24px', marginBottom: '2px' }}>🤖</div>
-          <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#1d4ed8' }}>AI 주로</div>
-          <div style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'bold', color: '#1e3a8a', margin: '2px 0' }}>
-            {dist.counts.ai_auto}개 <span style={{ fontSize: '12px', fontWeight: 'normal', color: '#64748b' }}>({dist.percentages.ai_auto}%)</span>
+        <div style={{ backgroundColor: '#eff6ff', padding: '16px 14px', borderRadius: '14px', border: '2px solid #bfdbfe', textAlign: 'center' }}>
+          <div style={{ fontSize: '28px', marginBottom: '4px' }}>🤖</div>
+          <div style={{ fontSize: '15px', fontWeight: '800', color: '#1d4ed8' }}>AI 주로 수행</div>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: '#1e3a8a', margin: '4px 0' }}>
+            {dist.counts.ai_auto}개 <span style={{ fontSize: '14px', fontWeight: 'normal', color: '#64748b' }}>({dist.percentages.ai_auto}%)</span>
           </div>
         </div>
 
-        <div style={{ backgroundColor: '#f0fdfa', padding: '14px', borderRadius: 'var(--radius-md)', border: '1.5px solid #99f6e4', textAlign: 'center' }}>
-          <div style={{ fontSize: '24px', marginBottom: '2px' }}>🤝</div>
-          <div style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--color-primary-hover)' }}>협업</div>
-          <div style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'bold', color: 'var(--color-primary-hover)', margin: '2px 0' }}>
-            {dist.counts.collaboration}개 <span style={{ fontSize: '12px', fontWeight: 'normal', color: '#64748b' }}>({dist.percentages.collaboration}%)</span>
+        <div style={{ backgroundColor: '#f0fdfa', padding: '16px 14px', borderRadius: '14px', border: '2px solid #99f6e4', textAlign: 'center' }}>
+          <div style={{ fontSize: '28px', marginBottom: '4px' }}>🤝</div>
+          <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--color-primary-hover)' }}>인간-AI 협업</div>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: 'var(--color-primary-hover)', margin: '4px 0' }}>
+            {dist.counts.collaboration}개 <span style={{ fontSize: '14px', fontWeight: 'normal', color: '#64748b' }}>({dist.percentages.collaboration}%)</span>
           </div>
         </div>
 
-        <div style={{ backgroundColor: '#faf5ff', padding: '14px', borderRadius: 'var(--radius-md)', border: '1.5px solid #e9d5ff', textAlign: 'center' }}>
-          <div style={{ fontSize: '24px', marginBottom: '2px' }}>👤</div>
-          <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#7c3aed' }}>인간 결정</div>
-          <div style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'bold', color: '#6d28d9', margin: '2px 0' }}>
-            {dist.counts.human_lead}개 <span style={{ fontSize: '12px', fontWeight: 'normal', color: '#64748b' }}>({dist.percentages.human_lead}%)</span>
+        <div style={{ backgroundColor: '#faf5ff', padding: '16px 14px', borderRadius: '14px', border: '2px solid #e9d5ff', textAlign: 'center' }}>
+          <div style={{ fontSize: '28px', marginBottom: '4px' }}>👤</div>
+          <div style={{ fontSize: '15px', fontWeight: '800', color: '#7c3aed' }}>인간 최종 결정</div>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: '#6d28d9', margin: '4px 0' }}>
+            {dist.counts.human_lead}개 <span style={{ fontSize: '14px', fontWeight: 'normal', color: '#64748b' }}>({dist.percentages.human_lead}%)</span>
           </div>
         </div>
       </div>
 
       {/* 12개 업무 컴팩트 리스트 (클릭 시 말풍선 해설 토글) */}
-      <div style={{ backgroundColor: 'white', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--color-border)', padding: '16px', marginBottom: '20px' }}>
+      <div style={{ backgroundColor: 'white', borderRadius: '14px', border: '1.5px solid var(--color-border)', padding: '18px 20px', marginBottom: '22px' }}>
         <div className="flex justify-between items-center mb-3">
-          <h3 style={{ fontSize: 'var(--font-size-base)', fontWeight: 'bold', color: 'var(--color-secondary)', margin: 0 }}>
+          <h3 style={{ fontSize: '17px', fontWeight: '800', color: 'var(--color-secondary)', margin: 0 }}>
             📋 12개 업무별 분류 및 이유
           </h3>
-          <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
+          <span style={{ fontSize: '13px', color: 'var(--color-text-muted)', fontWeight: '500' }}>
             💡 항목을 클릭하면 추천 이유가 말풍선으로 나타나요
           </span>
         </div>
 
-        <div className="flex flex-col gap-2" style={{ maxHeight: '320px', overflowY: 'auto', paddingRight: '4px' }}>
+        <div className="flex flex-col gap-2.5" style={{ maxHeight: '340px', overflowY: 'auto', paddingRight: '4px' }}>
           {evalResult.items.map(item => {
             const isExpanded = expandedTaskId === item.taskId;
             const zoneText = item.userZone === 'ai_auto' ? '🤖 AI 주로' : item.userZone === 'collaboration' ? '🤝 협업' : '👤 사람 결정';
@@ -94,29 +94,29 @@ export default function TaskAnalysisScreen({ taskClassifications = {}, selectedP
                 key={item.taskId}
                 onClick={() => setExpandedTaskId(isExpanded ? null : item.taskId)}
                 style={{
-                  border: isExpanded ? '1.5px solid var(--color-primary)' : '1px solid #e2e8f0',
-                  borderRadius: 'var(--radius-sm)',
+                  border: isExpanded ? '2px solid var(--color-primary)' : '1px solid #e2e8f0',
+                  borderRadius: '10px',
                   backgroundColor: isExpanded ? '#f0fdfa' : '#fafafa',
-                  padding: '10px 14px',
+                  padding: '12px 16px',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease'
                 }}
               >
                 <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <span style={{ fontSize: '18px' }}>{item.icon}</span>
-                    <strong style={{ fontSize: '13.5px', color: 'var(--color-text-main)' }}>{item.title}</strong>
-                    <span style={{ fontSize: '11px', color: '#94a3b8' }}>({item.category})</span>
+                  <div className="flex items-center gap-2.5">
+                    <span style={{ fontSize: '20px' }}>{item.icon}</span>
+                    <strong style={{ fontSize: '15px', color: 'var(--color-text-main)' }}>{item.title}</strong>
+                    <span style={{ fontSize: '13px', color: '#94a3b8' }}>({item.category})</span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '10px', backgroundColor: '#f1f5f9', fontWeight: 'bold', color: '#475569' }}>
+                    <span style={{ fontSize: '12.5px', padding: '3px 10px', borderRadius: '10px', backgroundColor: '#f1f5f9', fontWeight: 'bold', color: '#475569' }}>
                       내 선택: {zoneText}
                     </span>
-                    <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '10px', backgroundColor: '#e0f2fe', fontWeight: 'bold', color: '#0369a1' }}>
+                    <span style={{ fontSize: '12.5px', padding: '3px 10px', borderRadius: '10px', backgroundColor: '#e0f2fe', fontWeight: 'bold', color: '#0369a1' }}>
                       권장: {recText}
                     </span>
-                    <span style={{ fontSize: '12px', color: 'var(--color-primary)' }}>
+                    <span style={{ fontSize: '13px', color: 'var(--color-primary)', fontWeight: 'bold' }}>
                       {isExpanded ? '▲' : '💬 이유'}
                     </span>
                   </div>
@@ -126,12 +126,12 @@ export default function TaskAnalysisScreen({ taskClassifications = {}, selectedP
                 {isExpanded && (
                   <div 
                     style={{
-                      marginTop: '8px',
-                      paddingTop: '8px',
+                      marginTop: '10px',
+                      paddingTop: '10px',
                       borderTop: '1px solid #ccfbf1',
-                      fontSize: '12.5px',
+                      fontSize: '14px',
                       color: '#0f766e',
-                      lineHeight: '1.5',
+                      lineHeight: '1.6',
                       animation: 'fadeIn 0.2s ease-out'
                     }}
                   >
@@ -148,38 +148,38 @@ export default function TaskAnalysisScreen({ taskClassifications = {}, selectedP
       <div 
         style={{
           backgroundColor: '#fffbeb',
-          border: '1.5px solid #fde047',
-          borderRadius: 'var(--radius-md)',
-          padding: '16px 18px',
-          marginBottom: '20px'
+          border: '2px solid #fde047',
+          borderRadius: '14px',
+          padding: '18px 20px',
+          marginBottom: '22px'
         }}
       >
-        <h3 style={{ fontSize: 'var(--font-size-base)', fontWeight: 'bold', color: '#b45309', marginBottom: '8px' }}>
+        <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#b45309', marginBottom: '12px' }}>
           🌟 AI에게 넘길 수 없는 인간만의 3가지 고유 가치
         </h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', fontSize: '12px', color: '#92400e' }}>
-          <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: 'var(--radius-sm)', border: '1px solid #fef08a' }}>
-            <strong>1. 진정한 공감</strong>
-            <p style={{ margin: '4px 0 0 0', lineHeight: '1.4', color: '#78350f' }}>사람 대 사람으로 마음을 나누는 따뜻한 소통과 위로</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', fontSize: '14px', color: '#92400e' }}>
+          <div style={{ backgroundColor: 'white', padding: '14px', borderRadius: '10px', border: '1px solid #fef08a' }}>
+            <strong style={{ fontSize: '15px' }}>1. 진정한 공감</strong>
+            <p style={{ margin: '6px 0 0 0', lineHeight: '1.5', color: '#78350f', fontSize: '13.5px' }}>사람 대 사람으로 마음을 나누는 따뜻한 소통과 위로</p>
           </div>
-          <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: 'var(--radius-sm)', border: '1px solid #fef08a' }}>
-            <strong>2. 가치 판단과 책임</strong>
-            <p style={{ margin: '4px 0 0 0', lineHeight: '1.4', color: '#78350f' }}>생명, 법률, 도덕 등 삶에 영향을 주는 결정에 대한 윤리적 책임</p>
+          <div style={{ backgroundColor: 'white', padding: '14px', borderRadius: '10px', border: '1px solid #fef08a' }}>
+            <strong style={{ fontSize: '15px' }}>2. 가치 판단과 책임</strong>
+            <p style={{ margin: '6px 0 0 0', lineHeight: '1.5', color: '#78350f', fontSize: '13.5px' }}>생명, 법률, 도덕 등 삶에 영향을 주는 결정에 대한 윤리적 책임</p>
           </div>
-          <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: 'var(--radius-sm)', border: '1px solid #fef08a' }}>
-            <strong>3. 고유한 창의성</strong>
-            <p style={{ margin: '4px 0 0 0', lineHeight: '1.4', color: '#78350f' }}>통계를 넘어선 개인의 삶의 경험과 예술적 감수성</p>
+          <div style={{ backgroundColor: 'white', padding: '14px', borderRadius: '10px', border: '1px solid #fef08a' }}>
+            <strong style={{ fontSize: '15px' }}>3. 고유한 창의성</strong>
+            <p style={{ margin: '6px 0 0 0', lineHeight: '1.5', color: '#78350f', fontSize: '13.5px' }}>통계를 넘어선 개인의 삶의 경험과 예술적 감수성</p>
           </div>
         </div>
       </div>
 
       {/* 우리가 지킬 AI 공존 원칙 선택 (체크리스트) */}
-      <div style={{ backgroundColor: '#f8fafc', padding: '16px 18px', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--color-border)', marginBottom: '20px' }}>
-        <h3 style={{ fontSize: 'var(--font-size-base)', fontWeight: 'bold', marginBottom: '10px', color: 'var(--color-secondary)' }}>
+      <div style={{ backgroundColor: '#f8fafc', padding: '18px 20px', borderRadius: '14px', border: '1.5px solid var(--color-border)', marginBottom: '22px' }}>
+        <h3 style={{ fontSize: '17px', fontWeight: '800', marginBottom: '12px', color: 'var(--color-secondary)' }}>
           📜 우리가 지켜야 할 AI 공존 원칙을 골라주세요 (최소 2개)
         </h3>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2.5">
           {rolePrinciples.map((p, idx) => {
             const isChecked = (selectedPrinciples || []).includes(p);
             return (
@@ -188,14 +188,15 @@ export default function TaskAnalysisScreen({ taskClassifications = {}, selectedP
                 onClick={() => handleTogglePrinciple(p)}
                 style={{
                   backgroundColor: isChecked ? '#f0fdfa' : 'white',
-                  border: isChecked ? '1.5px solid var(--color-primary)' : '1px solid var(--color-border)',
-                  padding: '9px 12px',
-                  borderRadius: 'var(--radius-sm)',
+                  border: isChecked ? '2px solid var(--color-primary)' : '1px solid var(--color-border)',
+                  padding: '12px 16px',
+                  borderRadius: '10px',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '10px',
+                  gap: '12px',
                   cursor: 'pointer',
-                  fontSize: '13px'
+                  fontSize: '15px',
+                  transition: 'all 0.15s ease'
                 }}
                 role="checkbox"
                 aria-checked={isChecked}
@@ -206,9 +207,9 @@ export default function TaskAnalysisScreen({ taskClassifications = {}, selectedP
                   type="checkbox" 
                   checked={isChecked} 
                   onChange={() => {}} 
-                  style={{ width: '16px', height: '16px', accentColor: 'var(--color-primary)' }} 
+                  style={{ width: '18px', height: '18px', accentColor: 'var(--color-primary)', cursor: 'pointer' }} 
                 />
-                <span style={{ fontWeight: isChecked ? 'bold' : 'normal', color: isChecked ? 'var(--color-primary-hover)' : 'inherit' }}>
+                <span style={{ fontWeight: isChecked ? '700' : '500', color: isChecked ? 'var(--color-primary-hover)' : 'inherit' }}>
                   {p}
                 </span>
               </div>

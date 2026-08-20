@@ -18,11 +18,13 @@ import ConsentRightsScreen from './screens/media/ConsentRightsScreen';
 import MediaDecisionScreen from './screens/media/MediaDecisionScreen';
 import VerificationCompletionScreen from './screens/media/VerificationCompletionScreen';
 import VerificationWorksheet from './print/VerificationWorksheet';
+import WorksheetModal from '../../components/WorksheetModal';
 import './verification.css';
 
 export default function VerificationLabPage() {
   const { state, updateState, selectMode, resetState } = useVerificationState();
   const [isPresentation, setIsPresentation] = useState(false);
+  const [isWorksheetOpen, setIsWorksheetOpen] = useState(false);
 
   const scrollToTop = () => {
     if (typeof window === 'undefined' || !window.scrollTo) return;
@@ -227,6 +229,14 @@ export default function VerificationLabPage() {
     }
   };
 
+  const handleOpenWorksheet = () => {
+    setIsWorksheetOpen(true);
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <div className={`app-container verification-app ${isPresentation ? 'presentation-mode' : ''}`}>
       <AppHeader
@@ -234,7 +244,7 @@ export default function VerificationLabPage() {
         showBackButton={state.mode !== null}
         onBackToActivities={() => selectMode(null)}
         onReset={resetState}
-        onPrint={() => window.print()}
+        onPrint={handleOpenWorksheet}
         isPresentation={isPresentation}
         setIsPresentation={setIsPresentation}
       />
@@ -244,7 +254,21 @@ export default function VerificationLabPage() {
         {state.mode === 'claim' && renderClaim()}
         {state.mode === 'media' && renderMedia()}
       </main>
-      <VerificationWorksheet state={state} />
+
+      {/* 활동지 전용 팝업 모달 */}
+      <WorksheetModal
+        isOpen={isWorksheetOpen}
+        onClose={() => setIsWorksheetOpen(false)}
+        onPrint={handlePrint}
+        title="진실·미디어 검증소 탐구 활동지"
+      >
+        <VerificationWorksheet state={state} />
+      </WorksheetModal>
+
+      {/* 인쇄 시에만 출력되는 숨김 영역 */}
+      <div className="print-only" style={{ display: 'none' }}>
+        <VerificationWorksheet state={state} />
+      </div>
     </div>
   );
 }

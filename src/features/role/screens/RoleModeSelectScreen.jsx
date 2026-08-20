@@ -5,7 +5,7 @@ import geumjjokDoctor from '../../../assets/geumjjok/금쪽이_캐릭터_박사_
 
 export default function RoleModeSelectScreen({ onSelectMode }) {
   return (
-    <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+    <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
       <div className="text-center mb-6">
         <img 
           src={geumjjokMain} 

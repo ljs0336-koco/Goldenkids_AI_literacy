@@ -5,7 +5,7 @@ import geumjjokIdea from '../../../assets/geumjjok/금쪽이_캐릭터_아이디
 
 export default function AgentModeSelectScreen({ onSelectMode }) {
   return (
-    <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+    <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
       <div className="text-center mb-6">
         <img 
           src={geumjjokMain} 

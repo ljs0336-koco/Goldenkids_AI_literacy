@@ -164,6 +164,49 @@ button:disabled {
 .text-center { text-align: center; }
 .text-left { text-align: left; }
 
+/* Mode Select Grid & Cards (Shared across modules) */
+.mode-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.mode-card {
+  display: flex;
+  flex-direction: column;
+  padding: 28px;
+  border-radius: var(--radius-lg);
+  background-color: white;
+  text-align: left;
+  height: 100%;
+}
+
+.mode-icon-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.mode-badge {
+  font-size: var(--font-size-sm);
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid currentColor;
+}
+
+@media (max-width: 768px) {
+  .mode-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
 /* Bottom Action Bar */
 .bottom-nav-bar {
   display: flex;

@@ -1,0 +1,110 @@
+import { describe, it, expect } from 'vitest';
+import {
+  calculateDecemberAvg,
+  calculateGrowthDeltas,
+  getTempGrowthRecommendation,
+  getFinalGrowthRecommendation,
+  calculateTeamCandidateScore,
+  evaluateTeamCandidates,
+  evaluateTeamRoleBalance,
+  getRecommendationDiff
+} from './fairnessEngine';
+import { growthAwardCandidates, projectTeamCandidates, projectTeamPresets } from './fairnessData';
+
+describe('FairnessEngine Unit Tests', () => {
+  // ==========================================
+  // 1. AI 금쪽이 성장상 엔진 테스트
+  // ==========================================
+  describe('Growth Award Engine', () => {
+    it('1. 12월 점수 평균을 정확하게 계산한다', () => {
+      const seojun = growthAwardCandidates.find(s => s.id === 'seojun');
+      // (92 + 95 + 90) / 3 = 277 / 3 = 92.333... -> 92.3
+      expect(calculateDecemberAvg(seojun)).toBe(92.3);
+
+      const onyu = growthAwardCandidates.find(s => s.id === 'onyu');
+      // (78 + 82 + 86) / 3 = 246 / 3 = 82.0
+      expect(calculateDecemberAvg(onyu)).toBe(82.0);
+    });
+
+    it('2. 3월 시작 기록 대비 12월 마지막 기록의 변화량을 정확하게 계산한다', () => {
+      const onyu = growthAwardCandidates.find(s => s.id === 'onyu');
+      const deltas = calculateGrowthDeltas(onyu);
+
+      expect(deltas.digitalToolUseDelta).toBe(33); // 78 - 45
+      expect(deltas.problemSolvingDelta).toBe(32); // 82 - 50
+      expect(deltas.communicationCollaborationDelta).toBe(28); // 86 - 58
+      // (33 + 32 + 28) / 3 = 93 / 3 = 31.0
+      expect(deltas.avgDelta).toBe(31.0);
+    });
+
+    it('3. 12월 현재 기록만 보고 선정한 임시 추천 1명은 서준(92.3점)이다', () => {
+      const tempRec = getTempGrowthRecommendation(growthAwardCandidates);
+      expect(tempRec.id).toBe('seojun');
+      expect(calculateDecemberAvg(tempRec)).toBe(92.3);
+    });
+
+    it('4. 1년간 평균 변화량을 보고 선정한 최종 성장상 추천 1명은 온유(+31.0점)이다', () => {
+      const finalRec = getFinalGrowthRecommendation(growthAwardCandidates);
+      expect(finalRec.id).toBe('onyu');
+      const deltas = calculateGrowthDeltas(finalRec);
+      expect(deltas.avgDelta).toBe(31.0);
+    });
+  });
+
+  // ==========================================
+  // 2. 프로젝트 대표팀 구성 엔진 테스트
+  // ==========================================
+  describe('Project Team Engine', () => {
+    it('5. 지원자의 가중치 총점을 올바르게 계산한다', () => {
+      const narae = projectTeamCandidates.find(c => c.id === 'narae');
+      // narae: prob 75, dig 95, col 55, pres 85, prevCount 2 (oppScore = 60)
+      // preset1: prob 30, dig 35, col 20, pres 15, opp 0
+      // score: (75*30 + 95*35 + 55*20 + 85*15 + 60*0) / 1000 = (2250 + 3325 + 1100 + 1275) / 1000 = 79.5
+      const score = calculateTeamCandidateScore(narae, projectTeamPresets[0].weights);
+      expect(score).toBe(79.5);
+    });
+
+    it('6. 기준에 따라 대표팀 4명을 선발한다', () => {
+      const team = evaluateTeamCandidates(projectTeamCandidates, projectTeamPresets[0].weights);
+      expect(team).toHaveLength(4);
+      const teamIds = team.map(c => c.id);
+      expect(teamIds).toContain('narae');
+      expect(teamIds).toContain('maru');
+    });
+
+    it('7. 팀의 4대 역할 균형(80점 이상 강점 보유 여부)을 판별한다', () => {
+      // 4명이 모든 역할을 커버하는 경우
+      const balancedTeam = [
+        { id: '1', problemDiscovery: 85, digitalMaking: 60, communicationCollaboration: 70, presentation: 70 },
+        { id: '2', problemDiscovery: 70, digitalMaking: 90, communicationCollaboration: 70, presentation: 70 },
+        { id: '3', problemDiscovery: 70, digitalMaking: 60, communicationCollaboration: 95, presentation: 70 },
+        { id: '4', problemDiscovery: 70, digitalMaking: 60, communicationCollaboration: 70, presentation: 88 }
+      ];
+      const balanceRes = evaluateTeamRoleBalance(balancedTeam);
+      expect(balanceRes.isBalanced).toBe(true);
+      expect(balanceRes.problemDiscovery).toBe(true);
+      expect(balanceRes.digitalMaking).toBe(true);
+      expect(balanceRes.communicationCollaboration).toBe(true);
+      expect(balanceRes.presentation).toBe(true);
+
+      // 발표 역할이 80점 미만으로 결여된 경우
+      const unbalancedTeam = [
+        { id: '1', problemDiscovery: 85, digitalMaking: 90, communicationCollaboration: 85, presentation: 70 },
+        { id: '2', problemDiscovery: 80, digitalMaking: 85, communicationCollaboration: 80, presentation: 65 }
+      ];
+      const unbalRes = evaluateTeamRoleBalance(unbalancedTeam);
+      expect(unbalRes.isBalanced).toBe(false);
+      expect(unbalRes.presentation).toBe(false);
+    });
+
+    it('8. 대표팀 구성 변화(유지, 새로 추가, 제외)를 정확하게 계산한다', () => {
+      const oldTeam = [{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }];
+      const newTeam = [{ id: 'a' }, { id: 'b' }, { id: 'e' }, { id: 'f' }];
+
+      const diff = getRecommendationDiff(oldTeam, newTeam);
+      expect(diff.maintainedIds).toEqual(['a', 'b']);
+      expect(diff.newlyAddedIds).toEqual(['e', 'f']);
+      expect(diff.excludedIds).toEqual(['c', 'd']);
+    });
+  });
+});

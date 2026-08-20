@@ -1,31 +1,40 @@
 :root {
-  /* Colors */
-  --color-primary: #0d9488; /* 청록색 (Teal) */
-  --color-primary-hover: #0f766e;
-  --color-secondary: #1e3a8a; /* 남색 본문 */
-  --color-background: #f3f4f6; /* 밝은 회색 배경 */
-  --color-surface: #ffffff; /* 흰색 카드 */
-  --color-text-main: #1e3a8a;
-  --color-text-muted: #4b5563;
-  --color-warning: #f97316; /* 경고, 주의 주황색 */
-  --color-warning-hover: #ea580c;
-  --color-border: #e5e7eb;
-  --color-focus: #3b82f6;
-  
-  /* Theme Colors */
-  --color-blue: #3b82f6;   /* 💻 코딩 도구 익숙함 */
-  --color-orange: #f97316; /* 🧩 미션 해결하기 / 다시 확인 필요 */
-  --color-green: #22c55e;  /* 🤝 친구와 함께하기 */
-  --color-purple: #a855f7; /* 🌱 처음 도전 기회 */
-  --color-teal: #0d9488;   /* ✅ AI 추천 */
+  /* Warm editorial palette */
+  --color-primary: #2f6b63;
+  --color-primary-hover: #24564f;
+  --color-secondary: #303936;
+  --color-background: #f5f2ea;
+  --color-surface: #fffdf8;
+  --color-surface-soft: #efede5;
+  --color-surface-muted: #e7e3d9;
+  --color-text-main: #2d3431;
+  --color-text-muted: #68706b;
+  --color-border: #d8d4ca;
+  --color-border-strong: #bcb7aa;
+  --color-focus: #1f6f68;
+  --color-accent-warm: #a98046;
+
+  /* Semantic colors: reserved for meaning, not decoration */
+  --color-warning: #a65c45;
+  --color-warning-hover: #8d4a38;
+  --color-success: #58725e;
+  --color-danger: #a45549;
+  --color-caution: #9a7442;
+  --color-blue: #5b7482;
+  --color-orange: #a66b47;
+  --color-green: #668064;
+  --color-purple: #746b80;
+  --color-teal: #2f6b63;
 
   /* Typography */
-  --font-family-base: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-base: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-size-base: 16px;
   --font-size-sm: 14px;
   --font-size-lg: 18px;
-  --font-size-xl: 24px;
-  --font-size-2xl: 32px;
+  --font-size-xl: 23px;
+  --font-size-2xl: 30px;
+  --font-weight-medium: 600;
+  --font-weight-bold: 700;
 
   /* Spacing */
   --spacing-1: 4px;
@@ -37,23 +46,24 @@
   --spacing-8: 32px;
   --spacing-12: 48px;
 
-  /* Border Radius */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px; /* 카드 모서리 16px 내외 */
+  /* Shape and elevation */
+  --radius-sm: 6px;
+  --radius-md: 9px;
+  --radius-lg: 12px;
   --radius-full: 9999px;
+  --shadow-card: 0 1px 2px rgba(45, 52, 49, 0.05);
+  --shadow-raised: 0 10px 28px rgba(45, 52, 49, 0.11);
 
   /* Sizes */
-  --button-height: 52px; /* 주요 버튼 높이 최소 52px */
-  --max-width: 1100px; /* 전체 콘텐츠 최대 너비 1100px */
+  --button-height: 50px;
+  --max-width: 1080px;
 }
 
-/* Presentation Mode adjustments */
 .presentation-mode {
   --font-size-base: 24px;
   --font-size-sm: 20px;
   --font-size-lg: 28px;
   --font-size-xl: 36px;
-  --font-size-2xl: 48px;
+  --font-size-2xl: 46px;
   --button-height: 60px;
 }

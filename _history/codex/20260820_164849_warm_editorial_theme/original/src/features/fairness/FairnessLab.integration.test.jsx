@@ -248,8 +248,8 @@ describe('FairnessLab v5 UI & Flow Integration Tests', () => {
       />
     );
 
-    const completedSteps = document.querySelectorAll('.step-item.is-completed');
-    expect(completedSteps).toHaveLength(4);
+    const checks = screen.getAllByText('✅');
+    expect(checks).toHaveLength(4);
   });
 
   /* 15. 전체 앱 내비게이션 및 모드 전환 */

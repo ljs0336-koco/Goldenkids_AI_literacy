@@ -46,7 +46,7 @@ export default function VerificationModeSelectScreen({ onSelectMode }) {
       </div>
 
       <p className="verification-safety-note">
-        모든 사례는 수업용 가상 인물과 가상 기관으로 만들었어요. 실제 얼굴·목소리 업로드나 카메라·마이크를 사용하지 않습니다.
+        🔒 모든 사례는 수업용 가상 인물과 가상 기관으로 만들었어요. 실제 얼굴·목소리 업로드나 카메라·마이크를 사용하지 않습니다.
       </p>
     </section>
   );

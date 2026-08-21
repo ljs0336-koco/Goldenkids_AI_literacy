@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { evidenceSources } from '../../verificationData';
 import VerificationPageNav from '../../components/VerificationPageNav';
+import VerificationChoiceFork from '../../components/VerificationChoiceFork';
 
 function getSourceSet(claim) {
   return claim.sourceOptionIds
@@ -12,13 +13,20 @@ export default function SourceCheckScreen({ claim, selectedSourceIds, onToggleSo
   const sources = getSourceSet(claim);
   const [pageIndex, setPageIndex] = useState(0);
   const [openedIds, setOpenedIds] = useState(() => new Set(selectedSourceIds.filter(id => sources.some(source => source.id === id))));
+  const [sourceChoices, setSourceChoices] = useState(() => Object.fromEntries(selectedSourceIds.map(id => [id, true])));
   const source = sources[pageIndex];
   const opened = openedIds.has(source.id);
   const selected = selectedSourceIds.includes(source.id);
-  const allOpened = sources.every(item => openedIds.has(item.id));
+  const answered = Object.prototype.hasOwnProperty.call(sourceChoices, source.id);
+  const allAnswered = sources.every(item => Object.prototype.hasOwnProperty.call(sourceChoices, item.id));
   const hasEnoughSources = selectedSourceIds.length >= 2;
 
   const openSource = () => setOpenedIds(current => new Set([...current, source.id]));
+  const chooseSource = choiceId => {
+    const keep = choiceId === 'keep';
+    if (keep !== selected) onToggleSource(source.id);
+    setSourceChoices(current => ({ ...current, [source.id]: keep }));
+  };
 
   return (
     <section className="card verification-screen verification-story-page" aria-labelledby="source-check-title">
@@ -43,9 +51,16 @@ export default function SourceCheckScreen({ claim, selectedSourceIds, onToggleSo
             </header>
             <p className="verification-source-meta">{source.type} · {source.dateLabel}</p>
             <blockquote>{source.excerpt}</blockquote>
-            <button type="button" className={selected ? 'btn-outline' : 'btn-primary'} onClick={() => onToggleSource(source.id)}>
-              {selected ? '비교할 자료에서 빼기' : '이 자료를 비교에 포함하기'}
-            </button>
+            <VerificationChoiceFork
+              options={[
+                { id: 'keep', title: '비교할 자료로 남긴다', note: '이 문장을 확인하는 데 직접 도움이 되는 자료예요.', result: '다른 자료와 나란히 놓고 내용과 날짜를 비교해요.' },
+                { id: 'skip', title: '이번 비교에서는 뺀다', note: '관련성이 낮거나 지금 주장에 맞지 않는 자료예요.', result: '자료를 읽은 기록은 남지만 최종 비교에는 넣지 않아요.' }
+              ]}
+              selectedId={answered ? sourceChoices[source.id] ? 'keep' : 'skip' : ''}
+              onSelect={chooseSource}
+              prompt="이 자료를 최종 비교에 남길지 A 또는 B로 정하세요."
+              resultLabel="이 자료에 대한 내 결정"
+            />
           </>
         )}
       </article>
@@ -57,17 +72,17 @@ export default function SourceCheckScreen({ claim, selectedSourceIds, onToggleSo
         onNext={() => setPageIndex(index => Math.min(sources.length - 1, index + 1))}
         prevLabel="이전 자료"
         nextLabel="다음 자료"
-        disableNext={!opened}
+        disableNext={!opened || !answered}
       />
 
       <div className="verification-selection-summary" aria-live="polite">
-        자료 {openedIds.size}/{sources.length}개 열어 봄 · 비교할 자료 {selectedSourceIds.length}개 선택
+        자료 {Object.keys(sourceChoices).length}/{sources.length}개 판단 · 비교할 자료 {selectedSourceIds.length}개 남김
       </div>
 
       <div className="bottom-nav-bar">
         <button type="button" className="btn-outline" onClick={onPrev}>← 문장 다시 고르기</button>
-        <button type="button" className="btn-primary" onClick={onNext} disabled={!allOpened || !hasEnoughSources}>
-          {allOpened && hasEnoughSources ? '선택한 자료 차례로 비교하기 →' : '자료를 모두 열고 두 개 이상 남겨 주세요'}
+        <button type="button" className="btn-primary" onClick={onNext} disabled={!allAnswered || !hasEnoughSources}>
+          {allAnswered && hasEnoughSources ? '남긴 자료를 바로 비교하기 →' : '세 자료를 판단하고 비교 자료 두 개를 남겨 주세요'}
         </button>
       </div>
     </section>

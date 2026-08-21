@@ -80,10 +80,10 @@ export default function FairnessLabPage() {
   const handleToggleCareer = careerId => {
     const current = state.growthCareerChoices || [];
     if (current.includes(careerId)) {
-      updateState({ growthCareerChoices: current.filter(id => id !== careerId) });
+      updateState({ growthCareerChoices: [] });
       return;
     }
-    if (current.length < 2) updateState({ growthCareerChoices: [...current, careerId] });
+    updateState({ growthCareerChoices: [careerId] });
   };
 
   const handleCompleteGrowth = () => {

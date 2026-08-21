@@ -279,6 +279,34 @@
 .fair-before-after > div { display: grid; place-items: center; color: var(--color-accent-warm); font-size: 28px; }
 .fair-closing-sentence { margin: 20px 0 0; padding: 17px 20px; border-radius: var(--radius-md); background: #2f3935; color: #fff; text-align: center; font-weight: 800; }
 
+/* 선택 화면: 큰 A/B 두 갈래 + 필요할 때만 여는 제3안 */
+.fair-choice-fork { margin-top: 20px; }
+.fair-fork-prompt { margin: 0 0 12px; padding: 12px 15px; border: 1px solid #ddd3c4; border-radius: var(--radius-md); background: #f8f4eb; color: #5f584d; font-weight: 800; }
+.fair-fork-primary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.fair-fork-option { width: 100%; min-height: 158px; padding: 19px; display: grid; grid-template-columns: 42px 1fr auto; gap: 13px; align-items: start; border: 2px solid; border-radius: var(--radius-lg); color: var(--color-text-main); text-align: left; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease, background .15s ease; }
+.fair-fork-option--a { border-color: #82a299; background: #f0f5f2; }
+.fair-fork-option--b { border-color: #c18c7c; background: #faf1ed; }
+.fair-fork-option--c { min-height: 126px; border-color: #b49a61; background: #fbf6e9; }
+.fair-fork-option:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(60, 57, 50, .08); }
+.fair-fork-option.is-selected { box-shadow: inset 0 0 0 2px currentColor, 0 8px 18px rgba(60, 57, 50, .08); }
+.fair-fork-option--a.is-selected { color: #355f58; background: #e5efea; }
+.fair-fork-option--b.is-selected { color: #8b4d3d; background: #f5e5df; }
+.fair-fork-option--c.is-selected { color: #745a22; background: #f5ebce; }
+.fair-fork-letter { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: rgba(255, 255, 255, .78); font-size: 19px; font-weight: 900; }
+.fair-fork-copy { display: grid; gap: 8px; }
+.fair-fork-copy strong { font-size: 21px; line-height: 1.38; }
+.fair-fork-copy small { color: var(--color-text-muted); font-size: 15px; line-height: 1.5; font-weight: 650; }
+.fair-fork-check { align-self: center; color: currentColor; font-size: 14px; font-weight: 900; }
+.fair-fork-more { width: 100%; margin-top: 10px; padding: 10px 13px; display: flex; justify-content: center; gap: 8px; border: 0; background: transparent; color: var(--color-text-muted); cursor: pointer; }
+.fair-fork-more strong { color: var(--color-primary-hover); text-decoration: underline; text-underline-offset: 3px; }
+.fair-fork-alternative { max-width: 720px; margin: 8px auto 0; }
+.fair-fork-result { margin-top: 14px; padding: 16px 18px; display: grid; gap: 4px; border-left: 5px solid var(--color-primary); border-radius: 0 var(--radius-md) var(--radius-md) 0; background: #eef2ef; color: var(--color-text-main); }
+.fair-fork-result small { color: var(--color-primary-hover); font-weight: 900; }
+.fair-fork-result strong { font-size: 19px; }
+.fair-fork-result p { margin: 3px 0 0; color: var(--color-text-muted); }
+.fair-choice-detail { margin-top: 14px; padding: 18px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: #fff; }
+.fair-choice-detail > strong { display: block; margin-bottom: 10px; color: var(--color-primary-hover); }
+
 @media (max-width: 700px) {
   .fairness-app { --font-size-2xl: 30px; }
   .fair-learning-brief-grid, .fair-speaker-card { grid-template-columns: 1fr; }
@@ -300,4 +328,6 @@
   .fair-story-page { min-height: 0; }
   .fair-page-turn { grid-template-columns: 1fr 1fr; }
   .fair-page-dots { grid-column: 1 / -1; grid-row: 1; justify-content: center; }
+  .fair-fork-primary { grid-template-columns: 1fr; }
+  .fair-fork-option { min-height: 132px; }
 }

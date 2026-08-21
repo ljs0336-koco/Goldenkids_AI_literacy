@@ -1,46 +1,34 @@
-import React, { useState } from 'react';
-import PageTurnNav from './PageTurnNav';
+import React from 'react';
+import FairChoiceFork from './FairChoiceFork';
 
 export default function AiExchangePanel({ title = 'AI 금쪽이에게 되묻기', questions, selectedId, onSelect }) {
-  const selectedIndex = Math.max(0, questions.findIndex(question => question.id === selectedId));
-  const [pageOverride, setPageOverride] = useState(null);
-  const pageIndex = pageOverride ?? (selectedId ? selectedIndex : 0);
-  const question = questions[pageIndex];
-  const isSelected = selectedId === question.id;
+  const selectedQuestion = questions.find(question => question.id === selectedId);
+  const choices = questions.slice(0, 3).map(question => ({
+    id: question.id,
+    title: question.label,
+    note: question.id === 'why' ? 'AI가 어떤 기록을 연결했는지 들어요.' : question.id === 'missing' || question.id === 'roles' ? 'AI가 보지 못했거나 빠뜨린 것을 찾아요.' : '다른 가능성도 열어 봐요.'
+  }));
 
   return (
     <section className="fair-exchange fair-story-section" aria-labelledby="fair-exchange-title">
       <span className="fair-eyebrow">나 ↔ AI</span>
       <h3 id="fair-exchange-title">{title}</h3>
-      <p className="fair-one-line-help">질문을 넘겨 보고, 지금 가장 궁금한 한 가지를 눌러 보세요.</p>
+      <FairChoiceFork
+        options={choices}
+        selectedId={selectedId}
+        onSelect={onSelect}
+        prompt="먼저 묻고 싶은 질문을 A 또는 B에서 고르세요. 다른 질문은 아래에서 열 수 있어요."
+        moreLabel="다른 질문을 하고 싶다면?"
+        resultLabel="AI에게 보낸 질문"
+      />
 
-      <button
-        type="button"
-        className={`fair-question-page ${isSelected ? 'is-selected' : ''}`}
-        aria-pressed={isSelected}
-        onClick={() => onSelect(question.id)}
-      >
-        <span>내가 물어볼 말</span>
-        <strong>{question.label}</strong>
-        <small>{isSelected ? '선택했어요' : '이 질문을 AI에게 묻기'}</small>
-      </button>
-
-      {isSelected && (
+      {selectedQuestion && (
         <div className="fair-ai-response" role="status">
-          <strong>AI 금쪽이의 준비된 응답</strong>
-          <p>{question.response}</p>
+          <strong>AI 금쪽이의 답</strong>
+          <p>{selectedQuestion.response}</p>
           <small>학습을 위해 미리 만든 응답이에요.</small>
         </div>
       )}
-
-      <PageTurnNav
-        current={pageIndex}
-        total={questions.length}
-        onPrev={() => setPageOverride(Math.max(0, pageIndex - 1))}
-        onNext={() => setPageOverride(Math.min(questions.length - 1, pageIndex + 1))}
-        prevLabel="이전 질문"
-        nextLabel="다음 질문"
-      />
     </section>
   );
 }

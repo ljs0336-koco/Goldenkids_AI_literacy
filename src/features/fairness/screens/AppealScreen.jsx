@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { appealConsequences } from '../fairnessLearningData';
-import PageTurnNav from '../components/PageTurnNav';
+import FairChoiceFork from '../components/FairChoiceFork';
 import geumjjokEmbarrassed from '../../../assets/geumjjok/금쪽이_표정_당황.png';
 
 const options = [
@@ -10,32 +10,25 @@ const options = [
 ];
 
 export default function AppealScreen({ appealChoice, onSelectChoice, onProceed, onPrev }) {
-  const initialIndex = Math.max(0, options.findIndex(option => option.id === appealChoice));
-  const [pageIndex, setPageIndex] = useState(initialIndex);
-  const option = options[pageIndex];
-  const isSelected = appealChoice === option.id;
-  const consequence = isSelected ? appealConsequences[option.id] : null;
+  const consequence = appealChoice ? appealConsequences[appealChoice] : null;
+  const choices = options;
 
   return (
     <div className="card fair-story-page">
       <div className="text-center mb-4">
         <img src={geumjjokEmbarrassed} alt="당황한 금쪽이" style={{ width: '64px', height: 'auto' }} />
         <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '4px 0 8px' }}>“제 협업 기록이 잘못 들어갔어요!”</h2>
-        <p className="fair-one-line-help">한결의 협업 기록은 70점으로 입력됐지만 확인된 실제 점수는 92점이에요.</p>
+        <p className="fair-one-line-help">한결의 협업 기록은 70점으로 입력됐지만 확인된 실제 점수는 92점이에요. 어떻게 대응할지 바로 비교해요.</p>
       </div>
 
-      <button
-        type="button"
-        className={`fair-question-page ${isSelected ? 'is-selected' : ''}`}
-        onClick={() => onSelectChoice(option.id)}
-        aria-pressed={isSelected}
-        style={{ minHeight: '210px' }}
-      >
-        <span>대응 방법 {option.id}</span>
-        <strong>{option.title}</strong>
-        <small>{option.note}</small>
-        <small>{isSelected ? '이 대응을 선택했어요' : '이 대응을 선택해 결과 보기'}</small>
-      </button>
+      <FairChoiceFork
+        options={choices}
+        selectedId={appealChoice}
+        onSelect={onSelectChoice}
+        prompt="A는 결과를 유지하고, B는 잘못된 기록부터 바로잡아요."
+        moreLabel="한결만 예외로 넣고 싶다면?"
+        resultLabel="이 대응을 선택하면"
+      />
 
       {consequence && (
         <div className={`fair-consequence ${consequence.tone}`} role="status" style={{ marginTop: '16px' }}>
@@ -45,19 +38,10 @@ export default function AppealScreen({ appealChoice, onSelectChoice, onProceed, 
         </div>
       )}
 
-      <PageTurnNav
-        current={pageIndex}
-        total={options.length}
-        onPrev={() => setPageIndex(index => Math.max(0, index - 1))}
-        onNext={() => setPageIndex(index => Math.min(options.length - 1, index + 1))}
-        prevLabel="이전 대응"
-        nextLabel="다음 대응"
-      />
-
       <div className="bottom-nav-bar">
         <button className="btn-outline" onClick={onPrev}>← 이전</button>
         <button className="btn-primary" onClick={onProceed} disabled={!appealChoice} style={{ minHeight: '52px' }}>
-          {appealChoice ? '내 선택 뒤에 생기는 일 보기 →' : '대응 방법을 하나 골라 주세요'}
+          {appealChoice ? '내 선택이 팀에 남긴 결과 보기 →' : 'A 또는 B를 먼저 골라 주세요'}
         </button>
       </div>
     </div>

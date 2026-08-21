@@ -56,7 +56,7 @@ export function validateAndSanitizeState(rawState) {
     ? rawState.growthCareerChoices.filter((id, index, values) => (
       ['software', 'environmentalEngineering', 'scienceCommunication', 'greenTech'].includes(id)
       && values.indexOf(id) === index
-    )).slice(0, 2)
+    )).slice(0, 1)
     : [];
   const validTeamSpeakerPath = rawState.teamSpeakerPath === 'speaker' || rawState.teamSpeakerPath === 'sample'
     ? rawState.teamSpeakerPath
@@ -89,7 +89,7 @@ export function validateAndSanitizeState(rawState) {
     teamSelectedPrinciples: Array.isArray(rawState.teamSelectedPrinciples)
       ? rawState.teamSelectedPrinciples.filter((item, index, values) => (
         allowedTeamPrinciples.includes(item) && values.indexOf(item) === index
-      )).slice(0, 2)
+      )).slice(0, 1)
       : [],
     isGrowthCompleted: Boolean(rawState.isGrowthCompleted),
     isTeamCompleted: Boolean(rawState.isTeamCompleted)

@@ -10,20 +10,20 @@ export const claimDecisionOptions = [
     background: '#ecfdf5'
   },
   {
-    id: 'needs_evidence',
-    icon: '⚠️',
-    label: '근거가 더 필요함',
-    shortLabel: '근거 부족',
-    color: '#b45309',
-    background: '#fffbeb'
-  },
-  {
     id: 'contradicted',
     icon: '❌',
     label: '고쳐야 함',
     shortLabel: '수정 필요',
     color: '#b91c1c',
     background: '#fef2f2'
+  },
+  {
+    id: 'needs_evidence',
+    icon: '⚠️',
+    label: '근거가 더 필요함',
+    shortLabel: '근거 부족',
+    color: '#b45309',
+    background: '#fffbeb'
   }
 ];
 
@@ -147,9 +147,8 @@ export const evidenceSources = [
 
 export const mediaDecisionOptions = [
   { id: 'allowed', icon: '✅', label: '현재 정보로 사용 가능', color: '#047857', background: '#ecfdf5' },
-  { id: 'conditional', icon: '⚠️', label: '조건을 고쳐서 사용', color: '#b45309', background: '#fffbeb' },
   { id: 'not_allowed', icon: '❌', label: '현재는 사용하지 않음', color: '#b91c1c', background: '#fef2f2' },
-  { id: 'more_info', icon: '🔎', label: '정보를 더 확인한 뒤 결정', color: '#1d4ed8', background: '#eff6ff' }
+  { id: 'conditional', icon: '🔎', label: '조건을 고치거나 더 확인한 뒤 사용', color: '#8a651f', background: '#fbf4e6' }
 ];
 
 export const mediaCases = [
@@ -269,7 +268,7 @@ export const mediaCases = [
       { id: 'assume_ok', text: '학교 행사이므로 묻지 않아도 동의한 것으로 생각한다.', required: false }
     ],
     affectedRights: ['목소리에 대한 권리', '동의와 자기결정권', '사용 목적과 범위'],
-    expectedDecision: 'more_info',
+    expectedDecision: 'conditional',
     decisionReason: '패러디와 합성 표시가 있어도 당사자의 제작·상영 동의를 받았는지 아직 확인되지 않았습니다.',
     repairSteps: ['교장 선생님의 명시적 동의 확인하기', '합성 패러디 표시 유지하기', '합의한 행사와 공개 범위만 사용하기']
   }

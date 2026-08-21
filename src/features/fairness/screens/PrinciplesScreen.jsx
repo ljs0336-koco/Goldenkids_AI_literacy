@@ -1,59 +1,37 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { principles } from '../fairnessData';
-import PageTurnNav from '../components/PageTurnNav';
+import FairChoiceFork from '../components/FairChoiceFork';
 
 export default function PrinciplesScreen({ selectedPrinciples = [], setSelectedPrinciples, onComplete, onPrev }) {
-  const [pageIndex, setPageIndex] = useState(0);
-  const principle = principles[pageIndex];
-  const isSelected = selectedPrinciples.includes(principle);
-  const isFull = selectedPrinciples.length >= 2 && !isSelected;
-  const isReady = selectedPrinciples.length === 2;
-
-  const toggle = () => {
-    if (isFull) return;
-    setSelectedPrinciples(current => current.includes(principle)
-      ? current.filter(item => item !== principle)
-      : [...current, principle]);
-  };
+  const selectedPrinciple = selectedPrinciples[0] || '';
+  const choices = principles.map((principle, index) => ({
+    id: principle,
+    title: principle,
+    note: index === 0 ? '선택 전에 모두가 같은 목표와 기준을 알아요.' : index === 1 ? '잘못된 입력을 고친 뒤 같은 절차로 다시 살펴요.' : '결과에 질문하고 다시 확인할 길을 남겨요.',
+    result: '다음 AI 추천에서 이 약속을 가장 먼저 확인해요.'
+  }));
 
   return (
     <div className="card fair-story-page">
       <div className="text-center mb-4">
         <span className="fair-eyebrow">다음 선택을 위한 약속</span>
-        <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '4px 0 8px' }}>꼭 지키고 싶은 약속 두 가지를 골라요</h2>
-        <p className="fair-one-line-help">세 장을 차례로 읽고 다음 프로젝트 팀을 구성할 때 반드시 지킬 두 장을 선택하세요.</p>
+        <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '4px 0 8px' }}>가장 먼저 지킬 약속 하나를 골라요</h2>
+        <p className="fair-one-line-help">A와 B를 비교하고, 다음 팀 구성에서 가장 먼저 확인할 약속을 선택하세요.</p>
       </div>
 
-      <button
-        type="button"
-        className={`fair-question-page ${isSelected ? 'is-selected' : ''}`}
-        onClick={toggle}
-        disabled={isFull}
-        aria-pressed={isSelected}
-        style={{ minHeight: '220px', opacity: isFull ? .6 : 1 }}
-      >
-        <span>운영 원칙 {pageIndex + 1}</span>
-        <strong style={{ fontSize: '25px' }}>{principle}</strong>
-        <small>{isSelected ? '선택했어요 · 다시 누르면 취소' : isFull ? '이미 두 개를 골랐어요' : '이 약속 선택하기'}</small>
-      </button>
-
-      <PageTurnNav
-        current={pageIndex}
-        total={principles.length}
-        onPrev={() => setPageIndex(index => Math.max(0, index - 1))}
-        onNext={() => setPageIndex(index => Math.min(principles.length - 1, index + 1))}
-        prevLabel="이전 원칙"
-        nextLabel="다음 원칙"
+      <FairChoiceFork
+        options={choices}
+        selectedId={selectedPrinciple}
+        onSelect={id => setSelectedPrinciples([id])}
+        prompt="A는 기준을 먼저 공개하고, B는 잘못된 기록부터 바로잡는 약속이에요."
+        moreLabel="결과에 다시 질문하는 약속을 고르고 싶다면?"
+        resultLabel="내가 가장 먼저 지킬 약속"
       />
-
-      <p className="text-center" style={{ fontWeight: 800, color: isReady ? 'var(--color-primary-hover)' : 'var(--color-text-muted)' }}>
-        내가 고른 약속 {selectedPrinciples.length} / 2개
-      </p>
 
       <div className="bottom-nav-bar">
         <button className="btn-outline" onClick={onPrev}>← 이전</button>
-        <button className="btn-primary" onClick={onComplete} disabled={!isReady} style={{ minHeight: '52px' }}>
-          {isReady ? '약속 두 가지 저장하고 결과 보기 →' : '약속을 두 가지 골라 주세요'}
+        <button className="btn-primary" onClick={onComplete} disabled={!selectedPrinciple} style={{ minHeight: '52px' }}>
+          {selectedPrinciple ? '이 약속을 저장하고 결과 보기 →' : 'A 또는 B를 먼저 골라 주세요'}
         </button>
       </div>
     </div>

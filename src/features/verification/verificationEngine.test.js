@@ -55,6 +55,13 @@ describe('verificationEngine', () => {
     expect(result.decisionReason).toContain('제작 이력');
   });
 
+  it('최종 판단이 맞아도 필요한 게시 전 행동을 빼면 다시 검토하게 한다', () => {
+    const result = evaluateMediaDecision('media_voice', 'not_allowed', ['voice_consent']);
+    expect(result.isEvidenceAligned).toBe(false);
+    expect(result.hasAllRequiredActions).toBe(false);
+    expect(result.selectedRequiredCount).toBe(1);
+  });
+
   it('조사한 미디어 사례 수를 점수가 아닌 진행 상태로 계산한다', () => {
     const progress = getMediaProgress({ media_voice: 'not_allowed', unknown: 'allowed' });
     expect(progress.completedIds).toEqual(['media_voice']);

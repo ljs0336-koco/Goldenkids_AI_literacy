@@ -6,6 +6,7 @@ import {
 } from '../fairnessData';
 import { getTopActivityRecommendation, rankActivityRecommendations } from '../fairnessEngine';
 import PageTurnNav from '../components/PageTurnNav';
+import FairChoiceFork from '../components/FairChoiceFork';
 import ConceptBridge from '../components/ConceptBridge';
 import geumjjokTouched from '../../../assets/geumjjok/금쪽이_표정_감동.png';
 
@@ -14,10 +15,15 @@ export default function GrowthDeltaScreen({ selectedCareerIds = [], onToggleCare
   const allRecords = [...activityRecommendationInitialRecords, ...activityRecommendationSupplementRecords];
   const firstRecommendation = getTopActivityRecommendation(activityRecommendationInitialRecords, activityRecommendationOptions);
   const suggestions = rankActivityRecommendations(allRecords, activityRecommendationOptions);
-  const option = pageIndex > 0 ? suggestions[pageIndex - 1] : null;
-  const isSelected = option ? selectedCareerIds.includes(option.key) : false;
-  const selectionFull = selectedCareerIds.length >= 2 && !isSelected;
-  const ready = selectedCareerIds.length === 2 && pageIndex === suggestions.length;
+  const visibleSuggestions = suggestions.slice(0, 3);
+  const selectedCareerId = selectedCareerIds.find(id => visibleSuggestions.some(option => option.key === id)) || '';
+  const ready = pageIndex === 1 && Boolean(selectedCareerId);
+  const choices = visibleSuggestions.map(option => ({
+    id: option.key,
+    title: option.name,
+    note: option.desc,
+    result: option.why
+  }));
 
   return (
     <div className="card fair-story-page">
@@ -25,10 +31,10 @@ export default function GrowthDeltaScreen({ selectedCareerIds = [], onToggleCare
         <img src={geumjjokTouched} alt="생각을 넓힌 금쪽이" className="fair-scene-character" />
         <span className="fair-eyebrow">처음 생각과 넓어진 가능성</span>
         <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '4px 0 8px' }}>
-          {pageIndex === 0 ? '처음에는 직업 하나만 보였어요' : '하늘이가 더 알아볼 꿈 두 가지를 골라요'}
+          {pageIndex === 0 ? '처음에는 직업 하나만 보였어요' : '하늘이가 먼저 알아볼 꿈 하나를 골라요'}
         </h2>
         <p className="fair-one-line-help">
-          {pageIndex === 0 ? 'AI가 알고 있던 자료가 적었기 때문이에요.' : '네 가지 가능성을 끝까지 넘겨 보고 두 장을 선택하세요.'}
+          {pageIndex === 0 ? 'AI가 알고 있던 자료가 적었기 때문이에요.' : '새로 알게 된 이야기까지 반영한 두 방향을 바로 비교하세요.'}
         </p>
       </div>
 
@@ -40,44 +46,39 @@ export default function GrowthDeltaScreen({ selectedCareerIds = [], onToggleCare
           <strong>AI의 첫 제안은 탐색의 시작일 뿐이에요.</strong>
         </section>
       ) : (
-        <button
-          type="button"
-          className={`fair-career-page ${isSelected ? 'is-selected' : ''}`}
-          onClick={() => onToggleCareer?.(option.key)}
-          disabled={selectionFull}
-          aria-pressed={isSelected}
-        >
-          <span>꿈 후보 {pageIndex}</span>
-          <strong>{option.name}</strong>
-          <p>{option.desc}</p>
-          <small>{option.why}</small>
-          <em>{isSelected ? '더 알아볼 꿈으로 골랐어요' : selectionFull ? '이미 두 가지를 골랐어요' : '이 꿈을 더 알아보기'}</em>
-        </button>
+        <FairChoiceFork
+          options={choices}
+          selectedId={selectedCareerId}
+          onSelect={onToggleCareer}
+          prompt="A와 B는 새 정보에서 강하게 보인 서로 다른 진로 방향이에요. 먼저 탐색할 하나를 골라요."
+          moreLabel="AI의 첫 제안도 계속 살펴보고 싶다면?"
+          resultLabel="하늘이가 먼저 탐색할 꿈"
+        />
       )}
 
       <PageTurnNav
         current={pageIndex}
-        total={suggestions.length + 1}
+        total={2}
         onPrev={() => setPageIndex(index => Math.max(0, index - 1))}
-        onNext={() => setPageIndex(index => Math.min(suggestions.length, index + 1))}
-        prevLabel="이전 가능성"
-        nextLabel="다음 가능성"
+        onNext={() => setPageIndex(index => Math.min(1, index + 1))}
+        prevLabel="AI의 첫 제안"
+        nextLabel="넓어진 꿈 보기"
       />
 
       {pageIndex > 0 && (
-        <p className="fair-selection-count" role="status">더 알아볼 꿈 {selectedCareerIds.length} / 2개 선택</p>
+        <p className="fair-selection-count" role="status">먼저 알아볼 꿈 {ready ? '선택 완료' : '아직 선택하지 않음'}</p>
       )}
 
       {ready && (
         <ConceptBridge>
-          하늘이의 경험과 관심, 직접 한 말을 더하니 직업 하나가 정답처럼 남지 않았어요. AI의 제안은 하늘이가 가능성을 비교하도록 도와주는 출발점이에요.
+          하늘이의 경험과 관심, 직접 한 말을 더하니 직업 하나가 정답처럼 남지 않았어요. 지금 고른 꿈도 확정이 아니라 먼저 알아볼 출발점이에요.
         </ConceptBridge>
       )}
 
       <div className="bottom-nav-bar">
         <button className="btn-outline" onClick={onPrev}>← 하늘이 이야기</button>
         <button className="btn-primary" onClick={onNext} disabled={!ready} style={{ minHeight: '52px' }}>
-          {ready ? '두 가지 꿈을 더 알아볼 방법 정하기 →' : '네 가지를 보고 꿈 두 가지를 골라 주세요'}
+          {ready ? '이 꿈을 실제로 알아볼 방법 정하기 →' : pageIndex === 0 ? '넓어진 꿈을 먼저 보세요' : 'A 또는 B를 먼저 골라 주세요'}
         </button>
       </div>
     </div>

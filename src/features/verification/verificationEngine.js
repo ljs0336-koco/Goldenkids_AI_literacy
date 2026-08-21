@@ -63,15 +63,18 @@ export function evaluateMediaDecision(caseId, decisionId, selectedRightIds = [])
   const requiredIds = mediaCase.rightsChoices.filter(choice => choice.required).map(choice => choice.id);
   const harmfulIds = mediaCase.rightsChoices.filter(choice => !choice.required).map(choice => choice.id);
   const selectedRequiredCount = requiredIds.filter(id => selectedRightIds.includes(id)).length;
+  const hasAllRequiredActions = selectedRequiredCount === requiredIds.length;
+  const selectedHarmfulChoice = harmfulIds.some(id => selectedRightIds.includes(id));
 
   return {
     caseId,
     decisionId,
     expectedDecision: mediaCase.expectedDecision,
-    isEvidenceAligned: decisionId === mediaCase.expectedDecision,
+    isEvidenceAligned: decisionId === mediaCase.expectedDecision && hasAllRequiredActions && !selectedHarmfulChoice,
     selectedRequiredCount,
     requiredCount: requiredIds.length,
-    selectedHarmfulChoice: harmfulIds.some(id => selectedRightIds.includes(id)),
+    hasAllRequiredActions,
+    selectedHarmfulChoice,
     expectedOption: mediaDecisionOptions.find(option => option.id === mediaCase.expectedDecision) || null,
     decisionReason: mediaCase.decisionReason,
     repairSteps: mediaCase.repairSteps

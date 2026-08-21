@@ -24,7 +24,7 @@ export default function CompletionScreen({ mode, state = {}, onOpenRecord, onRes
         <img src={geumjjokCelebration} alt="축하하는 금쪽이" style={{ width: '84px', height: 'auto', marginBottom: '8px' }} />
         <span className="fair-badge">{isGrowth ? '하늘이의 꿈 탐색 완료' : '프로젝트 팀 재검토 완료'}</span>
         <h2>{isGrowth ? 'AI의 첫 답을 하늘이의 탐색 계획으로 바꿨어요' : 'AI의 첫 명단을 설명할 수 있는 결정으로 바꿨어요'}</h2>
-        <p>{isGrowth ? '직업 하나를 정답으로 고르지 않고, 더 알아볼 가능성과 다음 행동을 남겼어요.' : '기준을 고르고 기록 오류에 대응하며 팀을 다시 살펴봤어요.'}</p>
+        <p>{isGrowth ? '직업 하나를 정답으로 받지 않고, 먼저 알아볼 가능성과 다음 행동을 직접 골랐어요.' : '기준을 고르고 기록 오류에 대응하며 팀을 다시 살펴봤어요.'}</p>
       </header>
 
       <section className="fair-before-after" aria-label="활동 전후 비교">
@@ -36,9 +36,9 @@ export default function CompletionScreen({ mode, state = {}, onOpenRecord, onRes
         <div aria-hidden="true">→</div>
         <article className="is-after">
           <small>내가 확인한 뒤</small>
-          <h3>{isGrowth ? '두 가지 꿈과 다음 탐색' : '기준과 재검토가 있는 팀 구성'}</h3>
+          <h3>{isGrowth ? '내가 고른 꿈과 다음 탐색' : '기준과 재검토가 있는 팀 구성'}</h3>
           <p>{isGrowth
-            ? `${selectedCareers.join(' · ') || '여러 꿈 후보'}를 더 알아보기로 했어요.`
+            ? `${selectedCareers[0] || '새로운 꿈 후보'}를 먼저 알아보기로 했어요.`
             : `${selectedPreset?.name || '직접 고른 기준'}으로 다시 보고, ${correctedRecord ? '잘못된 기록도 바로잡았어요.' : '선택 뒤에 남은 문제도 확인했어요.'}`}</p>
         </article>
       </section>

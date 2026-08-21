@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { activityRecommendationOptions } from '../fairnessData';
 import { growthFinalChoices } from '../fairnessLearningData';
-import PageTurnNav from '../components/PageTurnNav';
+import FairChoiceFork from '../components/FairChoiceFork';
 import ConceptBridge from '../components/ConceptBridge';
 
 export default function GrowthHumanCheckScreen({ selectedCareerIds = [], finalChoice, onFinalChoice, onNext, onPrev }) {
-  const selectedChoiceIndex = Math.max(0, growthFinalChoices.findIndex(item => item.id === finalChoice));
-  const [pageOverride, setPageOverride] = useState(null);
-  const pageIndex = pageOverride ?? selectedChoiceIndex;
-  const choice = growthFinalChoices[pageIndex];
   const selectedCareers = selectedCareerIds
     .map(id => activityRecommendationOptions.find(option => option.key === id))
     .filter(Boolean);
-  const isSelected = finalChoice === choice.id;
+  const choices = growthFinalChoices.map(choice => ({
+    id: choice.id,
+    title: choice.title,
+    note: choice.note,
+    result: '이 행동으로 AI의 제안을 실제 경험과 정보에 연결해 볼 수 있어요.'
+  }));
 
   return (
     <div className="card fair-story-page">
@@ -30,25 +31,13 @@ export default function GrowthHumanCheckScreen({ selectedCareerIds = [], finalCh
         </div>
       </section>
 
-      <button
-        type="button"
-        className={`fair-question-page fair-next-action ${isSelected ? 'is-selected' : ''}`}
-        onClick={() => onFinalChoice(choice.id)}
-        aria-pressed={isSelected}
-      >
-        <span>다음 행동 {pageIndex + 1}</span>
-        <strong>{choice.title}</strong>
-        <small>{choice.note}</small>
-        <em>{isSelected ? '하늘이의 다음 행동으로 골랐어요' : '이 행동 선택하기'}</em>
-      </button>
-
-      <PageTurnNav
-        current={pageIndex}
-        total={growthFinalChoices.length}
-        onPrev={() => setPageOverride(Math.max(0, pageIndex - 1))}
-        onNext={() => setPageOverride(Math.min(growthFinalChoices.length - 1, pageIndex + 1))}
-        prevLabel="이전 행동"
-        nextLabel="다음 행동"
+      <FairChoiceFork
+        options={choices}
+        selectedId={finalChoice}
+        onSelect={onFinalChoice}
+        prompt="A는 먼저 묻고 찾아보는 방법, B는 직접 해 보는 방법이에요."
+        moreLabel="조금 더 경험한 뒤 정하고 싶다면?"
+        resultLabel="하늘이의 다음 행동"
       />
 
       <ConceptBridge>

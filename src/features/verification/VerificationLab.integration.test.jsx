@@ -118,16 +118,17 @@ describe('Verification module story-led student flow', () => {
 
   it('5. 자료는 봉투를 한 장씩 열고 두 개 이상을 비교에 남긴다', () => {
     render(<SourceHarness />);
-    expect(screen.getByRole('button', { name: /자료를 모두 열고 두 개 이상 남겨 주세요/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /세 자료를 판단하고 비교 자료 두 개/ })).toBeDisabled();
     fireEvent.click(screen.getByRole('button', { name: /봉투 열어 보기/ }));
-    fireEvent.click(screen.getByRole('button', { name: /이 자료를 비교에 포함하기/ }));
+    fireEvent.click(screen.getByRole('button', { name: /비교할 자료로 남긴다/ }));
     fireEvent.click(screen.getByRole('button', { name: /다음 자료/ }));
     fireEvent.click(screen.getByRole('button', { name: /봉투 열어 보기/ }));
-    fireEvent.click(screen.getByRole('button', { name: /이 자료를 비교에 포함하기/ }));
+    fireEvent.click(screen.getByRole('button', { name: /비교할 자료로 남긴다/ }));
     fireEvent.click(screen.getByRole('button', { name: /다음 자료/ }));
     fireEvent.click(screen.getByRole('button', { name: /봉투 열어 보기/ }));
-    expect(screen.getByText(/자료 3\/3개 열어 봄 · 비교할 자료 2개 선택/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /선택한 자료 차례로 비교하기/ })).toBeEnabled();
+    fireEvent.click(screen.getByRole('button', { name: /이번 비교에서는 뺀다/ }));
+    expect(screen.getByText(/자료 3\/3개 판단 · 비교할 자료 2개 남김/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /남긴 자료를 바로 비교하기/ })).toBeEnabled();
   });
 
   it('6. 선택한 근거를 한 장씩 읽고 마지막에 함께 비교한다', () => {
@@ -148,12 +149,10 @@ describe('Verification module story-led student flow', () => {
     expect(screen.getByRole('button', { name: /문장에 판정 도장 찍기/ })).toBeEnabled();
   });
 
-  it('7. 판정과 이유를 한 장씩 고른 뒤 기사 문장을 실제로 고친다', () => {
+  it('7. 판정은 A/B로 고르고 이유를 누르면 기사 수정 결과가 즉시 나온다', () => {
     render(<ClaimDecisionHarness />);
     fireEvent.click(screen.getByRole('button', { name: /자료로 확인됨/ }));
-    fireEvent.click(screen.getByRole('button', { name: /판정 이유 고르기/ }));
     fireEvent.click(screen.getByRole('button', { name: /서로 다른 학교 공식 문서/ }));
-    fireEvent.click(screen.getByRole('button', { name: /근거와 대조해 문장 고치기/ }));
     expect(screen.getByText('검증해 고친 문장')).toBeInTheDocument();
     expect(screen.getByText(/학교 공식 기록에 따르면/)).toBeInTheDocument();
   });
@@ -177,12 +176,14 @@ describe('Verification module story-led student flow', () => {
     render(<VisualHarness />);
     expect(screen.getByText('사건 파일의 게시 화면부터 살펴봐요')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /다음 단서/ }));
-    fireEvent.click(screen.getByRole('button', { name: /음성 파형/ }));
+    fireEvent.click(screen.getByRole('button', { name: /확인할 단서로 남긴다/ }));
     fireEvent.click(screen.getByRole('button', { name: /다음 단서/ }));
+    fireEvent.click(screen.getByRole('button', { name: /결정적인 단서로 쓰지 않는다/ }));
     fireEvent.click(screen.getByRole('button', { name: /다음 단서/ }));
+    fireEvent.click(screen.getByRole('button', { name: /결정적인 단서로 쓰지 않는다/ }));
     fireEvent.click(screen.getByRole('button', { name: /관찰 정리/ }));
     expect(screen.getByText(/합성인지, 사용해도 되는지는 아직 확정할 수 없어요/)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: /첫인상으로 결론 내리지 않고/ }));
+    fireEvent.click(screen.getByRole('button', { name: /출처와 제작 정보를 더 확인한다/ }));
     expect(screen.getByRole('button', { name: /출처와 제작 과정 확인하기/ })).toBeEnabled();
   });
 
@@ -199,13 +200,16 @@ describe('Verification module story-led student flow', () => {
 
   it('12. 동의와 권리 행동도 한 장씩 보고 마지막에 사용 판단으로 이동한다', () => {
     render(<RightsHarness />);
-    fireEvent.click(screen.getByRole('button', { name: /목소리 주인에게 합성 및 게시 동의/ }));
-    for (let index = 0; index < 3; index += 1) fireEvent.click(screen.getByRole('button', { name: /다음 행동/ }));
+    for (let index = 0; index < 3; index += 1) {
+      fireEvent.click(screen.getByRole('button', { name: /이 행동이 필요해요/ }));
+      fireEvent.click(screen.getByRole('button', { name: /다음 행동/ }));
+    }
     expect(screen.getByText(/조회 수를 높이기 위해/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /이 콘텐츠의 사용 여부 결정하기/ })).toBeEnabled();
+    fireEvent.click(screen.getByRole('button', { name: /이 행동은 필요하지 않아요/ }));
+    expect(screen.getByRole('button', { name: /모든 판단을 모아 사용 여부 결정하기/ })).toBeEnabled();
   });
 
-  it('13. 사용 결정은 한 장씩 비교하고 필요한 조치를 결과로 남긴다', () => {
+  it('13. 사용 결정은 A/B 선택 즉시 필요한 조치를 결과로 남긴다', () => {
     render(
       <MediaDecisionScreen
         mediaCase={mediaCaseById.media_voice}
@@ -218,7 +222,7 @@ describe('Verification module story-led student flow', () => {
       />
     );
     expect(screen.getByRole('button', { name: /현재는 사용하지 않음/ })).toHaveAttribute('aria-pressed', 'true');
-    fireEvent.click(screen.getByRole('button', { name: /확인한 정보와 대조하기/ }));
+    fireEvent.click(screen.getByRole('button', { name: /현재는 사용하지 않음/ }));
     expect(screen.getByText('필요한 조치')).toBeInTheDocument();
     expect(screen.getByText(/목소리 주인의 명시적 동의 받기/)).toBeInTheDocument();
   });

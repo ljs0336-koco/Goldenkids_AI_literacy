@@ -108,12 +108,12 @@ describe('useFairnessState Hook Tests (v5)', () => {
 
     expect(sanitized.growthSpeakerPath).toBe('sample');
     expect(sanitized.growthQuestionId).toBe('missing');
-    expect(sanitized.growthCareerChoices).toEqual(['environmentalEngineering', 'greenTech']);
+    expect(sanitized.growthCareerChoices).toEqual(['environmentalEngineering']);
     expect(sanitized.growthFinalChoice).toBe('ask_and_research');
     expect(sanitized.teamSpeakerPath).toBe('speaker');
     expect(sanitized.teamQuestionId).toBe('roles');
     expect(sanitized.teamAppealChoice).toBe(2);
-    expect(sanitized.teamSelectedPrinciples).toHaveLength(2);
+    expect(sanitized.teamSelectedPrinciples).toHaveLength(1);
 
     const rejected = validateAndSanitizeState({
       ...initialFairnessState,
@@ -126,7 +126,7 @@ describe('useFairnessState Hook Tests (v5)', () => {
     });
     expect(rejected.growthSpeakerPath).toBeNull();
     expect(rejected.growthQuestionId).toBeNull();
-    expect(rejected.growthCareerChoices).toEqual(['software', 'greenTech']);
+    expect(rejected.growthCareerChoices).toEqual(['software']);
     expect(rejected.growthFinalChoice).toBeNull();
     expect(rejected.teamAppealChoice).toBeNull();
     expect(rejected.teamSelectedPrinciples).toEqual([]);

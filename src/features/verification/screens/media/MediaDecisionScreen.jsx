@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { mediaDecisionOptions } from '../../verificationData';
 import { evaluateMediaDecision } from '../../verificationEngine';
-import VerificationPageNav from '../../components/VerificationPageNav';
+import VerificationChoiceFork from '../../components/VerificationChoiceFork';
 
-export default function MediaDecisionScreen({ mediaCase, selectedRightIds, decisionId, onChangeDecision, onSave, onContinue, onPrev }) {
-  const initialIndex = Math.max(0, mediaDecisionOptions.findIndex(option => option.id === decisionId));
-  const [pageIndex, setPageIndex] = useState(initialIndex);
+export default function MediaDecisionScreen({ mediaCase, selectedRightIds, decisionId, onChangeDecision, onContinue, onPrev }) {
   const [showFeedback, setShowFeedback] = useState(false);
-  const option = mediaDecisionOptions[pageIndex];
-  const selected = decisionId === option.id;
   const evaluation = showFeedback ? evaluateMediaDecision(mediaCase.id, decisionId, selectedRightIds) : null;
+  const choices = mediaDecisionOptions.map(option => ({
+    id: option.id,
+    title: `${option.icon} ${option.label}`,
+    note: option.id === 'allowed' ? '출처·제작 정보·동의 조건이 확인됐어요.' : option.id === 'not_allowed' ? '현재 상태로 게시하면 오해나 피해가 생길 수 있어요.' : '고칠 조건이나 확인할 정보가 남아 있어요.',
+    result: '사건 파일의 정보와 대조한 결과를 바로 확인합니다.'
+  }));
 
-  const handleCheck = () => {
-    onSave();
+  const handleDecisionSelect = nextDecisionId => {
+    onChangeDecision(nextDecisionId);
     setShowFeedback(true);
   };
 
@@ -26,6 +28,7 @@ export default function MediaDecisionScreen({ mediaCase, selectedRightIds, decis
           <h3>{evaluation.expectedOption.icon} {evaluation.expectedOption.label}</h3>
           <p>{evaluation.decisionReason}</p>
           {!evaluation.isEvidenceAligned && <p>내 첫 판단과 달라도 괜찮아요. 출처·제작 이력·동의 기록을 근거로 게시 조건을 고치면 돼요.</p>}
+          {!evaluation.hasAllRequiredActions && <p>게시 전에 필요한 행동 {evaluation.requiredCount}개 중 {evaluation.selectedRequiredCount}개만 남겼어요. 빠진 조치도 다시 확인해요.</p>}
         </div>
 
         <section className="verification-repair-page">
@@ -49,30 +52,18 @@ export default function MediaDecisionScreen({ mediaCase, selectedRightIds, decis
       <h2 id="media-decision-title">현재 확인한 정보로 이 콘텐츠를 어떻게 처리할까요?</h2>
       <div className="verification-focus-claim"><span>{mediaCase.mediaType}</span><strong>{mediaCase.title}</strong></div>
 
-      <button
-        type="button"
-        className={`verification-decision-page ${selected ? 'is-selected' : ''}`}
-        style={{ '--decision-color': option.color, '--decision-bg': option.background }}
-        onClick={() => onChangeDecision(option.id)}
-        aria-pressed={selected}
-      >
-        <span aria-hidden="true">{option.icon}</span>
-        <strong>{option.label}</strong>
-        <small>{selected ? '나의 결정으로 골랐어요' : '이 결정 선택하기'}</small>
-      </button>
-
-      <VerificationPageNav
-        current={pageIndex}
-        total={mediaDecisionOptions.length}
-        onPrev={() => setPageIndex(index => Math.max(0, index - 1))}
-        onNext={() => setPageIndex(index => Math.min(mediaDecisionOptions.length - 1, index + 1))}
-        prevLabel="이전 결정"
-        nextLabel="다음 결정"
+      <VerificationChoiceFork
+        options={choices}
+        selectedId={decisionId}
+        onSelect={handleDecisionSelect}
+        prompt="A는 지금 사용해도 될 때, B는 현재 사용하지 않아야 할 때 선택해요."
+        moreLabel="조건을 고치거나 더 확인하고 싶다면?"
+        resultLabel="나의 게시 결정"
       />
 
       <div className="bottom-nav-bar">
         <button type="button" className="btn-outline" onClick={onPrev}>← 게시 전 행동</button>
-        <button type="button" className="btn-primary" onClick={handleCheck} disabled={!decisionId}>확인한 정보와 대조하기 →</button>
+        <span className="verification-nav-hint">선택하면 사건 파일과 대조한 결과가 바로 나타나요.</span>
       </div>
     </section>
   );

@@ -8,16 +8,13 @@ export default function VerificationModeSelectScreen({ onSelectMode }) {
     <section aria-labelledby="verification-mode-title">
       <div className="verification-hero card">
         <div>
-          <span className="verification-kicker">AI 금쪽이 진실·미디어 검증소</span>
-          <h2 id="verification-mode-title">자연스러운 답과 그럴듯한 미디어, 무엇부터 확인할까요?</h2>
-          <p>정답을 빨리 맞히는 곳이 아니에요. 주장·출처·날짜·제작 이력·동의를 차례로 확인해요.</p>
+          <span className="verification-kicker">공개하기 전 마지막 확인</span>
+          <h2 id="verification-mode-title">진짜일까? 써도 될까?</h2>
+          <p>AI의 답과 미디어가 곧 공개될 상황이에요. 하나를 골라 근거와 사용 조건을 직접 확인해 봐요.</p>
         </div>
-        <div className="verification-rule-strip" role="note">
-          <strong>검증 순서</strong>
-          <span>① 주장·단서 찾기</span>
-          <span>② 출처·날짜 확인</span>
-          <span>③ 근거·권리 비교</span>
-          <span>④ 사람이 판단</span>
+        <div className="verification-opening-note" role="note">
+          <strong>두 활동에서 공통으로 할 일</strong>
+          <span>그럴듯한 첫인상에서 멈추지 않고, 공개해도 되는 근거가 있는지 확인해요.</span>
         </div>
       </div>
 
@@ -27,20 +24,20 @@ export default function VerificationModeSelectScreen({ onSelectMode }) {
             <img src={factCheckImage} alt="자료를 살펴보는 AI 금쪽이" />
           </div>
           <div className="verification-mode-copy">
-            <span className="verification-time">정보 검증 탐구 · 약 10분</span>
-            <h3>AI 금쪽이의 답변, 그대로 믿어도 될까?</h3>
-            <p>답변을 세 개의 주장으로 나누고, 서로 다른 자료의 출처와 날짜를 비교해요.</p>
-            <span className="verification-start">주장 검증 시작하기 →</span>
+            <span className="verification-time">학교신문 검증 · 약 10분</span>
+            <h3>마감 전, AI가 쓴 기사를 확인하라</h3>
+            <p>AI가 만든 학교숲 소개문을 문장별로 확인하고, 공개해도 되는 기사로 다시 써요.</p>
+            <span className="verification-start">학교신문 편집 시작하기 →</span>
           </div>
         </button>
 
         <button type="button" className="verification-mode-card verification-mode-card--media" onClick={() => onSelectMode('media')}>
           <VerificationMediaArt mediaCase={mediaCases[0]} decorative className="verification-mode-media-art" />
           <div className="verification-mode-copy">
-            <span className="verification-time">합성 미디어·인권 탐구 · 약 15분</span>
-            <h3>이 사진과 목소리, 사용해도 괜찮을까?</h3>
-            <p>눈에 보이는 단서를 넘어 원래 출처, 제작 이력, 동의와 피해 가능성을 확인해요.</p>
-            <span className="verification-start">미디어 CSI 시작하기 →</span>
+            <span className="verification-time">미디어 게시 전 확인 · 약 12분</span>
+            <h3>업로드 전, 이 콘텐츠를 써도 될까?</h3>
+            <p>보이는 단서와 출처, 제작 과정, 당사자 동의를 확인하고 게시 여부를 결정해요.</p>
+            <span className="verification-start">게시 요청 확인하기 →</span>
           </div>
         </button>
       </div>

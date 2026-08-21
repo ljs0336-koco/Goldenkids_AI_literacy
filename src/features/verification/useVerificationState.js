@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import {
   claimDecisionOptions,
-  evidenceSources,
   mediaCases,
   mediaDecisionOptions,
   verificationClaims
@@ -31,7 +30,6 @@ export const initialVerificationState = {
 
 const validModes = new Set(['claim', 'media', null]);
 const validClaimIds = new Set(verificationClaims.map(claim => claim.id));
-const validSourceIds = new Set(evidenceSources.map(source => source.id));
 const validClaimDecisions = new Set(claimDecisionOptions.map(option => option.id));
 const validMediaCaseIds = new Set(mediaCases.map(item => item.id));
 const validMediaDecisions = new Set(mediaDecisionOptions.map(option => option.id));
@@ -61,7 +59,10 @@ export function validateAndSanitizeVerificationState(rawState) {
   result.mode = validModes.has(rawState.mode) ? rawState.mode : null;
   result.claimStep = Number.isInteger(rawState.claimStep) && rawState.claimStep >= 0 && rawState.claimStep <= 5 ? rawState.claimStep : 0;
   result.selectedClaimId = validClaimIds.has(rawState.selectedClaimId) ? rawState.selectedClaimId : 'claim_opening';
-  result.claimSelectedSourceIds = sanitizeRecordOfArrays(rawState.claimSelectedSourceIds, validClaimIds, () => validSourceIds);
+  result.claimSelectedSourceIds = sanitizeRecordOfArrays(rawState.claimSelectedSourceIds, validClaimIds, claimId => {
+    const claim = verificationClaims.find(item => item.id === claimId);
+    return new Set(claim?.sourceOptionIds || []);
+  });
 
   if (rawState.claimDecisions && typeof rawState.claimDecisions === 'object' && !Array.isArray(rawState.claimDecisions)) {
     result.claimDecisions = Object.fromEntries(

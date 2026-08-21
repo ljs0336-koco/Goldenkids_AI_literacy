@@ -1,43 +1,50 @@
 import React from 'react';
 import rightsGeumjjok from '../../../../assets/geumjjok/금쪽이_표정_꽃화관.png';
-import { mediaCaseById, mediaDecisionOptions, verificationPrinciples } from '../../verificationData';
+import { mediaCaseById, mediaDecisionOptions } from '../../verificationData';
 import { getMediaProgress } from '../../verificationEngine';
 
-export default function VerificationCompletionScreen({ mediaDecisions, onExploreAnother, onRestart, onBackToActivities }) {
+export default function VerificationCompletionScreen({ mediaDecisions, caseId, onOpenRecord, onExploreAnother, onRestart, onBackToActivities }) {
   const progress = getMediaProgress(mediaDecisions);
+  const mediaCase = mediaCaseById[caseId] || mediaCaseById[progress.completedIds[0]];
+  const choice = mediaDecisionOptions.find(option => option.id === mediaDecisions[mediaCase?.id]);
 
   return (
     <section className="card verification-screen verification-completion" aria-labelledby="media-completion-title">
-      <img src={rightsGeumjjok} alt="인권 수호자 활동을 마친 AI 금쪽이" className="verification-completion-character" />
-      <span className="verification-kicker">인권 수호자 CSI 기록 완료</span>
-      <h2 id="media-completion-title">합성 여부와 사용 가능 여부를 따로 판단했어요</h2>
-      <p>이미지가 실제인지 AI인지보다, 출처·맥락·제작 이력·당사자 동의를 함께 확인하는 것이 중요합니다.</p>
+      <img src={rightsGeumjjok} alt="게시 전 확인을 마친 AI 금쪽이" className="verification-completion-character" />
+      <span className="verification-kicker">게시 전 확인 완료</span>
+      <h2 id="media-completion-title">합성처럼 보이는지보다, 사용할 근거가 있는지 확인했어요</h2>
+      <p>출처와 제작 과정, 맥락과 당사자 동의를 확인해 최종 게시 결정을 남겼어요.</p>
 
-      <div className="verification-media-summary">
-        {progress.completedIds.map(caseId => {
-          const mediaCase = mediaCaseById[caseId];
-          const choice = mediaDecisionOptions.find(option => option.id === mediaDecisions[caseId]);
-          return (
-            <article key={caseId}>
-              <strong>사례 {mediaCase.number}. {mediaCase.title}</strong>
-              <span style={{ color: choice.color }}>{choice.icon} 나의 판단: {choice.label}</span>
-              <p>{mediaCase.decisionReason}</p>
-            </article>
-          );
-        })}
-      </div>
+      {mediaCase && choice && (
+        <section className="verification-media-before-after" aria-label="게시 요청과 최종 결정 비교">
+          <article>
+            <small>처음 게시 요청</small>
+            <h3>{mediaCase.title}</h3>
+            <p>{mediaCase.postText}</p>
+          </article>
+          <div aria-hidden="true">→</div>
+          <article className="is-after">
+            <small>확인한 뒤의 결정</small>
+            <h3 style={{ color: choice.color }}>{choice.icon} {choice.label}</h3>
+            <p>{mediaCase.decisionReason}</p>
+          </article>
+        </section>
+      )}
 
-      <div className="verification-principle-box">
-        <strong>미디어를 공유하기 전 세 가지 약속</strong>
-        <ul>{verificationPrinciples.slice(3).map(principle => <li key={principle}>{principle}</li>)}</ul>
-      </div>
+      {mediaCase && (
+        <section className="verification-final-conditions">
+          <small>게시하거나 다시 검토하기 전에 남긴 조건</small>
+          <ol>{mediaCase.repairSteps.map(step => <li key={step}>{step}</li>)}</ol>
+        </section>
+      )}
+
+      <p className="verification-closing-sentence">다음에 미디어를 공유할 때도, <strong>보이는 단서에서 멈추지 않고 출처·맥락·동의를 확인할 거예요.</strong></p>
 
       <div className="verification-completion-actions">
-        {progress.completedCount < progress.totalCount && (
-          <button type="button" className="btn-primary" onClick={onExploreAnother}>다른 가상 사례도 조사하기</button>
-        )}
-        <button type="button" className="btn-outline" onClick={onRestart}>현재 활동 처음부터</button>
-        <button type="button" className="btn-ghost" onClick={onBackToActivities}>활동 고르기로</button>
+        <button type="button" className="btn-outline" onClick={onOpenRecord}>내 확인 기록 보기</button>
+        {progress.completedCount < progress.totalCount && <button type="button" className="btn-primary" onClick={onExploreAnother}>다른 사건 파일 열기</button>}
+        <button type="button" className="btn-outline" onClick={onRestart}>미디어 활동 처음부터</button>
+        <button type="button" className="btn-ghost" onClick={onBackToActivities}>다른 이야기 고르기</button>
       </div>
     </section>
   );

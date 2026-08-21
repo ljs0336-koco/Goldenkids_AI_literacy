@@ -4,7 +4,7 @@ export const claimDecisionOptions = [
   {
     id: 'confirmed',
     icon: '✅',
-    label: '근거로 확인됨',
+    label: '자료로 확인됨',
     shortLabel: '확인됨',
     color: '#047857',
     background: '#ecfdf5'
@@ -13,15 +13,15 @@ export const claimDecisionOptions = [
     id: 'needs_evidence',
     icon: '⚠️',
     label: '근거가 더 필요함',
-    shortLabel: '더 확인',
+    shortLabel: '근거 부족',
     color: '#b45309',
     background: '#fffbeb'
   },
   {
     id: 'contradicted',
     icon: '❌',
-    label: '근거와 맞지 않음',
-    shortLabel: '맞지 않음',
+    label: '고쳐야 함',
+    shortLabel: '수정 필요',
     color: '#b91c1c',
     background: '#fef2f2'
   }
@@ -47,6 +47,7 @@ export const verificationClaims = [
     question: '개장 날짜를 확인할 수 있을까요?',
     expectedDecision: 'confirmed',
     recommendedSourceIds: ['source_notice_current', 'source_newsletter_old'],
+    sourceOptionIds: ['source_notice_current', 'source_newsletter_old', 'source_student_survey'],
     reasonOptions: [
       { id: 'opening_two_records', text: '서로 다른 학교 공식 문서 두 곳에 같은 개장 날짜가 적혀 있다.', isBest: true },
       { id: 'opening_one_comment', text: '개인 게시물 댓글에서 본 날짜라서 맞을 것 같다.', isBest: false },
@@ -62,6 +63,7 @@ export const verificationClaims = [
     question: '“현재” 이용 시간은 최신 자료와 맞을까요?',
     expectedDecision: 'contradicted',
     recommendedSourceIds: ['source_notice_current', 'source_newsletter_old'],
+    sourceOptionIds: ['source_notice_current', 'source_newsletter_old', 'source_student_survey'],
     reasonOptions: [
       { id: 'hours_current_wins', text: '최신 공식 안내에는 오후 6시까지라고 적혀 있고, 오후 5시는 예전 안내다.', isBest: true },
       { id: 'hours_old_first', text: '먼저 작성된 자료가 언제나 더 정확하다.', isBest: false },
@@ -77,6 +79,7 @@ export const verificationClaims = [
     question: '35%라는 수치를 뒷받침하는 조사 근거가 있을까요?',
     expectedDecision: 'needs_evidence',
     recommendedSourceIds: ['source_student_survey', 'source_parent_post'],
+    sourceOptionIds: ['source_student_survey', 'source_parent_post', 'source_notice_current'],
     reasonOptions: [
       { id: 'focus_small_no_method', text: '소수의 느낌 조사와 출처 없는 게시물만으로는 35% 향상을 확인할 수 없다.', isBest: true },
       { id: 'focus_number_specific', text: '35%처럼 구체적인 숫자는 그 자체로 과학적 근거가 된다.', isBest: false },
@@ -143,10 +146,10 @@ export const evidenceSources = [
 ];
 
 export const mediaDecisionOptions = [
-  { id: 'allowed', icon: '✅', label: '사용 가능', color: '#047857', background: '#ecfdf5' },
-  { id: 'conditional', icon: '⚠️', label: '조건을 지키면 사용 가능', color: '#b45309', background: '#fffbeb' },
-  { id: 'not_allowed', icon: '❌', label: '사용하면 안 됨', color: '#b91c1c', background: '#fef2f2' },
-  { id: 'more_info', icon: '🔎', label: '정보가 더 필요함', color: '#1d4ed8', background: '#eff6ff' }
+  { id: 'allowed', icon: '✅', label: '현재 정보로 사용 가능', color: '#047857', background: '#ecfdf5' },
+  { id: 'conditional', icon: '⚠️', label: '조건을 고쳐서 사용', color: '#b45309', background: '#fffbeb' },
+  { id: 'not_allowed', icon: '❌', label: '현재는 사용하지 않음', color: '#b91c1c', background: '#fef2f2' },
+  { id: 'more_info', icon: '🔎', label: '정보를 더 확인한 뒤 결정', color: '#1d4ed8', background: '#eff6ff' }
 ];
 
 export const mediaCases = [

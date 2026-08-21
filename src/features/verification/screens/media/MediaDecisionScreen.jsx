@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import { mediaDecisionOptions } from '../../verificationData';
 import { evaluateMediaDecision } from '../../verificationEngine';
+import VerificationPageNav from '../../components/VerificationPageNav';
 
 export default function MediaDecisionScreen({ mediaCase, selectedRightIds, decisionId, onChangeDecision, onSave, onContinue, onPrev }) {
+  const initialIndex = Math.max(0, mediaDecisionOptions.findIndex(option => option.id === decisionId));
+  const [pageIndex, setPageIndex] = useState(initialIndex);
   const [showFeedback, setShowFeedback] = useState(false);
+  const option = mediaDecisionOptions[pageIndex];
+  const selected = decisionId === option.id;
   const evaluation = showFeedback ? evaluateMediaDecision(mediaCase.id, decisionId, selectedRightIds) : null;
 
   const handleCheck = () => {
@@ -11,45 +16,63 @@ export default function MediaDecisionScreen({ mediaCase, selectedRightIds, decis
     setShowFeedback(true);
   };
 
+  if (showFeedback) {
+    return (
+      <section className="card verification-screen verification-story-page" aria-labelledby="media-feedback-title">
+        <span className="verification-kicker">게시 전 최종 기록</span>
+        <h2 id="media-feedback-title">확인한 정보가 가리키는 사용 조건이에요</h2>
+        <div className={`verification-feedback ${evaluation.isEvidenceAligned ? 'is-aligned' : 'needs-review'}`} role="status">
+          <span>현재 사건 파일의 판단</span>
+          <h3>{evaluation.expectedOption.icon} {evaluation.expectedOption.label}</h3>
+          <p>{evaluation.decisionReason}</p>
+          {!evaluation.isEvidenceAligned && <p>내 첫 판단과 달라도 괜찮아요. 출처·제작 이력·동의 기록을 근거로 게시 조건을 고치면 돼요.</p>}
+        </div>
+
+        <section className="verification-repair-page">
+          <small>게시하거나 다시 검토하기 전에</small>
+          <h3>필요한 조치</h3>
+          <ol>{evaluation.repairSteps.map(step => <li key={step}>{step}</li>)}</ol>
+          {evaluation.selectedHarmfulChoice && <p>선택한 행동 중 오해나 피해를 키울 수 있는 행동이 있어요. 게시 전 목록에서 빼야 해요.</p>}
+        </section>
+
+        <div className="bottom-nav-bar">
+          <button type="button" className="btn-outline" onClick={() => setShowFeedback(false)}>← 사용 판단 다시 보기</button>
+          <button type="button" className="btn-primary" onClick={onContinue}>최종 게시 결정 남기기 →</button>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section className="card verification-screen" aria-labelledby="media-decision-title">
-      <span className="verification-kicker">⑤ 사람이 최종 판단</span>
-      <h2 id="media-decision-title">현재 확인한 정보로 이 콘텐츠를 사용해도 될까요?</h2>
+    <section className="card verification-screen verification-story-page" aria-labelledby="media-decision-title">
+      <span className="verification-kicker">사람이 내리는 최종 결정</span>
+      <h2 id="media-decision-title">현재 확인한 정보로 이 콘텐츠를 어떻게 처리할까요?</h2>
       <div className="verification-focus-claim"><span>{mediaCase.mediaType}</span><strong>{mediaCase.title}</strong></div>
 
-      <fieldset className="verification-fieldset" disabled={showFeedback}>
-        <legend>나의 최종 판단</legend>
-        <div className="verification-media-decision-grid">
-          {mediaDecisionOptions.map(option => (
-            <label key={option.id} className={`verification-decision-option ${decisionId === option.id ? 'is-selected' : ''}`} style={{ '--decision-color': option.color, '--decision-bg': option.background }}>
-              <input type="radio" name="media-decision" value={option.id} checked={decisionId === option.id} onChange={() => onChangeDecision(option.id)} />
-              <span aria-hidden="true">{option.icon}</span>
-              <strong>{option.label}</strong>
-            </label>
-          ))}
-        </div>
-      </fieldset>
+      <button
+        type="button"
+        className={`verification-decision-page ${selected ? 'is-selected' : ''}`}
+        style={{ '--decision-color': option.color, '--decision-bg': option.background }}
+        onClick={() => onChangeDecision(option.id)}
+        aria-pressed={selected}
+      >
+        <span aria-hidden="true">{option.icon}</span>
+        <strong>{option.label}</strong>
+        <small>{selected ? '나의 결정으로 골랐어요' : '이 결정 선택하기'}</small>
+      </button>
 
-      {evaluation && (
-        <div className={`verification-feedback ${evaluation.isEvidenceAligned ? 'is-aligned' : 'needs-review'}`} role="status">
-          <h3>{evaluation.isEvidenceAligned ? '출처·이력·권리를 함께 연결했어요' : '판단 조건을 조금 더 살펴봅시다'}</h3>
-          <p><strong>현재 증거가 가리키는 판단:</strong> {evaluation.expectedOption.icon} {evaluation.expectedOption.label}</p>
-          <p>{evaluation.decisionReason}</p>
-          <div className="verification-repair-list">
-            <strong>안전하게 사용하려면</strong>
-            <ul>{evaluation.repairSteps.map(step => <li key={step}>{step}</li>)}</ul>
-          </div>
-          {evaluation.selectedHarmfulChoice && <p>선택한 행동 중에는 오해나 피해를 키울 수 있는 행동이 포함되어 있어요. 공개 전에 다시 검토하세요.</p>}
-        </div>
-      )}
+      <VerificationPageNav
+        current={pageIndex}
+        total={mediaDecisionOptions.length}
+        onPrev={() => setPageIndex(index => Math.max(0, index - 1))}
+        onNext={() => setPageIndex(index => Math.min(mediaDecisionOptions.length - 1, index + 1))}
+        prevLabel="이전 결정"
+        nextLabel="다음 결정"
+      />
 
       <div className="bottom-nav-bar">
-        <button type="button" className="btn-outline" onClick={onPrev}>← 권리 조건</button>
-        {!showFeedback ? (
-          <button type="button" className="btn-primary" onClick={handleCheck} disabled={!decisionId}>증거와 대조하기</button>
-        ) : (
-          <button type="button" className="btn-primary" onClick={onContinue}>CSI 판결문 완성 →</button>
-        )}
+        <button type="button" className="btn-outline" onClick={onPrev}>← 게시 전 행동</button>
+        <button type="button" className="btn-primary" onClick={handleCheck} disabled={!decisionId}>확인한 정보와 대조하기 →</button>
       </div>
     </section>
   );

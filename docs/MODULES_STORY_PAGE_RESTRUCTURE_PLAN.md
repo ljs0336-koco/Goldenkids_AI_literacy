@@ -7,7 +7,8 @@
 ## 구현 현황
 
 - 모듈 1: 구현 완료 — 상세 내용은 `docs/MODULE1_STORY_PAGE_IMPLEMENTATION.md`
-- 모듈 2~4: 본 문서의 합의안 상태 유지
+- 모듈 2: 구현 완료 — 상세 내용은 `docs/MODULE2_STORY_PAGE_IMPLEMENTATION.md`
+- 모듈 3~4: 본 문서의 합의안 상태 유지
 
 ## 1. 이번 재편의 목표
 

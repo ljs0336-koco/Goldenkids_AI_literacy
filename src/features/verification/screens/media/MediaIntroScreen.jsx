@@ -1,46 +1,52 @@
-import React from 'react';
+import React, { useState } from 'react';
 import VerificationMediaArt from '../../VerificationMediaArt';
 import { mediaCases, mediaDecisionOptions } from '../../verificationData';
+import VerificationPageNav from '../../components/VerificationPageNav';
 
 export default function MediaIntroScreen({ mediaDecisions, onSelectCase, onPrev }) {
+  const completedCount = Object.keys(mediaDecisions).length;
+  const canBrowseCases = completedCount > 0;
+  const [pageIndex, setPageIndex] = useState(0);
+  const mediaCase = mediaCases[canBrowseCases ? pageIndex : 0];
+  const chosen = mediaDecisionOptions.find(option => option.id === mediaDecisions[mediaCase.id]);
+
   return (
-    <section className="card verification-screen" aria-labelledby="media-intro-title">
-      <span className="verification-kicker">합성 미디어·인권 탐구</span>
-      <h2 id="media-intro-title">겉모습보다 먼저 출처와 맥락을 추적해요</h2>
-      <p>AI로 만든 콘텐츠가 모두 나쁜 것도, 실제 사진이 언제나 진실인 것도 아니에요. 조사할 가상 사례를 고르세요.</p>
+    <section className="card verification-screen verification-story-page" aria-labelledby="media-intro-title">
+      <div className="verification-upload-alert">
+        <span aria-hidden="true">●</span>
+        <div><small>새 게시 요청</small><strong>공개하기 전에 사용 가능 여부를 확인해 주세요</strong></div>
+      </div>
 
-      <div className="verification-content-credentials" role="note">
-        <span aria-hidden="true">🥣</span>
+      <span className="verification-kicker">{canBrowseCases ? '다른 사건 파일도 열어 보기' : '첫 번째 사건 파일'}</span>
+      <h2 id="media-intro-title">{canBrowseCases ? '어떤 콘텐츠를 더 확인해 볼까요?' : '동아리 진행자의 목소리를 본뜬 광고가 곧 게시돼요'}</h2>
+      <p>{canBrowseCases ? '완료한 사건은 다시 볼 수 있고, 새로운 사건도 선택할 수 있어요.' : '합성처럼 들리는지만 찾지 말고, 누가 만들었고 당사자가 동의했는지까지 확인해야 해요.'}</p>
+
+      <button type="button" className="verification-case-file" onClick={() => onSelectCase(mediaCase.id)}>
+        <VerificationMediaArt mediaCase={mediaCase} decorative />
         <div>
-          <strong>콘텐츠 자격증명은 ‘콘텐츠 영양성분표’와 같아요</strong>
-          <p>누가 만들었는지, 언제 만들어졌는지, 무엇을 수정했는지 확인하도록 도와줍니다.</p>
+          <span className="verification-media-type">사건 {mediaCase.number} · {mediaCase.mediaType}</span>
+          <h3>{mediaCase.title}</h3>
+          <p>{mediaCase.postText}</p>
+          <em>{chosen ? `${chosen.icon} ${chosen.label} · 다시 확인하기` : '사건 파일 열기'}</em>
         </div>
-      </div>
+      </button>
 
-      <div className="verification-media-case-grid">
-        {mediaCases.map(mediaCase => {
-          const chosen = mediaDecisionOptions.find(option => option.id === mediaDecisions[mediaCase.id]);
-          return (
-            <button key={mediaCase.id} type="button" className="verification-media-case-card" onClick={() => onSelectCase(mediaCase.id)}>
-              <VerificationMediaArt mediaCase={mediaCase} decorative />
-              <div>
-                <span className="verification-media-type">사례 {mediaCase.number} · {mediaCase.mediaType}</span>
-                <h3>{mediaCase.title}</h3>
-                <p>{mediaCase.postText}</p>
-                <span className={chosen ? 'verification-status-chip is-complete' : 'verification-status-chip'}>
-                  {chosen ? `${chosen.icon} ${chosen.label} · 다시 조사` : '출처 추적 시작 →'}
-                </span>
-              </div>
-            </button>
-          );
-        })}
-      </div>
+      {canBrowseCases && (
+        <VerificationPageNav
+          current={pageIndex}
+          total={mediaCases.length}
+          onPrev={() => setPageIndex(index => Math.max(0, index - 1))}
+          onNext={() => setPageIndex(index => Math.min(mediaCases.length - 1, index + 1))}
+          prevLabel="이전 사건"
+          nextLabel="다음 사건"
+        />
+      )}
 
       <p className="verification-fiction-note">※ 모든 그림과 인물, 학교·기관 이름은 수업을 위해 만든 가상 사례입니다.</p>
 
       <div className="bottom-nav-bar">
         <button type="button" className="btn-outline" onClick={onPrev}>← 활동 고르기</button>
-        <span className="verification-nav-hint">사례 하나를 골라 네 단계로 조사하세요.</span>
+        <span className="verification-nav-hint">가운데 사건 파일을 누르면 게시 전 확인이 시작돼요.</span>
       </div>
     </section>
   );

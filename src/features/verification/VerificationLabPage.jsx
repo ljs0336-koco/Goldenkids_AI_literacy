@@ -19,12 +19,15 @@ import MediaDecisionScreen from './screens/media/MediaDecisionScreen';
 import VerificationCompletionScreen from './screens/media/VerificationCompletionScreen';
 import VerificationWorksheet from './print/VerificationWorksheet';
 import WorksheetModal from '../../components/WorksheetModal';
+import VerificationPageCue from './components/VerificationPageCue';
+import VerificationHelpDrawer from './components/VerificationHelpDrawer';
+import { verificationStepPurposes } from './verificationLearningData';
 import './verification.css';
 
 export default function VerificationLabPage() {
-  const { state, updateState, selectMode, resetState } = useVerificationState();
-  const [isPresentation, setIsPresentation] = useState(false);
+  const { state, updateState, selectMode } = useVerificationState();
   const [isWorksheetOpen, setIsWorksheetOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   const scrollToTop = () => {
     if (typeof window === 'undefined' || !window.scrollTo) return;
@@ -41,23 +44,23 @@ export default function VerificationLabPage() {
   const mediaCase = mediaCaseById[state.selectedMediaCaseId];
 
   const getSteps = () => {
-    if (state.mode === 'claim') return ['① 주장 찾기', '② 출처·날짜', '③ 근거 비교', '④ 판단·설명'];
-    if (state.mode === 'media') return ['① 첫 단서', '② 출처·제작 이력', '③ 동의·권리', '④ 최종 판단'];
+    if (state.mode === 'claim') return ['① 마감 직전 초안', '② 확인할 문장', '③ 자료 비교', '④ 기사 고치기'];
+    if (state.mode === 'media') return ['① 게시 요청', '② 보이는 단서', '③ 제작 정보·권리', '④ 사용 결정'];
     return [];
   };
 
   const getStepperCurrent = () => {
     if (state.mode === 'claim') {
-      if (state.claimStep <= 1) return 0;
-      if (state.claimStep === 2) return 1;
-      if (state.claimStep === 3) return 2;
+      if (state.claimStep === 0) return 0;
+      if (state.claimStep === 1) return 1;
+      if (state.claimStep <= 3) return 2;
       if (state.claimStep === 4) return 3;
       return 4;
     }
     if (state.mode === 'media') {
-      if (state.mediaStep <= 1) return 0;
-      if (state.mediaStep === 2) return 1;
-      if (state.mediaStep === 3) return 2;
+      if (state.mediaStep === 0) return 0;
+      if (state.mediaStep === 1) return 1;
+      if (state.mediaStep <= 3) return 2;
       if (state.mediaStep === 4) return 3;
       return 4;
     }
@@ -124,7 +127,7 @@ export default function VerificationLabPage() {
       case 5:
         return (
           <VerifiedCardScreen
-            claimDecisions={state.claimDecisions}
+            onOpenRecord={() => setIsWorksheetOpen(true)}
             onRestart={() => go({
               claimStep: 0,
               selectedClaimId: 'claim_opening',
@@ -210,6 +213,8 @@ export default function VerificationLabPage() {
         return (
           <VerificationCompletionScreen
             mediaDecisions={state.mediaDecisions}
+            caseId={state.selectedMediaCaseId}
+            onOpenRecord={() => setIsWorksheetOpen(true)}
             onExploreAnother={() => go({ mediaStep: 0 })}
             onRestart={() => go({
               mediaStep: 0,
@@ -229,38 +234,42 @@ export default function VerificationLabPage() {
     }
   };
 
-  const handleOpenWorksheet = () => {
-    setIsWorksheetOpen(true);
-  };
-
   const handlePrint = () => {
     window.print();
   };
 
+  const currentStep = state.mode === 'claim' ? state.claimStep : state.mediaStep;
+  const currentPurpose = state.mode ? verificationStepPurposes[state.mode]?.[currentStep] : null;
+
   return (
-    <div className={`app-container verification-app ${isPresentation ? 'presentation-mode' : ''}`}>
+    <div className="app-container verification-app">
       <AppHeader
-        title="진실·미디어 검증소"
+        title="진짜일까? 써도 될까?"
         showBackButton={state.mode !== null}
         onBackToActivities={() => selectMode(null)}
-        onReset={resetState}
-        onPrint={handleOpenWorksheet}
-        isPresentation={isPresentation}
-        setIsPresentation={setIsPresentation}
+        studentMode
+        onHelp={() => setIsHelpOpen(true)}
       />
       <main className="container mt-4 no-print">
-        {state.mode && <ProgressStepper steps={getSteps()} currentStep={getStepperCurrent()} />}
+        {state.mode && (
+          <>
+            <ProgressStepper steps={getSteps()} currentStep={getStepperCurrent()} />
+            <VerificationPageCue purpose={currentPurpose} />
+          </>
+        )}
         {!state.mode && <VerificationModeSelectScreen onSelectMode={selectMode} />}
         {state.mode === 'claim' && renderClaim()}
         {state.mode === 'media' && renderMedia()}
       </main>
+
+      <VerificationHelpDrawer isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} mode={state.mode} />
 
       {/* 활동지 전용 팝업 모달 */}
       <WorksheetModal
         isOpen={isWorksheetOpen}
         onClose={() => setIsWorksheetOpen(false)}
         onPrint={handlePrint}
-        title="진실·미디어 검증소 탐구 활동지"
+        title="확인하고 고친 나의 탐구 기록"
       >
         <VerificationWorksheet state={state} />
       </WorksheetModal>

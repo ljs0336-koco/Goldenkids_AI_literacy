@@ -26,7 +26,7 @@ export default function VerificationWorksheet({ state }) {
       `}</style>
 
       <section className="verification-print-page">
-        <h1>AI 답변 정보 검증 활동지</h1>
+        <h1>학교신문 AI 초안 검증 기록</h1>
         <p style={{ textAlign: 'right' }}>___학년 ___반 ___번 이름: _______________</p>
         <p><strong>검증 순서:</strong> 주장 찾기 → 출처·날짜 확인 → 근거 비교 → 판단하고 설명</p>
         <table>
@@ -53,12 +53,12 @@ export default function VerificationWorksheet({ state }) {
       </section>
 
       <section className="verification-print-page">
-        <h1>합성 미디어·인권 CSI 활동지</h1>
+        <h1>게시 전 미디어 확인 기록</h1>
         <p style={{ textAlign: 'right' }}>___학년 ___반 ___번 이름: _______________</p>
         <p><strong>조사 사례:</strong> {selectedMediaCase?.title || '____________________________'}</p>
         <table>
           <tbody>
-            <tr><th style={{ width: '24%' }}>첫 의심 단서</th><td>____________________________________________________________</td></tr>
+            <tr><th style={{ width: '24%' }}>화면에서 관찰한 사실</th><td>____________________________________________________________</td></tr>
             <tr><th>원래 출처와 맥락</th><td>____________________________________________________________</td></tr>
             <tr><th>제작·수정 이력</th><td>____________________________________________________________</td></tr>
             <tr><th>동의를 받아야 할 사람</th><td>____________________________________________________________</td></tr>
@@ -68,7 +68,7 @@ export default function VerificationWorksheet({ state }) {
               <td>
                 {selectedMediaCase && state.mediaDecisions[selectedMediaCase.id]
                   ? mediaDecisionOptions.find(option => option.id === state.mediaDecisions[selectedMediaCase.id])?.label
-                  : '□ 사용 가능  □ 조건부 사용  □ 사용하면 안 됨  □ 정보가 더 필요함'}
+                  : '□ 현재 사용 가능  □ 조건을 고쳐 사용  □ 현재 사용하지 않음  □ 정보 확인 뒤 결정'}
               </td>
             </tr>
           </tbody>
@@ -77,7 +77,7 @@ export default function VerificationWorksheet({ state }) {
         <p>1. ______________________________________________________________________________</p>
         <p>2. ______________________________________________________________________________</p>
         <p>3. ______________________________________________________________________________</p>
-        <p><strong>기억하기:</strong> 눈으로 이상한 점을 찾는 것은 첫 단계일 뿐입니다. 출처, 맥락, 제작 이력, 동의와 권리를 함께 확인해야 합니다.</p>
+        <p><strong>기억하기:</strong> 보이는 단서는 첫 단계일 뿐입니다. 출처, 맥락, 제작 이력, 동의와 권리를 함께 확인해야 합니다.</p>
       </section>
     </div>
   );

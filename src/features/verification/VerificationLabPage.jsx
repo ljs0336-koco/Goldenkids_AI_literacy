@@ -21,8 +21,28 @@ import VerificationWorksheet from './print/VerificationWorksheet';
 import WorksheetModal from '../../components/WorksheetModal';
 import VerificationPageCue from './components/VerificationPageCue';
 import VerificationHelpDrawer from './components/VerificationHelpDrawer';
+import LearningGuideToast from '../../components/LearningGuideToast';
 import { verificationStepPurposes } from './verificationLearningData';
 import './verification.css';
+
+const verificationClickGuides = {
+  claim: [
+    '가운데 AI 기사 초안을 읽고, 아래 ‘검증할 문장 고르기’를 누르세요.',
+    '카드의 문장을 읽고, 아직 확인하지 않은 문장 하나를 누르세요.',
+    '가운데 ‘봉투 열어 보기’를 누른 뒤 A 또는 B를 고르고, ‘다음 자료’로 넘기세요.',
+    '자료 내용을 읽고 ‘다음 자료’를 눌러 모두 비교한 뒤, 아래 버튼으로 이어가세요.',
+    '먼저 A 또는 B 판정을 누르고, 이어서 나타난 이유 카드 하나를 누르세요.',
+    '고친 기사와 AI 초안을 비교하고, 원하는 다음 활동 버튼을 누르세요.'
+  ],
+  media: [
+    '가운데 사건 카드의 이미지와 설명을 보고, 확인할 콘텐츠 하나를 누르세요.',
+    '이미지 아래의 단서를 한 장씩 확인하고, 보이는 사실에 해당하는 버튼을 누르세요.',
+    '제작 정보 카드를 한 장씩 눌러 네 장을 모두 연 뒤, 아래 버튼을 누르세요.',
+    '각 행동에서 A 또는 B를 고르고, ‘다음 행동’으로 모든 항목을 확인하세요.',
+    'A 또는 B로 게시 결정을 내리거나, 다른 판단 C를 열어 고르세요.',
+    '내가 남긴 사용 조건을 확인하고, 기록을 열거나 다른 사건을 살펴보세요.'
+  ]
+};
 
 export default function VerificationLabPage() {
   const { state, updateState, selectMode } = useVerificationState();
@@ -240,6 +260,7 @@ export default function VerificationLabPage() {
 
   const currentStep = state.mode === 'claim' ? state.claimStep : state.mediaStep;
   const currentPurpose = state.mode ? verificationStepPurposes[state.mode]?.[currentStep] : null;
+  const currentClickGuide = state.mode ? verificationClickGuides[state.mode]?.[currentStep] : null;
 
   return (
     <div className="app-container verification-app">
@@ -261,6 +282,11 @@ export default function VerificationLabPage() {
         {state.mode === 'claim' && renderClaim()}
         {state.mode === 'media' && renderMedia()}
       </main>
+
+      <LearningGuideToast
+        key={`${state.mode || 'activities'}:${currentStep}`}
+        message={currentClickGuide}
+      />
 
       <VerificationHelpDrawer isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} mode={state.mode} />
 

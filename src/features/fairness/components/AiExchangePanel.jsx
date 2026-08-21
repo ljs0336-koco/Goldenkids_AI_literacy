@@ -22,13 +22,17 @@ export default function AiExchangePanel({ title = 'AI 금쪽이에게 되묻기'
         resultLabel="AI에게 보낸 질문"
       />
 
-      {selectedQuestion && (
-        <div className="fair-ai-response" role="status">
-          <strong>AI 금쪽이의 답</strong>
-          <p>{selectedQuestion.response}</p>
-          <small>학습을 위해 미리 만든 응답이에요.</small>
-        </div>
-      )}
+      <div className={`fair-ai-response ${selectedQuestion ? '' : 'is-empty'}`} role="status">
+        {selectedQuestion ? (
+          <>
+            <strong>AI 금쪽이의 답</strong>
+            <p>{selectedQuestion.response}</p>
+            <small>학습을 위해 미리 만든 응답이에요.</small>
+          </>
+        ) : (
+          <p>A 또는 B 질문을 누르면 AI 금쪽이의 답이 이 자리에 나타나요.</p>
+        )}
+      </div>
     </section>
   );
 }

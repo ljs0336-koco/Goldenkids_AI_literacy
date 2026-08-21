@@ -7,6 +7,7 @@ import FairnessWorksheet from './print/FairnessWorksheet';
 import ModeSelectScreen from './screens/ModeSelectScreen';
 import StepPurposeBar from './components/StepPurposeBar';
 import FairnessHelpDrawer from './components/FairnessHelpDrawer';
+import LearningGuideToast from '../../components/LearningGuideToast';
 import { fairnessStepPurposes } from './fairnessLearningData';
 import './fairness.css';
 
@@ -24,6 +25,26 @@ import PrinciplesScreen from './screens/PrinciplesScreen';
 import CompletionScreen from './screens/CompletionScreen';
 import { projectTeamCandidates, projectTeamPresets } from './fairnessData';
 import { evaluateTeamCandidates } from './fairnessEngine';
+
+const fairnessClickGuides = {
+  growth: [
+    '가운데 하늘이 소개를 읽고, 오른쪽 아래 ‘하늘이와 AI에게 물어보기’를 누르세요.',
+    '자료를 읽으며 ‘다음 장면’을 눌러 질문 장면까지 간 뒤, 질문 카드 하나를 고르세요.',
+    '가운데 이야기 카드를 읽고 ‘다음 이야기’를 눌러 네 장을 모두 확인하세요.',
+    '서로 다른 꿈 카드 두 장을 읽고, 먼저 알아보고 싶은 카드 하나를 누르세요.',
+    'A 또는 B에서 다음 행동을 고른 뒤, 아래 ‘탐색 계획 완성하기’를 누르세요.',
+    '완성된 기록을 확인하고, 기록을 열거나 다른 활동으로 돌아가세요.'
+  ],
+  team: [
+    '프로젝트 설명과 AI의 첫 팀을 차례로 본 뒤, 오른쪽 아래 버튼을 누르세요.',
+    'A 또는 B 기준 카드를 누르고, 아래에 나타난 설명을 읽은 뒤 결과를 확인하세요.',
+    '‘다음 비교’를 눌러 마지막 장면까지 간 뒤, AI에게 물어볼 질문 하나를 고르세요.',
+    'A 또는 B 대응을 누르고, 아래에 나타난 결과를 읽은 뒤 다음으로 가세요.',
+    '바뀐 기록과 팀 결과를 비교하고, 오른쪽 아래 버튼을 누르세요.',
+    '가장 먼저 지키고 싶은 원칙을 누른 뒤 ‘운영 원칙 완성하기’를 누르세요.',
+    '완성된 기록을 확인하고, 기록을 열거나 다른 활동으로 돌아가세요.'
+  ]
+};
 
 export default function FairnessLabPage() {
   const { state, updateState, selectMode } = useFairnessState();
@@ -242,6 +263,7 @@ export default function FairnessLabPage() {
   const stepperInfo = getStepperInfo();
   const stepIndex = state.mode === 'growth' ? state.growthStep : state.teamStep;
   const currentPurpose = state.mode ? fairnessStepPurposes[state.mode]?.[stepIndex] : null;
+  const currentClickGuide = state.mode ? fairnessClickGuides[state.mode]?.[stepIndex] : null;
 
   return (
     <div className="app-container fairness-app">
@@ -266,6 +288,11 @@ export default function FairnessLabPage() {
         )}
         {renderContent()}
       </main>
+
+      <LearningGuideToast
+        key={`${state.mode || 'activities'}:${stepIndex}`}
+        message={currentClickGuide}
+      />
 
       <FairnessHelpDrawer isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} mode={state.mode} />
       <WorksheetModal

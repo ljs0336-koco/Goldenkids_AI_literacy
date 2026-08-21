@@ -30,13 +30,17 @@ export default function AppealScreen({ appealChoice, onSelectChoice, onProceed, 
         resultLabel="이 대응을 선택하면"
       />
 
-      {consequence && (
-        <div className={`fair-consequence ${consequence.tone}`} role="status" style={{ marginTop: '16px' }}>
-          <h3>{consequence.title}</h3>
-          <p>{consequence.summary}</p>
-          <p><strong>생각할 점:</strong> {consequence.lesson}</p>
-        </div>
-      )}
+      <div className={`fair-consequence-stage ${consequence ? '' : 'is-empty'}`} role="status">
+        {consequence ? (
+          <div className={`fair-consequence ${consequence.tone}`}>
+            <h3>{consequence.title}</h3>
+            <p>{consequence.summary}</p>
+            <p><strong>생각할 점:</strong> {consequence.lesson}</p>
+          </div>
+        ) : (
+          <p>A 또는 B를 누르면 그 선택이 팀과 기록에 남기는 결과가 이 자리에 나타나요.</p>
+        )}
+      </div>
 
       <div className="bottom-nav-bar">
         <button className="btn-outline" onClick={onPrev}>← 이전</button>

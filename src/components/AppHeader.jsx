@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { goToLearningHome, resetAllLearningProgress } from '../utils/learningProgress';
 
 export default function AppHeader({
   title = 'AI 리터러시 실험실',
@@ -12,6 +13,7 @@ export default function AppHeader({
   onHelp
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -22,9 +24,26 @@ export default function AppHeader({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (!resetDialogOpen) return undefined;
+    const handleKeyDown = event => {
+      if (event.key === 'Escape') setResetDialogOpen(false);
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [resetDialogOpen]);
+
+  const handleResetAll = () => {
+    resetAllLearningProgress();
+    onReset?.();
+    setResetDialogOpen(false);
+    goToLearningHome();
+  };
+
   return (
-    <header className="app-header app-header-shell no-print">
-      <div className="app-header-leading">
+    <>
+      <header className="app-header app-header-shell no-print">
+        <div className="app-header-leading">
         {showBackButton && (
           <button
             type="button"
@@ -43,9 +62,29 @@ export default function AppHeader({
             <strong>{title}</strong>
           </span>
         </a>
-      </div>
+        </div>
 
-      <div className="app-header-tools relative" ref={menuRef}>
+        <div className="app-header-tools relative" ref={menuRef}>
+          <button
+            type="button"
+            className="btn-outline app-header-button"
+            onClick={() => goToLearningHome()}
+            aria-label="전체 홈으로 돌아가기"
+          >
+            <span aria-hidden="true">⌂</span>
+            <span className="app-header-button-label">홈</span>
+          </button>
+
+          <button
+            type="button"
+            className="btn-outline app-header-button app-header-reset-button"
+            onClick={() => setResetDialogOpen(true)}
+            aria-label="모든 활동 기록 초기화"
+          >
+            <span aria-hidden="true">↺</span>
+            <span className="app-header-button-label">전체 초기화</span>
+          </button>
+
         {studentMode && onHelp && (
           <button
             type="button"
@@ -84,7 +123,7 @@ export default function AppHeader({
           </button>
         )}
 
-        {!studentMode && menuOpen && (
+          {!studentMode && menuOpen && (
           <div className="app-header-menu" role="menu">
             <button
               type="button"
@@ -116,11 +155,32 @@ export default function AppHeader({
                 }
               }}
             >
-              처음부터 다시
+              현재 활동만 다시
             </button>
           </div>
         )}
-      </div>
-    </header>
+        </div>
+      </header>
+
+      {resetDialogOpen && (
+        <div className="app-reset-dialog-backdrop no-print" role="presentation" onMouseDown={() => setResetDialogOpen(false)}>
+          <section
+            className="app-reset-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="app-reset-dialog-title"
+            onMouseDown={event => event.stopPropagation()}
+          >
+            <span className="app-reset-dialog-icon" aria-hidden="true">↺</span>
+            <h2 id="app-reset-dialog-title">모든 활동을 처음부터 다시 할까요?</h2>
+            <p>모듈 1~4에서 저장된 선택과 완료 기록이 지워지고 전체 홈으로 돌아가요.</p>
+            <div className="app-reset-dialog-actions">
+              <button type="button" className="btn-outline" onClick={() => setResetDialogOpen(false)}>취소</button>
+              <button type="button" className="btn-primary" onClick={handleResetAll}>전체 기록 지우기</button>
+            </div>
+          </section>
+        </div>
+      )}
+    </>
   );
 }

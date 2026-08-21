@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { announceLearningGuide } from '../../../utils/learningGuide';
 
 function FairChoiceButton({ option, index, alternativeChoice, selectedId, onSelect }) {
   return (
@@ -30,12 +31,23 @@ export default function FairChoiceFork({
   const primary = options.slice(0, 2);
   const alternative = options[2];
   const selected = options.find(option => option.id === selectedId);
+  const handleSelect = optionId => {
+    onSelect(optionId);
+    announceLearningGuide('선택 결과가 아래에 표시됐어요. 결과를 읽고 화면 아래의 다음 버튼을 눌러 이어가세요.');
+  };
+
+  const handleAlternative = () => {
+    setShowAlternative(current => {
+      announceLearningGuide(current ? '제3안을 접었어요. A 또는 B 중 더 가까운 쪽을 눌러 보세요.' : '제3안 C가 열렸어요. A·B와 비교한 뒤 원하는 카드를 눌러 보세요.');
+      return !current;
+    });
+  };
 
   return (
     <section className="fair-choice-fork" aria-label="선택하기">
       <p className="fair-fork-prompt">☝ {prompt}</p>
       <div className="fair-fork-primary">
-        {primary.map((option, index) => <FairChoiceButton key={option.id} option={option} index={index} selectedId={selectedId} onSelect={onSelect} />)}
+        {primary.map((option, index) => <FairChoiceButton key={option.id} option={option} index={index} selectedId={selectedId} onSelect={handleSelect} />)}
       </div>
 
       {alternative && (
@@ -43,27 +55,29 @@ export default function FairChoiceFork({
           <button
             type="button"
             className="fair-fork-more"
-            onClick={() => setShowAlternative(current => !current)}
+            onClick={handleAlternative}
             aria-expanded={showAlternative}
           >
             <span>{moreLabel}</span>
             <strong>{showAlternative ? '제3안 접기' : '제3안 보기'}</strong>
           </button>
-          {showAlternative && (
-            <div className="fair-fork-alternative">
-              <FairChoiceButton option={alternative} index={2} alternativeChoice selectedId={selectedId} onSelect={onSelect} />
-            </div>
-          )}
+          <div className={`fair-fork-alternative-slot ${showAlternative ? 'is-open' : ''}`}>
+            {showAlternative ? (
+              <div className="fair-fork-alternative">
+                <FairChoiceButton option={alternative} index={2} alternativeChoice selectedId={selectedId} onSelect={handleSelect} />
+              </div>
+            ) : (
+              <p>제3안은 필요할 때 위의 작은 버튼으로 열 수 있어요.</p>
+            )}
+          </div>
         </>
       )}
 
-      {selected && (
-        <div className="fair-fork-result" role="status">
-          <small>{resultLabel}</small>
-          <strong>{selected.title}</strong>
-          {selected.result && <p>{selected.result}</p>}
-        </div>
-      )}
+      <div className={`fair-fork-result ${selected ? '' : 'is-empty'}`} role="status">
+        <small>{selected ? resultLabel : '선택 결과'}</small>
+        <strong>{selected ? selected.title : 'A 또는 B를 누르면 결과가 여기에 나타나요.'}</strong>
+        {selected?.result && <p>{selected.result}</p>}
+      </div>
     </section>
   );
 }

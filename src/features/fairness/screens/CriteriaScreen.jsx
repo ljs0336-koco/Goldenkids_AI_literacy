@@ -34,15 +34,19 @@ export default function CriteriaScreen({ weights, setWeights, onCalculate, onPre
         resultLabel="우리 팀의 기준"
       />
 
-      {selectedPreset && (
-        <section className="fair-choice-detail" role="status">
-          <strong>이 기준으로 결과를 다시 계산해요</strong>
-          <div className="fair-focus-tags" aria-label="이 기준이 중요하게 보는 것">
-            {selectedPreset.focus.map(item => <b key={item}>{item}</b>)}
-          </div>
-          <p className="fair-criterion-tradeoff"><strong>함께 생각할 점</strong>{selectedPreset.tradeoff}</p>
-        </section>
-      )}
+      <section className={`fair-choice-detail ${selectedPreset ? '' : 'is-empty'}`} role="status">
+        {selectedPreset ? (
+          <>
+            <strong>이 기준으로 결과를 다시 계산해요</strong>
+            <div className="fair-focus-tags" aria-label="이 기준이 중요하게 보는 것">
+              {selectedPreset.focus.map(item => <b key={item}>{item}</b>)}
+            </div>
+            <p className="fair-criterion-tradeoff"><strong>함께 생각할 점</strong>{selectedPreset.tradeoff}</p>
+          </>
+        ) : (
+          <p>A 또는 B를 누르면 이 기준이 중요하게 보는 내용이 여기에 나타나요.</p>
+        )}
+      </section>
 
       <div className="bottom-nav-bar">
         <button className="btn-outline" onClick={onPrev}>← 이전</button>

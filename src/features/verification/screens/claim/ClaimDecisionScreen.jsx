@@ -63,20 +63,27 @@ export default function ClaimDecisionScreen({ claim, decisionId, reasonId, onCha
         resultLabel="내 판정"
       />
 
-      {decisionId && (
-        <div className="verification-followup-choice">
-          <h3>그렇게 판단한 이유는 무엇인가요?</h3>
-          <p>이유를 누르면 자료와 대조한 결과가 바로 나와요.</p>
-          <VerificationChoiceFork
-            options={reasonChoices}
-            selectedId={reasonId}
-            onSelect={handleReasonSelect}
-            prompt="A와 B 중 내 판정을 가장 잘 뒷받침하는 이유를 고르세요."
-            moreLabel="다른 이유를 고르고 싶다면?"
-            resultLabel="내가 연결한 이유"
-          />
-        </div>
-      )}
+      <div className={`verification-followup-stage ${decisionId ? '' : 'is-empty'}`}>
+        {decisionId ? (
+          <div className="verification-followup-choice">
+            <h3>그렇게 판단한 이유는 무엇인가요?</h3>
+            <p>이유를 누르면 자료와 대조한 결과가 바로 나와요.</p>
+            <VerificationChoiceFork
+              options={reasonChoices}
+              selectedId={reasonId}
+              onSelect={handleReasonSelect}
+              prompt="A와 B 중 내 판정을 가장 잘 뒷받침하는 이유를 고르세요."
+              moreLabel="다른 이유를 고르고 싶다면?"
+              resultLabel="내가 연결한 이유"
+            />
+          </div>
+        ) : (
+          <div>
+            <strong>다음: 판단한 이유 고르기</strong>
+            <p>위에서 A 또는 B를 누르면 근거를 고르는 화면이 이 자리에 나타나요.</p>
+          </div>
+        )}
+      </div>
 
       <div className="bottom-nav-bar">
         <button type="button" className="btn-outline" onClick={onPrev}>← 자료 비교</button>

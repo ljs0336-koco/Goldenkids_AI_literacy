@@ -1,55 +1,44 @@
 import React from 'react';
 import {
   activityRecommendationInitialRecords,
-  activityRecommendationOptions,
-  activityRecommendationStudent
+  activityRecommendationOptions
 } from '../fairnessData';
-import { getTopActivityRecommendation, rankActivityRecommendations } from '../fairnessEngine';
+import { getTopActivityRecommendation } from '../fairnessEngine';
 import AiExchangePanel from '../components/AiExchangePanel';
 import { growthQuestions } from '../fairnessLearningData';
 import geumjjokDoctor from '../../../assets/geumjjok/금쪽이_캐릭터_박사_안경콧수염.png';
 
 export default function GrowthTempRecScreen({ questionId, onQuestion, onNext, onPrev }) {
-  const ranking = rankActivityRecommendations(activityRecommendationInitialRecords, activityRecommendationOptions);
   const firstRecommendation = getTopActivityRecommendation(activityRecommendationInitialRecords, activityRecommendationOptions);
 
   return (
     <div className="card fair-story-page">
       <div className="text-center">
         <img src={geumjjokDoctor} alt="박사 금쪽이" style={{ width: '62px', height: 'auto', marginBottom: '6px' }} />
-        <span className="fair-eyebrow">온라인 기록 3개만 본 첫 답</span>
+        <span className="fair-eyebrow">AI가 처음 떠올린 직업</span>
         <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '5px 0 8px' }}>{firstRecommendation.name}</h2>
-        <p className="fair-one-line-help">
-          “온라인 기록에서는 코딩 관련 단서가 가장 많이 보여요.”
-        </p>
+        <p className="fair-one-line-help">AI는 아래 세 가지 기록을 보고 이렇게 생각했어요.</p>
       </div>
 
-      <p className="fair-story-conclusion">
-        하지만 AI는 <strong>교실 활동과 {activityRecommendationStudent.name}의 직접 선택</strong>을 아직 보지 못했어요.
-      </p>
+      <ul className="fair-evidence-list" aria-label="AI가 소프트웨어 개발자를 떠올린 근거">
+        <li><strong>정보 92점</strong><span>성적표에서 가장 높은 과목이에요.</span></li>
+        <li><strong>코딩 과제 8번 모두 제출</strong><span>오류를 고쳐 가며 끝까지 완성했어요.</span></li>
+        <li><strong>규칙 찾기 문제 해결</strong><span>틀린 답을 다시 보고 다른 방법을 시도했어요.</span></li>
+      </ul>
 
-      <details className="fair-inline-details">
-        <summary>AI가 계산한 단서 점수 보기</summary>
-        <div className="flex gap-2" style={{ flexWrap: 'wrap' }}>
-          {ranking.map(option => (
-            <span key={option.key} style={{ padding: '7px 11px', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-full)' }}>
-              {option.shortName} {option.score}점
-            </span>
-          ))}
-        </div>
-      </details>
+      <p className="fair-story-conclusion">하지만 성적표와 과제 기록만으로는 <strong>하늘이가 어떤 삶을 꿈꾸는지</strong> 알 수 없어요.</p>
 
       <AiExchangePanel
         questions={growthQuestions}
         selectedId={questionId}
         onSelect={onQuestion}
-        title="첫 추천에 한 가지를 되물어 보세요"
+        title="AI 금쪽이에게 하나만 더 물어보세요"
       />
 
       <div className="bottom-nav-bar">
         <button className="btn-outline" onClick={onPrev}>← 이전</button>
         <button className="btn-primary" onClick={onNext} disabled={!questionId} style={{ minHeight: '52px' }}>
-          {questionId ? 'AI가 놓친 기록 찾아보기 →' : '질문 하나를 골라 주세요'}
+          {questionId ? '성적표에 없는 하늘이의 모습 보기 →' : '물어볼 질문 하나를 골라 주세요'}
         </button>
       </div>
     </div>

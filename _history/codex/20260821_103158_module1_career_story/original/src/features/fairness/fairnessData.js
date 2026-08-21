@@ -1,133 +1,110 @@
 /**
  * 공정한 AI 실험실 통합 데이터셋
- * 1. AI 금쪽이 꿈·진로 탐색 (한 학생의 기록 범위 비교)
+ * 1. AI 금쪽이 활동 추천 (한 학생의 기록 범위 비교)
  * 2. 프로젝트 대표팀 구성 (projectTeamCandidates) - 8명
  */
 
 // ==========================================
-// 1. AI 금쪽이 꿈·진로 탐색 데이터
+// 1. AI 금쪽이 활동 추천 데이터
 // ==========================================
 
 export const activityRecommendationStudent = {
   id: "haneul",
-  name: "하늘이",
-  grade: "초등학교 6학년",
-  reportCard: [
-    { subject: "정보", score: 92 },
-    { subject: "수학", score: 86 },
-    { subject: "과학", score: 78 },
-    { subject: "국어", score: 74 }
-  ],
-  codingRecord: "블록 코딩 과제 8번을 모두 제출했어요."
+  name: "하늘"
 };
 
 export const activityRecommendationOptions = [
   {
-    key: "software",
-    name: "💻 소프트웨어 개발자",
-    shortName: "소프트웨어 개발자",
-    desc: "컴퓨터 프로그램과 디지털 서비스를 만드는 사람",
-    why: "정보 성적이 높고 코딩 과제를 꾸준히 해 온 모습이 보여요.",
+    key: "coding",
+    name: "💻 코딩 메이커 교실",
+    shortName: "코딩 메이커",
+    desc: "디지털 도구로 아이디어를 직접 만드는 활동",
     color: "var(--color-blue)"
   },
   {
-    key: "environmentalEngineering",
-    name: "🌿 환경공학자",
-    shortName: "환경공학자",
-    desc: "과학과 기술로 환경 문제의 해결 방법을 찾는 사람",
-    why: "환경 문제에 관심이 많고 관찰과 실험을 끝까지 이어 가요.",
+    key: "science",
+    name: "🔬 과학 탐구 교실",
+    shortName: "과학 탐구",
+    desc: "궁금한 점을 관찰하고 실험으로 확인하는 활동",
     color: "var(--color-orange)"
   },
   {
-    key: "scienceCommunication",
-    name: "🔎 과학 커뮤니케이터",
-    shortName: "과학 커뮤니케이터",
-    desc: "어려운 과학 이야기를 다른 사람이 이해하기 쉽게 전하는 사람",
-    why: "친구가 어려워할 때 실험 방법을 차근차근 설명해 주었어요.",
+    key: "story",
+    name: "✍️ 이야기 창작 교실",
+    shortName: "이야기 창작",
+    desc: "생각을 글과 이야기로 자유롭게 표현하는 활동",
     color: "var(--color-purple)"
   },
   {
-    key: "greenTech",
-    name: "🌏 환경 문제를 해결하는 소프트웨어 개발자",
-    shortName: "환경 소프트웨어 개발자",
-    desc: "디지털 기술로 동물과 환경을 돕는 방법을 만드는 사람",
-    why: "코딩 경험과 환경을 돕고 싶다는 마음을 함께 살릴 수 있어요.",
+    key: "collaboration",
+    name: "🤝 협력 프로젝트 교실",
+    shortName: "협력 프로젝트",
+    desc: "친구와 역할을 나누고 함께 결과물을 만드는 활동",
     color: "var(--color-green)"
   }
 ];
 
-// 처음 AI에게 제공된 성적표·온라인 학습 기록 3개
+// 처음 AI에게 제공된 최근 온라인 기록 3개
 export const activityRecommendationInitialRecords = [
   {
-    id: "report_card",
-    source: "하늘이의 성적표",
-    title: "정보 92점 · 수학 86점 · 과학 78점 · 국어 74점",
-    desc: "AI는 과목 점수만 보고 정보와 수학을 상대적인 강점으로 보았어요.",
-    signals: { software: 4, environmentalEngineering: 1, scienceCommunication: 0, greenTech: 2 }
+    id: "online_coding",
+    source: "학습 앱",
+    title: "블록 코딩 미션을 세 번 완성함",
+    desc: "순서와 조건을 사용해 캐릭터가 움직이도록 만들었어요.",
+    signals: { coding: 4, science: 1, story: 0, collaboration: 0 }
   },
   {
-    id: "coding_homework",
-    source: "온라인 과제 기록",
-    title: "블록 코딩 과제 8번을 모두 제출함",
-    desc: "순서와 조건을 바꾸어 가며 오류를 고쳐 과제를 완성했어요.",
-    signals: { software: 5, environmentalEngineering: 0, scienceCommunication: 0, greenTech: 4 }
+    id: "digital_making",
+    source: "디지털 교실",
+    title: "디지털 만들기 과제를 끝까지 수행함",
+    desc: "도구를 바꾸어 가며 원하는 결과를 완성했어요.",
+    signals: { coding: 3, science: 1, story: 0, collaboration: 1 }
   },
   {
     id: "logic_quiz",
     source: "온라인 퀴즈",
     title: "규칙 찾기 문제를 여러 방법으로 해결함",
-    desc: "틀린 답을 다시 살펴보고 다른 해결 방법을 시도했어요.",
-    signals: { software: 3, environmentalEngineering: 2, scienceCommunication: 1, greenTech: 3 }
+    desc: "틀린 문제를 다시 살펴보고 다른 방법을 시도했어요.",
+    signals: { coding: 2, science: 2, story: 1, collaboration: 0 }
   }
 ];
 
-// 처음에는 빠져 있던 실제 경험·관심·학생의 말 4개
+// 처음에는 빠져 있던 오프라인 수업·학생 관심 기록 3개
 export const activityRecommendationSupplementRecords = [
   {
-    id: "science_explainer",
-    source: "과학 실험 활동",
-    title: "실험이 어려운 친구에게 방법을 차근차근 설명했어요",
-    desc: "혼자 답을 맞히는 것보다 친구가 함께 이해했을 때 더 뿌듯했다고 말했어요.",
-    reveals: "하늘이는 과학을 다른 사람에게 쉽게 설명하는 일을 좋아해요.",
-    signals: { software: 0, environmentalEngineering: 2, scienceCommunication: 5, greenTech: 1 }
+    id: "science_notebook",
+    source: "과학 관찰 노트",
+    title: "식물이 빛을 향해 자라는 까닭을 매일 기록함",
+    desc: "관찰 결과를 비교하며 새로운 질문을 계속 적었어요.",
+    signals: { coding: 0, science: 5, story: 1, collaboration: 1 }
   },
   {
-    id: "environment_project",
-    source: "환경 프로젝트",
-    title: "학교에서 버려지는 일회용품을 줄이는 방법을 찾았어요",
-    desc: "쓰레기의 종류와 양을 관찰하고 친구들과 해결 아이디어를 정리했어요.",
-    reveals: "하늘이는 환경 문제를 그냥 지나치지 않고 해결 방법을 찾고 싶어 해요.",
-    signals: { software: 1, environmentalEngineering: 5, scienceCommunication: 2, greenTech: 4 }
+    id: "interest_choice",
+    source: "학생 관심 설문",
+    title: "가장 해 보고 싶은 활동으로 과학 실험을 선택함",
+    desc: "직접 실험을 설계하고 결과를 확인해 보고 싶다고 답했어요.",
+    signals: { coding: 0, science: 4, story: 2, collaboration: 0 }
   },
   {
-    id: "team_ideas",
-    source: "모둠 활동에서 한 말",
-    title: "혼자 코딩할 때보다 친구들과 아이디어를 만들 때 더 재미있어요",
-    desc: "친구들의 생각을 듣고 서로 다른 아이디어를 하나로 합치는 과정을 좋아했어요.",
-    reveals: "하늘이는 혼자 하는 일보다 사람들과 아이디어를 나누는 일을 즐겨요.",
-    signals: { software: 1, environmentalEngineering: 1, scienceCommunication: 3, greenTech: 3 }
-  },
-  {
-    id: "student_voice",
-    source: "하늘이가 직접 한 말",
-    title: "동물과 환경을 돕는 일을 해 보고 싶어요",
-    desc: "아직 직업 이름은 모르지만, 자신이 해결하고 싶은 문제를 분명하게 말했어요.",
-    reveals: "성적표에는 나타나지 않는 하늘이의 관심과 바람이에요.",
-    signals: { software: 0, environmentalEngineering: 5, scienceCommunication: 2, greenTech: 5 }
+    id: "team_prototype",
+    source: "교실 관찰 기록",
+    title: "모둠에서 종이 다리 모형 실험을 이끌었음",
+    desc: "친구들과 역할을 나누고 여러 번 고쳐 더 튼튼하게 만들었어요.",
+    signals: { coding: 1, science: 3, story: 0, collaboration: 5 }
   }
 ];
 
 export const activityRecommendationChecklist = [
-  { id: "check_sources", text: "AI가 어떤 자료를 보고 진로를 제안했는지 확인했나요?" },
-  { id: "check_missing", text: "성적표에 나오지 않는 하늘이의 경험도 확인했나요?" },
-  { id: "check_interest", text: "하늘이가 좋아하는 일과 직접 한 말을 확인했나요?" },
-  { id: "check_human_choice", text: "AI의 제안을 정답이 아니라 꿈 탐색의 출발점으로 보았나요?" }
+  { id: "check_sources", text: "온라인 기록뿐 아니라 오프라인 활동 기록도 확인했는가?" },
+  { id: "check_missing", text: "누락되거나 잘못 입력된 기록은 없는가?" },
+  { id: "check_interest", text: "학생이 직접 표현한 관심과 선택도 포함했는가?" },
+  { id: "check_human_choice", text: "AI 추천을 정답이 아닌 선택을 돕는 참고 자료로 사용했는가?" }
 ];
 
 export const activityRecommendationExitQuiz = {
-  question: "AI가 성적표를 보고 추천한 직업은 그 학생에게 가장 알맞은 진로이다.",
+  question: "AI가 추천한 활동은 그 학생이 반드시 선택해야 하는 가장 알맞은 활동이다.",
   correctAnswer: false, // ❌ 거짓
-  explanation: "성적표는 학생의 일부 모습만 보여 줘요. 실제 경험, 좋아하는 일, 해결하고 싶은 문제와 학생의 목소리를 함께 살펴야 꿈의 가능성을 넓힐 수 있어요."
+  explanation: "AI는 입력된 기록에서 보이는 패턴만 비교해요. 추천은 선택지 중 하나이며 당사자의 관심과 상황, 새로운 가능성을 함께 살펴 최종 선택해야 해요."
 };
 
 

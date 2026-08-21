@@ -20,7 +20,7 @@ export default function GrowthHumanCheckScreen({ checklist = [], onToggleCheck, 
       <div className="text-center mb-4">
         <div style={{ fontSize: '38px' }}>{isAllChecked ? '🧭' : '🔍'}</div>
         <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '4px 0 8px' }}>
-          {isAllChecked ? '이제 하늘이의 꿈을 더 알아볼 방법을 골라요' : '진로 제안을 믿기 전에 확인할 것을 살펴봐요'}
+          {isAllChecked ? '이제 내가 다음 행동을 정해요' : '추천 전에 확인할 것을 한 장씩 살펴봐요'}
         </h2>
         <p className="fair-one-line-help">
           {isAllChecked ? '선택지를 넘겨 보고 가장 필요한 다음 행동을 골라 보세요.' : '내용을 읽고 확인했다면 버튼을 눌러 다음 장으로 가세요.'}
@@ -71,7 +71,7 @@ export default function GrowthHumanCheckScreen({ checklist = [], onToggleCheck, 
             nextLabel="다음 선택"
           />
           <ConceptBridge>
-            진로 추천 AI를 잘 쓰는 방법은 직업 이름을 바로 고르는 것이 아니라, 근거를 확인하고 당사자의 목소리를 들으며 가능성을 넓히는 것이에요.
+            AI에게 추천을 받는 것만큼, 근거를 확인하고 당사자의 목소리를 들어 다음 행동을 정하는 것도 AI 리터러시예요.
           </ConceptBridge>
         </>
       )}
@@ -79,7 +79,7 @@ export default function GrowthHumanCheckScreen({ checklist = [], onToggleCheck, 
       <div className="bottom-nav-bar">
         <button className="btn-outline" onClick={onPrev}>← 이전</button>
         <button className="btn-primary" onClick={onNext} disabled={!isAllChecked || !finalChoice} style={{ minHeight: '52px' }}>
-          {isAllChecked && finalChoice ? '내가 고른 다음 탐색 저장하기 →' : '확인한 뒤 나의 행동을 골라 주세요'}
+          {isAllChecked && finalChoice ? '내 선택으로 탐구 마치기 →' : '확인한 뒤 나의 행동을 골라 주세요'}
         </button>
       </div>
     </div>

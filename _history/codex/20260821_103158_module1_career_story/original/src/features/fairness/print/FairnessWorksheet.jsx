@@ -6,7 +6,7 @@ import {
   activityRecommendationSupplementRecords,
   projectTeamCandidates
 } from '../fairnessData';
-import { getTopActivityRecommendation, rankActivityRecommendations } from '../fairnessEngine';
+import { getTopActivityRecommendation } from '../fairnessEngine';
 import { growthFinalChoices, growthQuestions } from '../fairnessLearningData';
 
 export default function FairnessWorksheet({ state }) {
@@ -20,10 +20,10 @@ export default function FairnessWorksheet({ state }) {
     activityRecommendationInitialRecords,
     activityRecommendationOptions
   );
-  const expandedSuggestions = rankActivityRecommendations(
+  const updatedRecommendation = getTopActivityRecommendation(
     allRecommendationRecords,
     activityRecommendationOptions
-  ).filter(option => option.key !== firstRecommendation?.key).slice(0, 3);
+  );
   const growthQuestion = growthQuestions.find(item => item.id === state?.growthQuestionId)?.label;
   const growthChoice = growthFinalChoices.find(item => item.id === state?.growthFinalChoice)?.title;
   const appealSummary = {
@@ -49,62 +49,70 @@ export default function FairnessWorksheet({ state }) {
         `}
       </style>
 
-      {/* AI 금쪽이 꿈·진로 탐색 활동지 */}
+      {/* AI 금쪽이 활동 추천 활동지 */}
       {isGrowth && (
         <div>
           <h2 style={{ borderBottom: '2px solid black', paddingBottom: '8px' }}>
-            [AI 금쪽이와 함께하는 꿈·진로 탐색 기록]
+            [AI 금쪽이 활동 추천 활동지] 학습 데이터 탐구
           </h2>
           <p style={{ textAlign: 'right', fontSize: '12px', margin: '0 0 10px 0' }}>
-            살펴볼 점: AI가 받은 자료에 따라 진로 제안이 어떻게 달라지는가
+            권장 활용 주제: 학습 데이터의 누락과 AI 추천
           </p>
 
-          <p><strong>상황:</strong> AI 금쪽이가 {activityRecommendationStudent.grade} {activityRecommendationStudent.name}의 성적표와 코딩 기록을 보고 어울리는 직업을 떠올립니다.</p>
+          <p><strong>상황:</strong> AI 금쪽이가 가상의 학생 {activityRecommendationStudent.name}에게 체험 활동 하나를 추천합니다.</p>
 
-          <h3>1. AI가 처음 받은 {activityRecommendationStudent.name}의 자료</h3>
+          <h3>1. AI에게 제공된 활동 기록</h3>
           <table>
             <thead>
               <tr>
-                {activityRecommendationStudent.reportCard.map(item => <th key={item.subject}>{item.subject}</th>)}
+                <th>처음 포함 여부</th>
+                <th>데이터 출처</th>
+                <th>기록 내용</th>
+                {activityRecommendationOptions.map(option => (
+                  <th key={option.key}>{option.shortName}</th>
+                ))}
               </tr>
             </thead>
             <tbody>
-              <tr>{activityRecommendationStudent.reportCard.map(item => <td key={item.subject}>{item.score}점</td>)}</tr>
-            </tbody>
-          </table>
-          <p>• 온라인 과제 기록: {activityRecommendationStudent.codingRecord}</p>
-          <p>• 온라인 문제 풀이: 규칙 찾기 문제를 여러 방법으로 해결했어요.</p>
-
-          <h3>2. AI가 처음 떠올린 직업</h3>
-          <p>• {firstRecommendation?.name}</p>
-          <p>• AI가 말한 이유: {firstRecommendation?.why}</p>
-
-          <h3>3. 성적표에는 없었던 {activityRecommendationStudent.name}의 이야기</h3>
-          <table>
-            <thead><tr><th>어디에서 알게 되었나요?</th><th>하늘이의 모습</th><th>새롭게 알게 된 점</th></tr></thead>
-            <tbody>
-              {activityRecommendationSupplementRecords.map(record => (
-                <tr key={record.id}>
-                  <td>{record.source}</td>
-                  <td style={{ textAlign: 'left' }}>{record.title}</td>
-                  <td style={{ textAlign: 'left' }}>{record.reveals}</td>
-                </tr>
-              ))}
+              {allRecommendationRecords.map(record => {
+                const wasInitiallyIncluded = activityRecommendationInitialRecords.some(item => item.id === record.id);
+                return (
+                  <tr key={record.id}>
+                    <td><strong>{wasInitiallyIncluded ? '포함' : '누락'}</strong></td>
+                    <td>{record.source}</td>
+                    <td style={{ textAlign: 'left' }}>{record.title}</td>
+                    {activityRecommendationOptions.map(option => (
+                      <td key={option.key}>{record.signals[option.key] || 0}</td>
+                    ))}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
 
-          <h3>4. 새롭게 보인 꿈 후보</h3>
-          <ul>
-            {expandedSuggestions.map(option => <li key={option.key}><strong>{option.name}</strong> — {option.why}</li>)}
-          </ul>
+          <h3>2. AI 금쪽이의 추천 비교</h3>
+          <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
+            <div style={{ flex: 1, border: '1px solid black', padding: '10px' }}>
+              <strong>처음 추천 (온라인 기록 {activityRecommendationInitialRecords.length}개)</strong>
+              <p style={{ margin: '6px 0 0 0' }}>• 추천 활동: {firstRecommendation?.name} ({firstRecommendation?.score}점)</p>
+            </div>
+            <div style={{ flex: 1, border: '1px solid black', padding: '10px' }}>
+              <strong>다시 추천 (전체 기록 {allRecommendationRecords.length}개)</strong>
+              <p style={{ margin: '6px 0 0 0' }}>• 추천 활동: {updatedRecommendation?.name} ({updatedRecommendation?.score}점)</p>
+            </div>
+          </div>
 
-          <h3>5. 내가 질문하고 선택한 다음 탐색</h3>
+          <h3>3. 나의 생각 정리하기</h3>
           <p>• 내가 AI에게 던진 질문: {growthQuestion || '____________________________________'}</p>
-          <p>• 내가 고른 다음 행동: {growthChoice || '____________________________________'}</p>
-          <p>Q. 성적표만 보았을 때와 하늘이의 이야기를 더 알게 되었을 때, 꿈 후보가 달라진 이유는 무엇일까요?</p>
+          <p>Q. 같은 추천 규칙을 사용했는데도 AI 금쪽이의 추천 활동이 달라진 이유는 무엇일까요?</p>
           <p style={{ borderBottom: '1px solid black', height: '24px' }}></p>
           <p style={{ borderBottom: '1px solid black', height: '24px' }}></p>
-          <p><strong>기억할 말:</strong> 꿈은 AI가 정해 주는 답이 아니라, 여러 경험과 나의 마음을 살피며 찾아가는 가능성이에요.</p>
+
+          <h3>4. 사람이 최종 선택하기</h3>
+          <p>• AI 추천에서 참고할 점: _________________________________________________</p>
+          <p>• AI가 알지 못하는 정보: _________________________________________________</p>
+          <p>• 내가 최종 선택한 활동 또는 다음 행동: {growthChoice || '________________________'}</p>
+          <p>• 그렇게 선택한 이유: __________________________________________________</p>
         </div>
       )}
 

@@ -18,40 +18,40 @@ import {
 
 describe('FairnessEngine Unit Tests', () => {
   // ==========================================
-  // 1. AI 금쪽이 꿈·진로 탐색 엔진 테스트
+  // 1. AI 금쪽이 활동 추천 엔진 테스트
   // ==========================================
-  describe('Career Exploration Engine', () => {
-    it('1. 화면에 노출하지 않는 내부 진로 단서를 정확하게 합산한다', () => {
+  describe('Activity Recommendation Engine', () => {
+    it('1. 온라인 기록의 활동별 관심 단서 점수를 정확하게 합산한다', () => {
       const scores = calculateActivityScores(
         activityRecommendationInitialRecords,
         activityRecommendationOptions
       );
 
-      expect(scores.find(item => item.key === 'software')?.score).toBe(12);
-      expect(scores.find(item => item.key === 'environmentalEngineering')?.score).toBe(3);
-      expect(scores.find(item => item.key === 'scienceCommunication')?.score).toBe(1);
-      expect(scores.find(item => item.key === 'greenTech')?.score).toBe(9);
+      expect(scores.find(item => item.key === 'coding')?.score).toBe(9);
+      expect(scores.find(item => item.key === 'science')?.score).toBe(4);
+      expect(scores.find(item => item.key === 'story')?.score).toBe(1);
+      expect(scores.find(item => item.key === 'collaboration')?.score).toBe(1);
     });
 
-    it('2. 성적표와 코딩 기록만 보면 소프트웨어 개발자를 먼저 떠올린다', () => {
+    it('2. 온라인 기록만 보면 코딩 메이커 교실을 첫 활동으로 추천한다', () => {
       const recommendation = getTopActivityRecommendation(
         activityRecommendationInitialRecords,
         activityRecommendationOptions
       );
 
-      expect(recommendation.key).toBe('software');
-      expect(recommendation.score).toBe(12);
+      expect(recommendation.key).toBe('coding');
+      expect(recommendation.score).toBe(9);
     });
 
-    it('3. 경험과 학생의 말을 추가하면 환경 소프트웨어 개발자가 먼저 보인다', () => {
+    it('3. 빠졌던 기록을 추가하면 과학 탐구 교실로 추천이 달라진다', () => {
       const allRecords = [
         ...activityRecommendationInitialRecords,
         ...activityRecommendationSupplementRecords
       ];
       const recommendation = getTopActivityRecommendation(allRecords, activityRecommendationOptions);
 
-      expect(recommendation.key).toBe('greenTech');
-      expect(recommendation.score).toBe(22);
+      expect(recommendation.key).toBe('science');
+      expect(recommendation.score).toBe(16);
     });
 
     it('4. 활동 순위를 점수 내림차순으로 정렬하고 입력 데이터는 변경하지 않는다', () => {
@@ -61,7 +61,7 @@ describe('FairnessEngine Unit Tests', () => {
         activityRecommendationOptions
       );
 
-      expect(ranking.map(item => item.key)).toEqual(['software', 'greenTech', 'environmentalEngineering', 'scienceCommunication']);
+      expect(ranking.map(item => item.key)).toEqual(['coding', 'science', 'story', 'collaboration']);
       expect(activityRecommendationInitialRecords).toEqual(originalRecords);
     });
   });

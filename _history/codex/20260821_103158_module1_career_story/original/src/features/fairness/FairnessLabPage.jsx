@@ -38,7 +38,7 @@ export default function FairnessLabPage() {
   };
 
   const getSteps = () => {
-    if (state.mode === 'growth') return ['① AI가 받은 자료', '② 하늘이의 이야기', '③ 꿈 후보 비교', '④ 다음 탐색'];
+    if (state.mode === 'growth') return ['① AI가 본 기록', '② 빠진 기록', '③ 추천 비교', '④ 내가 선택'];
     if (state.mode === 'team') return ['① 지원자 기록', '② 팀 구성 기준', '③ 추천 설명', '④ 이의제기·검토'];
     return [];
   };

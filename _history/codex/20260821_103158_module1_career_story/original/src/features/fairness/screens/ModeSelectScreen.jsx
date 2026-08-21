@@ -7,13 +7,13 @@ const activities = [
   {
     id: 'growth',
     icon: '🌱',
-    badge: '꿈·진로 탐색 · 약 10분',
-    eyebrow: 'AI 진로 추천 살펴보기',
+    badge: '학습 데이터 탐구 · 약 10분',
+    eyebrow: '맞춤 활동 추천',
     image: geumjjokDoctor,
-    imageAlt: '하늘이의 꿈을 함께 살펴보는 AI 금쪽이',
-    title: 'AI가 하늘이의 꿈을 골라 줘도 될까?',
-    description: '성적표와 코딩 기록만 보고 떠올린 직업이, 하늘이의 경험과 관심을 더 알게 된 뒤 어떻게 달라지는지 살펴봐요.',
-    action: '하늘이의 꿈 탐색 시작하기'
+    imageAlt: '활동 기록을 살펴보는 AI 금쪽이',
+    title: 'AI 금쪽이의 활동 추천, 그대로 따라도 될까?',
+    description: '온라인 기록만 볼 때와 빠진 오프라인 활동·관심 기록을 함께 볼 때, AI 금쪽이의 추천이 어떻게 달라지는지 비교해요.',
+    action: '활동 추천 실험 시작하기'
   },
   {
     id: 'team',

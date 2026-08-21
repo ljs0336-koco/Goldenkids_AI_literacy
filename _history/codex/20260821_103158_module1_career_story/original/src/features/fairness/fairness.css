@@ -100,17 +100,9 @@
 .fair-data-scene small { color: var(--color-text-muted); font-weight: 800; }
 .fair-data-scene h3 { margin: 8px 0 5px; font-size: 25px; }
 .fair-data-scene p { margin: 0; color: var(--color-text-muted); }
-.fair-report-strip { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 12px 0; }
-.fair-report-strip span { padding: 8px 10px; border: 1px solid #c9d5cf; border-radius: var(--radius-sm); background: #fff; color: var(--color-text); }
-.fair-report-strip strong { margin-right: 3px; }
 .fair-data-arrow { display: grid; place-items: center; color: var(--color-accent-warm); font-size: 30px; }
 .fair-story-conclusion { margin: 0 0 16px; padding: 16px 18px; border-radius: var(--radius-md); background: #2f3935; color: white; text-align: center; font-size: 18px; }
 .fair-story-conclusion strong { color: #f5ddaf; }
-.fair-evidence-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 8px 0 18px; padding: 0; list-style: none; }
-.fair-evidence-list li { padding: 16px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: #fff; }
-.fair-evidence-list strong, .fair-evidence-list span { display: block; }
-.fair-evidence-list strong { margin-bottom: 5px; color: var(--color-text); }
-.fair-evidence-list span { color: var(--color-text-muted); line-height: 1.55; }
 .fair-inline-details { margin: 10px 0 18px; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
 .fair-inline-details summary { padding: 12px 2px; color: var(--color-primary-hover); font-weight: 800; cursor: pointer; }
 .fair-inline-details > div, .fair-inline-details > ul { margin: 0 0 14px; }
@@ -132,13 +124,6 @@
 .fair-record-page.is-viewed { border-color: var(--color-primary); background: #edf2ee; }
 .fair-record-page h3 { margin: 5px 0 10px; font-size: 25px; }
 .fair-record-page p { color: var(--color-text-muted); }
-.fair-record-reveal { display: grid; gap: 4px; margin-top: 18px; padding: 14px 16px; border-radius: var(--radius-md); background: var(--color-surface-soft); }
-.fair-record-reveal strong { color: var(--color-primary-hover); }
-.fair-career-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.fair-career-options article { padding: 20px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-lg); background: #fff; }
-.fair-career-options h3 { margin: 0 0 9px; font-size: 21px; }
-.fair-career-options p { margin: 0 0 12px; color: var(--color-text-muted); }
-.fair-career-options small { display: block; color: var(--color-primary-hover); font-size: 14px; font-weight: 700; line-height: 1.55; }
 .fair-record-confirm { width: 100%; min-height: 48px; margin-top: 18px; }
 .fair-concept-bridge { padding: 17px 20px; border-left: 5px solid var(--color-accent-warm); background: #f5efe4; }
 .fair-concept-bridge strong { color: #71542d; }
@@ -180,7 +165,6 @@
   .fair-page-cue { grid-template-columns: 38px 1fr auto; }
   .fair-data-story { grid-template-columns: 1fr; }
   .fair-data-arrow { transform: rotate(90deg); min-height: 28px; }
-  .fair-evidence-list, .fair-career-options { grid-template-columns: 1fr; }
   .fair-story-page { min-height: 0; }
   .fair-page-turn { grid-template-columns: 1fr 1fr; }
   .fair-page-dots { grid-column: 1 / -1; grid-row: 1; justify-content: center; }

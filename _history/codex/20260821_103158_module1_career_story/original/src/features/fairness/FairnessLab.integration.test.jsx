@@ -25,7 +25,7 @@ describe('FairnessLab v5 paged student flow', () => {
   it('1. 학생 화면과 활동지에 차시 번호가 노출되지 않는다', () => {
     render(<FairnessLabPage />);
     expect(screen.queryByText(/2차시|5차시/)).not.toBeInTheDocument();
-    expect(screen.getByText('꿈·진로 탐색 · 약 10분')).toBeInTheDocument();
+    expect(screen.getByText('학습 데이터 탐구 · 약 10분')).toBeInTheDocument();
 
     const { container } = render(<FairnessWorksheet state={{ mode: 'growth' }} />);
     expect(container.textContent).not.toMatch(/2차시|5차시/);
@@ -33,64 +33,59 @@ describe('FairnessLab v5 paged student flow', () => {
 
   it('2. 활동 선택 화면에서 두 실험의 목적과 시작 버튼을 확인한다', () => {
     render(<FairnessLabPage />);
-    expect(screen.getByText('AI가 하늘이의 꿈을 골라 줘도 될까?')).toBeInTheDocument();
+    expect(screen.getByText('AI 금쪽이의 활동 추천, 그대로 따라도 될까?')).toBeInTheDocument();
     expect(screen.getByText('우리 학교 프로젝트 대표팀을 만들어라!')).toBeInTheDocument();
-    expect(screen.getByText(/하늘이의 꿈 탐색 시작하기/)).toBeInTheDocument();
+    expect(screen.getByText(/활동 추천 실험 시작하기/)).toBeInTheDocument();
     expect(screen.getByText(/대표팀 구성 시작하기/)).toBeInTheDocument();
   });
 
-  it('3. 첫 장은 AI가 받은 성적표와 아직 모르는 하늘이의 이야기를 구분한다', () => {
+  it('3. 첫 장은 AI가 아는 것과 모르는 것을 쉬운 문장으로 구분한다', () => {
     render(<GrowthInitialScreen onNext={() => {}} />);
-    expect(screen.getByText('AI가 받은 자료')).toBeInTheDocument();
-    expect(screen.getByText('하늘이의 성적표')).toBeInTheDocument();
-    expect(screen.getByText((_, element) => element?.tagName === 'SPAN' && element.textContent === '정보 92점')).toBeInTheDocument();
-    expect(screen.getByText('이 자료에는 없는 것')).toBeInTheDocument();
-    expect(screen.getByText(/AI의 첫 번째 추측/)).toBeInTheDocument();
+    expect(screen.getByText('AI가 지금 아는 것')).toBeInTheDocument();
+    expect(screen.getByText('온라인 기록 3개')).toBeInTheDocument();
+    expect(screen.getByText('AI가 아직 모르는 것')).toBeInTheDocument();
+    expect(screen.getByText(/첫 번째 임시 추천/)).toBeInTheDocument();
     expect(screen.queryByText('✅ 기록됨')).not.toBeInTheDocument();
-    expect(screen.queryByText(/체험 활동 4가지/)).not.toBeInTheDocument();
+    expect(screen.getByText('이번에 비교할 체험 활동 4가지 보기')).toBeInTheDocument();
   });
 
-  it('4. 첫 진로 제안은 실제 자료와 이유를 보여 주고 인공적인 추천 점수는 표시하지 않는다', () => {
+  it('4. 첫 추천은 핵심 답만 보여 주고 자세한 점수는 접어 둔다', () => {
     render(<GrowthTempRecScreen questionId={null} onQuestion={() => {}} onNext={() => {}} onPrev={() => {}} />);
-    expect(screen.getByRole('heading', { name: /소프트웨어 개발자/ })).toBeInTheDocument();
-    expect(screen.getByText('정보 92점')).toBeInTheDocument();
-    expect(screen.getByText('코딩 과제 8번 모두 제출')).toBeInTheDocument();
-    expect(screen.queryByText(/단서 점수|현재 1위|적합도/)).not.toBeInTheDocument();
-    expect(screen.getByText(/하늘이가 어떤 삶을 꿈꾸는지/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /물어볼 질문 하나를 골라 주세요/ })).toBeDisabled();
+    expect(screen.getByRole('heading', { name: /코딩 메이커 교실/ })).toBeInTheDocument();
+    expect(screen.getByText('AI가 계산한 단서 점수 보기')).toBeInTheDocument();
+    expect(screen.getByText(/교실 활동과 하늘의 직접 선택/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /질문 하나를 골라 주세요/ })).toBeDisabled();
   });
 
   it('5. 빠진 기록은 한 장씩 확인하며 현재 장을 확인해야 다음 장으로 간다', () => {
     const { rerender } = render(
       <GrowthSupplementScreen viewedStudentIds={[]} onStudentViewed={() => {}} onNext={() => {}} onPrev={() => {}} />
     );
-    expect(screen.getByLabelText('4장 중 1장')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /다음 이야기/ })).toBeDisabled();
-    expect(screen.getByRole('button', { name: /새로운 모습 4가지를 차례로 확인해 주세요/ })).toBeDisabled();
+    expect(screen.getByLabelText('3장 중 1장')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /다음 기록/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /기록 3개를 차례로 확인해 주세요/ })).toBeDisabled();
 
     rerender(
       <GrowthSupplementScreen
-        viewedStudentIds={['science_explainer', 'environment_project', 'team_ideas', 'student_voice']}
+        viewedStudentIds={['science_notebook', 'interest_choice', 'team_prototype']}
         onStudentViewed={() => {}}
         onNext={() => {}}
         onPrev={() => {}}
       />
     );
-    expect(screen.getByRole('button', { name: /새롭게 떠오른 꿈 후보 보기/ })).not.toBeDisabled();
+    expect(screen.getByRole('button', { name: /전체 기록으로 다시 추천받기/ })).not.toBeDisabled();
   });
 
-  it('6. 처음 직업 한 가지에서 서로 다른 꿈 후보 세 가지로 가능성이 넓어진다', () => {
+  it('6. 추천 비교는 처음 장에서 다시 추천 장으로 넘겨 확인한다', () => {
     render(<GrowthDeltaScreen onNext={() => {}} onPrev={() => {}} />);
-    expect(screen.getByRole('heading', { name: /소프트웨어 개발자/ })).toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: /환경공학자/ })).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /넓어진 꿈 후보를 먼저 확인해 주세요/ })).toBeDisabled();
+    expect(screen.getByRole('heading', { name: /코딩 메이커 교실/ })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /과학 탐구 교실/ })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /다시 추천 장을 먼저 확인해 주세요/ })).toBeDisabled();
 
-    fireEvent.click(screen.getByRole('button', { name: '넓어진 꿈 →' }));
-    expect(screen.getByRole('heading', { name: /환경공학자/ })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /과학 커뮤니케이터/ })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /환경 문제를 해결하는 소프트웨어 개발자/ })).toBeInTheDocument();
-    expect(screen.queryByText(/점 →|현재 1위|단서 점수/)).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /하늘이의 다음 탐색 정하기/ })).not.toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: '다시 추천 →' }));
+    expect(screen.getByRole('heading', { name: /과학 탐구 교실/ })).toBeInTheDocument();
+    expect(screen.getByText('네 활동의 점수가 어떻게 달라졌는지 보기')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /내가 마지막으로 판단하기/ })).not.toBeDisabled();
   });
 
   it('7. 최종 판단은 OX 퀴즈가 아니라 확인 장과 학생 선택으로 마친다', () => {
@@ -104,15 +99,15 @@ describe('FairnessLab v5 paged student flow', () => {
     rerender(
       <GrowthHumanCheckScreen
         checklist={['check_sources', 'check_missing', 'check_interest', 'check_human_choice']}
-        finalChoice="ask_and_research"
+        finalChoice="ask_student"
         onToggleCheck={() => {}}
         onFinalChoice={() => {}}
         onNext={() => {}}
         onPrev={() => {}}
       />
     );
-    expect(screen.getByText(/하늘이에게 마음이 가는 꿈을 묻고/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /내가 고른 다음 탐색 저장하기/ })).not.toBeDisabled();
+    expect(screen.getByText(/하늘이에게 두 활동을 보여 주고 직접 묻는다/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /내 선택으로 탐구 마치기/ })).not.toBeDisabled();
   });
 
   it('8. 지원자 8명은 그리드가 아니라 한 명씩 넘겨 본다', () => {
@@ -194,20 +189,20 @@ describe('FairnessLab v5 paged student flow', () => {
 
   it('15. 활동 진입과 활동 고르기로 돌아가기가 동작한다', () => {
     render(<FairnessLabPage />);
-    fireEvent.click(screen.getByText(/하늘이의 꿈 탐색 시작하기/));
-    expect(screen.getByText(/AI는 지금 하늘이의 성적표와 코딩 기록만 보고 있어요/)).toBeInTheDocument();
-    expect(screen.getByText('① AI가 받은 자료')).toBeInTheDocument();
+    fireEvent.click(screen.getByText(/활동 추천 실험 시작하기/));
+    expect(screen.getByText(/AI는 하늘의 일부 기록만 보고 있어요/)).toBeInTheDocument();
+    expect(screen.getByText('① AI가 본 기록')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /활동 고르기/ }));
     expect(screen.getByText('AI 금쪽이와 함께하는 공정한 AI 실험실')).toBeInTheDocument();
   });
 
   it('16. 긴 안내 대신 손가락 행동 지시와 접이식 이유 도움말을 제공한다', () => {
     render(<FairnessLabPage />);
-    fireEvent.click(screen.getByText(/하늘이의 꿈 탐색 시작하기/));
+    fireEvent.click(screen.getByText(/활동 추천 실험 시작하기/));
     expect(screen.getByText('이 화면에서는')).toBeInTheDocument();
-    expect(screen.getByText(/AI가 받은 하늘이의 자료를 살펴보세요/)).toBeInTheDocument();
+    expect(screen.getByText(/금쪽이에게 추천을 부탁할 준비/)).toBeInTheDocument();
     fireEvent.click(screen.getByLabelText('이 활동을 하는 이유 보기'));
-    expect(screen.getByText(/어떤 정보로 진로를 떠올렸는지 알아야/)).toBeInTheDocument();
+    expect(screen.getByText(/어떤 정보만 보고 있는지 먼저 알아야/)).toBeInTheDocument();
     expect(screen.queryByText('내가 할 일')).not.toBeInTheDocument();
   });
 
@@ -222,7 +217,7 @@ describe('FairnessLab v5 paged student flow', () => {
   it('18. 금쪽이 대화는 작은 제안일 뿐 진행 조건이 아니다', () => {
     render(<GrowthInitialScreen onNext={() => {}} />);
     expect(screen.getByText('금쪽이와도 대화해 보세요')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /AI가 떠올린 첫 직업 보기/ })).not.toBeDisabled();
+    expect(screen.getByRole('button', { name: /AI의 첫 추천 받아 보기/ })).not.toBeDisabled();
     expect(screen.queryByText(/대화 방법을 먼저 골라/)).not.toBeInTheDocument();
   });
 
@@ -233,8 +228,8 @@ describe('FairnessLab v5 paged student flow', () => {
     first.unmount();
 
     render(<GrowthTempRecScreen questionId="why" onQuestion={() => {}} onNext={() => {}} onPrev={() => {}} />);
-    expect(screen.getByText(/정보 성적이 높고 코딩 과제를 꾸준히/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /성적표에 없는 하늘이의 모습 보기/ })).not.toBeDisabled();
+    expect(screen.getByText(/온라인 기록에서 코딩 관련 단서가 가장 많이/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /AI가 놓친 기록 찾아보기/ })).not.toBeDisabled();
   });
 
   it('20. 완료 화면에서 현재 선택이 반영된 탐구 기록을 확인한다', () => {
@@ -243,13 +238,13 @@ describe('FairnessLab v5 paged student flow', () => {
       mode: 'growth',
       growthStep: 5,
       growthQuestionId: 'missing',
-      growthFinalChoice: 'ask_and_research',
+      growthFinalChoice: 'ask_student',
       isGrowthCompleted: true
     }));
     render(<FairnessLabPage />);
     fireEvent.click(screen.getByRole('button', { name: /내 탐구 기록 보기/ }));
     const dialog = screen.getByRole('dialog', { name: /공정한 AI 실험실 나의 탐구 기록/ });
-    expect(dialog).toHaveTextContent(/내가 AI에게 던진 질문:.*하늘이가 좋아하는 일도 알고 있어/s);
-    expect(dialog).toHaveTextContent(/내가 고른 다음 행동:.*하늘이에게/s);
+    expect(dialog).toHaveTextContent(/내가 AI에게 던진 질문:.*못 본 기록/s);
+    expect(dialog).toHaveTextContent(/내가 최종 선택한 활동 또는 다음 행동:.*하늘이에게/s);
   });
 });

@@ -2,7 +2,7 @@ import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 export const initialFairnessState = {
   version: 'v5',
-  mode: null, // 'growth'(꿈·진로 탐색 내부 호환 키) | 'team' | null
+  mode: null, // 'growth'(활동 추천 내부 호환 키) | 'team' | null
   growthStep: 0, // 기존 화면 구조 유지: 0 Initial ~ 5 Completion
   teamStep: 0, // 0: Candidate, 1: Criteria, 2: Result, 3: Appeal, 4: AppealResult, 5: Principles, 6: Completion
   growthViewedStudentIds: [],
@@ -42,7 +42,7 @@ export function validateAndSanitizeState(rawState) {
   const validGrowthQuestionId = ['why', 'missing', 'alternatives'].includes(rawState.growthQuestionId)
     ? rawState.growthQuestionId
     : null;
-  const validGrowthFinalChoice = ['ask_and_research', 'try_project', 'explore_more'].includes(rawState.growthFinalChoice)
+  const validGrowthFinalChoice = ['science', 'coding', 'ask_student'].includes(rawState.growthFinalChoice)
     ? rawState.growthFinalChoice
     : null;
   const validTeamSpeakerPath = rawState.teamSpeakerPath === 'speaker' || rawState.teamSpeakerPath === 'sample'

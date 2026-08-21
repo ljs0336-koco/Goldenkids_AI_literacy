@@ -94,14 +94,14 @@ describe('useFairnessState Hook Tests (v5)', () => {
       mode: 'growth',
       growthSpeakerPath: 'sample',
       growthQuestionId: 'missing',
-      growthFinalChoice: 'ask_and_research',
+      growthFinalChoice: 'ask_student',
       teamSpeakerPath: 'speaker',
       teamQuestionId: 'roles'
     });
 
     expect(sanitized.growthSpeakerPath).toBe('sample');
     expect(sanitized.growthQuestionId).toBe('missing');
-    expect(sanitized.growthFinalChoice).toBe('ask_and_research');
+    expect(sanitized.growthFinalChoice).toBe('ask_student');
     expect(sanitized.teamSpeakerPath).toBe('speaker');
     expect(sanitized.teamQuestionId).toBe('roles');
 

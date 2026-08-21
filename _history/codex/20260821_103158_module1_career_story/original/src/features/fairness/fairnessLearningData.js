@@ -1,10 +1,10 @@
 export const fairnessLearningBriefs = {
   growth: {
-    eyebrow: '꿈·진로 탐색',
-    title: 'AI가 하늘이의 꿈을 어떻게 떠올렸는지 살펴봐요',
-    doText: 'AI가 첫 직업을 왜 떠올렸는지 묻고, 하늘이의 경험과 관심을 더 알게 된 뒤 꿈 후보가 어떻게 넓어지는지 살펴봐요.',
-    learnText: 'AI의 진로 제안은 받은 자료에 따라 달라지며, 학생의 꿈을 대신 정할 수 없다는 것을 경험해요.',
-    skill: '자료 확인 · AI에게 질문하기 · 가능성 넓히기'
+    eyebrow: '활동 추천 실험',
+    title: 'AI 추천을 질문하고, 빠진 정보를 찾아 다시 판단해요',
+    doText: '금쪽이의 첫 추천에 질문한 뒤, 빠진 기록을 더해 추천이 어떻게 달라지는지 비교해요.',
+    learnText: 'AI 추천은 데이터의 범위에 따라 달라지며, 마지막 선택과 책임은 사람에게 있다는 것을 경험해요.',
+    skill: '데이터 확인 · AI에게 되묻기 · 최종 판단'
   },
   team: {
     eyebrow: '공정한 팀 구성 실험',
@@ -17,12 +17,12 @@ export const fairnessLearningBriefs = {
 
 export const fairnessStepPurposes = {
   growth: [
-    { action: 'AI가 받은 하늘이의 자료를 살펴보세요.', reason: 'AI가 어떤 정보로 진로를 떠올렸는지 알아야 그 말을 얼마나 믿을 수 있을지 생각할 수 있어요.' },
-    { action: 'AI 금쪽이에게 궁금한 점을 하나 물어보세요.', reason: 'AI의 말을 바로 믿기 전에 이유와 빠진 정보를 확인하는 연습이에요.' },
-    { action: 'AI가 처음 보지 못한 하늘이의 모습 4가지를 확인하세요.', reason: '성적표에 나오지 않는 경험과 관심도 진로를 탐색할 때 중요한 자료예요.' },
-    { action: '처음 제안과 새롭게 찾은 꿈 후보를 비교하세요.', reason: 'AI가 보는 자료가 달라지면 떠올리는 가능성도 달라질 수 있어요.' },
-    { action: '하늘이의 꿈을 더 알아볼 다음 행동을 골라 보세요.', reason: 'AI는 가능성을 제안할 수 있지만 학생의 꿈을 대신 결정할 수는 없어요.' },
-    { action: '내가 확인하고 질문한 내용을 돌아보세요.', reason: '다른 진로 추천 AI를 만났을 때도 같은 방법으로 근거와 빠진 정보를 확인할 수 있어요.' }
+    { action: '금쪽이에게 추천을 부탁할 준비를 해요.', reason: 'AI가 어떤 정보만 보고 있는지 먼저 알아야 추천을 제대로 살필 수 있어요.' },
+    { action: '첫 추천에 궁금한 점을 하나 물어봐요.', reason: 'AI 답변을 그대로 받지 않고 이유와 빠진 정보를 되묻는 연습이에요.' },
+    { action: '빠져 있던 기록 3개를 직접 찾아 더해요.', reason: '기록되지 않은 정보도 중요한 데이터일 수 있어요.' },
+    { action: '처음 답과 다시 받은 답을 나란히 비교해요.', reason: '같은 계산 규칙도 데이터가 달라지면 결과가 달라질 수 있어요.' },
+    { action: '확인할 점을 점검하고 내가 최종 선택해요.', reason: 'AI는 선택을 돕지만, 사람의 관심과 상황까지 대신 결정할 수는 없어요.' },
+    { action: '내가 한 행동과 배운 점을 확인해요.', reason: '다른 AI 추천을 만났을 때 다시 쓸 수 있는 방법으로 정리해요.' }
   ],
   team: [
     { action: '지원자 8명의 서로 다른 강점을 살펴봐요.', reason: '한 가지 숫자만으로 사람을 판단하면 중요한 강점을 놓칠 수 있어요.' },
@@ -35,13 +35,13 @@ export const fairnessStepPurposes = {
   ]
 };
 
-export const growthSpeakerPrompt = '내 성적표와 코딩 기록만 보고 떠오르는 직업을 하나 말해 줘. 왜 그렇게 생각했는지도 알려 줘.';
+export const growthSpeakerPrompt = '내 기록을 보고 체험 활동 하나를 추천해 줘. 왜 그런지도 알려 줘.';
 export const teamSpeakerPrompt = '프로젝트 팀을 공정하게 뽑으려면 어떤 기준을 살펴봐야 해?';
 
 export const growthQuestions = [
-  { id: 'why', label: '왜 소프트웨어 개발자를 떠올렸어?', response: '정보 성적이 높고 코딩 과제를 꾸준히 한 기록을 보았기 때문이야. 하지만 이 자료만으로 하늘이의 꿈을 정할 수는 없어.' },
-  { id: 'missing', label: '하늘이가 좋아하는 일도 알고 있어?', response: '아직은 몰라. 지금 받은 자료에는 하늘이가 무엇을 좋아하고 어떤 문제를 해결하고 싶은지 나오지 않아.' },
-  { id: 'alternatives', label: '다른 꿈도 떠올릴 수 있어?', response: '물론이야. 하늘이의 실제 활동과 관심을 더 알게 되면 지금과 다른 직업도 함께 떠올릴 수 있어.' }
+  { id: 'why', label: '왜 이 활동을 추천했어?', response: '온라인 기록에서 코딩 관련 단서가 가장 많이 보였기 때문이야. 하지만 내가 보지 못한 활동이 있다면 추천은 달라질 수 있어.' },
+  { id: 'missing', label: '네가 못 본 기록은 없어?', response: '지금은 온라인 기록 3개만 보고 있어. 교실 활동이나 하늘이가 직접 말한 관심은 아직 확인하지 못했어.' },
+  { id: 'alternatives', label: '다른 가능성도 보여 줄래?', response: '코딩 다음으로 이야기 만들기와 과학 탐구 단서도 보여. 더 다양한 기록을 확인하면 순서가 달라질 수 있어.' }
 ];
 
 export const teamQuestions = [
@@ -51,9 +51,9 @@ export const teamQuestions = [
 ];
 
 export const growthFinalChoices = [
-  { id: 'ask_and_research', title: '하늘이에게 마음이 가는 꿈을 묻고, 그 직업이 하는 일을 함께 찾아본다', note: '당사자의 생각을 먼저 듣고 실제 직업 정보를 확인해요.' },
-  { id: 'try_project', title: '환경 문제를 해결하는 작은 프로젝트를 직접 해 본다', note: '직업 이름만 고르기보다 관련 경험을 해 보며 잘 맞는지 알아봐요.' },
-  { id: 'explore_more', title: '새로운 활동을 더 경험한 뒤 꿈 후보를 다시 살펴본다', note: '지금 보이지 않는 강점과 관심이 앞으로 더 발견될 수 있어요.' }
+  { id: 'science', title: '과학 탐구 교실을 우선 제안한다', note: '넓어진 기록에서 과학 단서가 가장 많았다는 점을 참고해요.' },
+  { id: 'coding', title: '코딩 메이커 교실도 후보로 남긴다', note: '처음 기록에서 강하게 보인 관심을 한 번 더 확인해요.' },
+  { id: 'ask_student', title: '하늘이에게 두 활동을 보여 주고 직접 묻는다', note: '데이터에 없는 현재 관심과 상황을 당사자에게 확인해요.' }
 ];
 
 export const appealConsequences = {

@@ -1,16 +1,16 @@
 /**
  * 공정한 AI 실험실 연산 및 평가 엔진
- * 1. AI 금쪽이 꿈·진로 탐색 연산 엔진
+ * 1. AI 금쪽이 활동 추천 연산 엔진
  * 2. 프로젝트 대표팀 구성 연산 엔진
  */
 
 // ==========================================
-// 1. AI 금쪽이 꿈·진로 탐색 연산 엔진
+// 1. AI 금쪽이 활동 추천 연산 엔진
 // ==========================================
 
 /**
- * 기록에 포함된 진로 관련 단서를 후보별로 합산한다.
- * 이 내부 수치는 화면에 학생의 능력이나 진로 적합도 점수로 노출하지 않는다.
+ * 기록에 포함된 관심 단서를 활동별로 합산한다.
+ * 이 점수는 학생의 능력 점수가 아니라 추천 시뮬레이터가 찾은 패턴의 수치다.
  */
 export function calculateActivityScores(records, options) {
   const safeRecords = Array.isArray(records) ? records : [];
@@ -27,7 +27,7 @@ export function calculateActivityScores(records, options) {
 }
 
 /**
- * 현재 자료에서 관련 단서가 많이 연결된 꿈 후보 순서로 정렬한다.
+ * 활동별 관심 단서 점수가 높은 순서로 정렬한다.
  * 동점이면 데이터에 정의된 원래 순서를 유지한다.
  */
 export function rankActivityRecommendations(records, options) {
@@ -36,7 +36,7 @@ export function rankActivityRecommendations(records, options) {
 }
 
 /**
- * 현재 자료 범위에서 AI가 먼저 떠올릴 꿈 후보 한 가지를 반환한다.
+ * 현재 데이터 범위에서 가장 높은 활동 추천 한 가지를 반환한다.
  */
 export function getTopActivityRecommendation(records, options) {
   return rankActivityRecommendations(records, options)[0] ?? null;

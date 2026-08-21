@@ -13,56 +13,53 @@ export default function GrowthDeltaScreen({ onNext, onPrev }) {
   const [pageIndex, setPageIndex] = useState(0);
   const allRecords = [...activityRecommendationInitialRecords, ...activityRecommendationSupplementRecords];
   const firstRecommendation = getTopActivityRecommendation(activityRecommendationInitialRecords, activityRecommendationOptions);
-  const updatedRecommendation = getTopActivityRecommendation(allRecords, activityRecommendationOptions);
-  const firstRanking = rankActivityRecommendations(activityRecommendationInitialRecords, activityRecommendationOptions);
-  const fullRanking = rankActivityRecommendations(allRecords, activityRecommendationOptions);
+  const expandedSuggestions = rankActivityRecommendations(allRecords, activityRecommendationOptions)
+    .filter(option => option.key !== firstRecommendation.key)
+    .slice(0, 3);
   const isBefore = pageIndex === 0;
-  const recommendation = isBefore ? firstRecommendation : updatedRecommendation;
 
   return (
     <div className="card fair-story-page">
       <div className="text-center mb-4">
         <img src={geumjjokTouched} alt="생각하는 금쪽이" style={{ width: '62px', height: 'auto', marginBottom: '6px' }} />
-        <span className="fair-eyebrow">추천 전후 비교</span>
+        <span className="fair-eyebrow">처음 생각과 넓어진 가능성</span>
         <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '5px 0 8px' }}>
-          {isBefore ? '처음 받은 추천' : '빠진 기록을 더한 뒤의 추천'}
+          {isBefore ? '성적표만 보고 떠올린 직업' : '하늘이를 더 알고 나니 꿈 후보가 넓어졌어요'}
         </h2>
       </div>
 
-      <section className={`fair-record-page ${isBefore ? '' : 'is-viewed'}`} style={{ textAlign: 'center' }}>
-        <small>{isBefore ? '온라인 기록 3개만 사용' : '온라인·오프라인·관심 기록 6개 사용'}</small>
-        <h3 style={{ fontSize: '30px' }}>{recommendation.name}</h3>
-        <p>관심 단서 {recommendation.score}점 · 현재 1위</p>
-        <p className="fair-story-conclusion" style={{ marginTop: '18px' }}>
-          {isBefore
-            ? 'AI가 본 정보가 적을 때는 코딩 단서가 가장 크게 보였어요.'
-            : '교실 활동과 직접 표현한 관심을 더하자 과학 단서가 가장 크게 보였어요.'}
-        </p>
-      </section>
+      {isBefore ? (
+        <section className="fair-record-page" style={{ textAlign: 'center' }}>
+          <small>AI가 받은 자료: 성적표와 코딩 기록</small>
+          <h3 style={{ fontSize: '30px' }}>{firstRecommendation.name}</h3>
+          <p>{firstRecommendation.why}</p>
+          <p className="fair-story-conclusion" style={{ marginTop: '18px' }}>이때 AI는 하늘이의 관심과 직접 한 말을 알지 못했어요.</p>
+        </section>
+      ) : (
+        <section className="fair-career-options" aria-label="새롭게 떠오른 꿈 후보 세 가지">
+          {expandedSuggestions.map(option => (
+            <article key={option.key}>
+              <h3>{option.name}</h3>
+              <p>{option.desc}</p>
+              <small>{option.why}</small>
+            </article>
+          ))}
+        </section>
+      )}
 
       <PageTurnNav
         current={pageIndex}
         total={2}
         onPrev={() => setPageIndex(0)}
         onNext={() => setPageIndex(1)}
-        prevLabel="처음 추천"
-        nextLabel="다시 추천"
+        prevLabel="처음 생각"
+        nextLabel="넓어진 꿈"
       />
 
       {!isBefore && (
         <>
-          <details className="fair-inline-details">
-            <summary>네 활동의 점수가 어떻게 달라졌는지 보기</summary>
-            <div className="flex flex-col gap-2">
-              {activityRecommendationOptions.map(option => {
-                const first = firstRanking.find(item => item.key === option.key);
-                const updated = fullRanking.find(item => item.key === option.key);
-                return <span key={option.key}>{option.shortName}: {first.score}점 → {updated.score}점</span>;
-              })}
-            </div>
-          </details>
           <ConceptBridge>
-            AI의 추천은 고정된 정답이 아니에요. AI가 볼 수 있었던 데이터가 달라지면 같은 계산 방식도 다른 답을 만들 수 있어요.
+            성적표는 하늘이의 일부 모습만 보여 줘요. 경험과 관심, 하늘이의 말을 함께 보니 하나의 직업이 아니라 여러 꿈의 가능성이 보였어요.
           </ConceptBridge>
         </>
       )}
@@ -70,7 +67,7 @@ export default function GrowthDeltaScreen({ onNext, onPrev }) {
       <div className="bottom-nav-bar">
         <button className="btn-outline" onClick={onPrev}>← 이전</button>
         <button className="btn-primary" onClick={onNext} disabled={isBefore} style={{ minHeight: '52px' }}>
-          {isBefore ? '다시 추천 장을 먼저 확인해 주세요' : '내가 마지막으로 판단하기 →'}
+          {isBefore ? '넓어진 꿈 후보를 먼저 확인해 주세요' : '하늘이의 다음 탐색 정하기 →'}
         </button>
       </div>
     </div>

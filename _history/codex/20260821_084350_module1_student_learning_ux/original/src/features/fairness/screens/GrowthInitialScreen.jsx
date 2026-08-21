@@ -5,10 +5,8 @@ import {
   activityRecommendationStudent
 } from '../fairnessData';
 import geumjjokCurious from '../../../assets/geumjjok/금쪽이_표정_궁금.png';
-import SpeakerBridgeCard from '../components/SpeakerBridgeCard';
-import { growthSpeakerPrompt } from '../fairnessLearningData';
 
-export default function GrowthInitialScreen({ speakerPath, onSpeakerPath, onNext }) {
+export default function GrowthInitialScreen({ onNext }) {
   return (
     <div className="card" style={{ maxWidth: '850px', margin: '0 auto' }}>
       <div className="text-center mb-6">
@@ -29,32 +27,32 @@ export default function GrowthInitialScreen({ speakerPath, onSpeakerPath, onNext
       {/* 데이터 상태 요약 카드 */}
       <div 
         style={{ 
-          backgroundColor: 'var(--color-surface-soft)',
+          backgroundColor: '#eff6ff', 
           padding: '18px 20px', 
           borderRadius: 'var(--radius-md)', 
-          border: '1.5px solid var(--color-border-strong)',
+          border: '1.5px solid #bfdbfe', 
           marginBottom: '24px' 
         }}
       >
-        <h3 style={{ fontSize: 'var(--font-size-base)', fontWeight: 'bold', color: 'var(--color-primary-hover)', margin: '0 0 12px 0' }}>
+        <h3 style={{ fontSize: 'var(--font-size-base)', fontWeight: 'bold', color: '#1e40af', margin: '0 0 12px 0' }}>
           📊 AI가 현재 보고 있는 데이터
         </h3>
         <div className="flex flex-col gap-2">
-          <div className="flex justify-between items-center p-3" style={{ backgroundColor: 'white', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)' }}>
+          <div className="flex justify-between items-center p-3" style={{ backgroundColor: 'white', borderRadius: 'var(--radius-sm)', border: '1px solid #dbeafe' }}>
             <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: '600' }}>💻 최근 온라인 학습 기록 ({activityRecommendationInitialRecords.length}개)</span>
-            <span style={{ fontSize: '15px', backgroundColor: '#e9f0ec', color: '#24564f', padding: '3px 10px', borderRadius: '12px', fontWeight: 'bold' }}>
+            <span style={{ fontSize: '13px', backgroundColor: '#ccfbf1', color: '#0f766e', padding: '3px 10px', borderRadius: '12px', fontWeight: 'bold' }}>
               ✅ 기록됨
             </span>
           </div>
           <div className="flex justify-between items-center p-3" style={{ backgroundColor: 'white', borderRadius: 'var(--radius-sm)', border: '1px solid #fee2e2' }}>
             <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: '600' }}>🏫 오프라인 수업 활동과 학생 관심 기록</span>
-            <span style={{ fontSize: '15px', backgroundColor: '#f3e8e4', color: '#8d4a38', padding: '3px 10px', borderRadius: '12px', fontWeight: 'bold' }}>
+            <span style={{ fontSize: '13px', backgroundColor: '#fee2e2', color: '#b91c1c', padding: '3px 10px', borderRadius: '12px', fontWeight: 'bold' }}>
               ⚠️ 누락됨
             </span>
           </div>
           <div className="flex justify-between items-center p-3" style={{ backgroundColor: 'white', borderRadius: 'var(--radius-sm)', border: '1px solid #fef3c7' }}>
             <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: '600' }}>🧭 여러 가능성을 고려한 활동 추천</span>
-            <span style={{ fontSize: '15px', backgroundColor: '#f5efe3', color: '#76582f', padding: '3px 10px', borderRadius: '12px', fontWeight: 'bold' }}>
+            <span style={{ fontSize: '13px', backgroundColor: '#fef3c7', color: '#b45309', padding: '3px 10px', borderRadius: '12px', fontWeight: 'bold' }}>
               ❓ 확인할 수 없음
             </span>
           </div>
@@ -73,7 +71,7 @@ export default function GrowthInitialScreen({ speakerPath, onSpeakerPath, onNext
             style={{
               borderRadius: 'var(--radius-md)',
               border: '1.5px solid var(--color-border)',
-              backgroundColor: 'var(--color-surface-soft)'
+              backgroundColor: '#f8fafc'
             }}
           >
             <div className="flex justify-between items-center mb-1">
@@ -88,21 +86,18 @@ export default function GrowthInitialScreen({ speakerPath, onSpeakerPath, onNext
         ))}
       </div>
 
-      <div className="p-4 mb-6" style={{ backgroundColor: '#f5efe3', borderRadius: 'var(--radius-sm)', border: '1px solid #d7c19c', color: '#71542d', fontSize: 'var(--font-size-sm)', lineHeight: '1.6' }}>
+      <div className="p-4 mb-6" style={{ backgroundColor: '#fffbeb', borderRadius: 'var(--radius-sm)', border: '1px solid #fef08a', color: '#92400e', fontSize: 'var(--font-size-sm)', lineHeight: '1.6' }}>
         💡 <strong>생각해 보기:</strong> AI는 기록된 데이터만 비교할 수 있어요. 온라인 기록만 본 AI는 {activityRecommendationStudent.name}에게 어떤 활동을 추천할까요?
       </div>
-
-      <SpeakerBridgeCard prompt={growthSpeakerPrompt} value={speakerPath} onChange={onSpeakerPath} />
 
       <div className="bottom-nav-bar">
         <div></div>
         <button 
           className="btn-primary" 
           onClick={onNext}
-          disabled={!speakerPath}
           style={{ minHeight: '52px', fontSize: 'var(--font-size-base)' }}
         >
-          {speakerPath ? 'AI 금쪽이의 첫 추천 보기 →' : '대화 방법을 먼저 골라 주세요'}
+          🤖 AI 금쪽이의 첫 추천 보기 →
         </button>
       </div>
     </div>

@@ -8,13 +8,8 @@ export const initialFairnessState = {
   growthViewedStudentIds: [],
   growthChecklist: [],
   growthQuizAnswer: null,
-  growthSpeakerPath: null,
-  growthQuestionId: null,
-  growthFinalChoice: null,
   teamCriteriaWeights: null,
   teamHasViewedAll: false,
-  teamSpeakerPath: null,
-  teamQuestionId: null,
   teamAppealChoice: null,
   teamSelectedPrinciples: [],
   isGrowthCompleted: false,
@@ -36,21 +31,6 @@ export function validateAndSanitizeState(rawState) {
     : 0;
 
   const validMode = rawState.mode === 'growth' || rawState.mode === 'team' ? rawState.mode : null;
-  const validGrowthSpeakerPath = rawState.growthSpeakerPath === 'speaker' || rawState.growthSpeakerPath === 'sample'
-    ? rawState.growthSpeakerPath
-    : null;
-  const validGrowthQuestionId = ['why', 'missing', 'alternatives'].includes(rawState.growthQuestionId)
-    ? rawState.growthQuestionId
-    : null;
-  const validGrowthFinalChoice = ['science', 'coding', 'ask_student'].includes(rawState.growthFinalChoice)
-    ? rawState.growthFinalChoice
-    : null;
-  const validTeamSpeakerPath = rawState.teamSpeakerPath === 'speaker' || rawState.teamSpeakerPath === 'sample'
-    ? rawState.teamSpeakerPath
-    : null;
-  const validTeamQuestionId = ['why', 'roles', 'opportunity'].includes(rawState.teamQuestionId)
-    ? rawState.teamQuestionId
-    : null;
 
   const validTeamCriteriaWeights = rawState.teamCriteriaWeights && typeof rawState.teamCriteriaWeights === 'object'
     ? rawState.teamCriteriaWeights
@@ -64,13 +44,8 @@ export function validateAndSanitizeState(rawState) {
     growthViewedStudentIds: Array.isArray(rawState.growthViewedStudentIds) ? rawState.growthViewedStudentIds : [],
     growthChecklist: Array.isArray(rawState.growthChecklist) ? rawState.growthChecklist : [],
     growthQuizAnswer: typeof rawState.growthQuizAnswer === 'boolean' ? rawState.growthQuizAnswer : null,
-    growthSpeakerPath: validGrowthSpeakerPath,
-    growthQuestionId: validGrowthQuestionId,
-    growthFinalChoice: validGrowthFinalChoice,
     teamCriteriaWeights: validTeamCriteriaWeights,
     teamHasViewedAll: Boolean(rawState.teamHasViewedAll),
-    teamSpeakerPath: validTeamSpeakerPath,
-    teamQuestionId: validTeamQuestionId,
     teamAppealChoice: typeof rawState.teamAppealChoice === 'number' ? rawState.teamAppealChoice : null,
     teamSelectedPrinciples: Array.isArray(rawState.teamSelectedPrinciples) ? rawState.teamSelectedPrinciples : [],
     isGrowthCompleted: Boolean(rawState.isGrowthCompleted),
@@ -115,9 +90,6 @@ export function useFairnessState() {
         growthViewedStudentIds: [],
         growthChecklist: [],
         growthQuizAnswer: null,
-        growthSpeakerPath: null,
-        growthQuestionId: null,
-        growthFinalChoice: null,
         isGrowthCompleted: false
       });
     } else if (mode === 'team') {
@@ -126,8 +98,6 @@ export function useFairnessState() {
         teamStep: 0,
         teamCriteriaWeights: null,
         teamHasViewedAll: false,
-        teamSpeakerPath: null,
-        teamQuestionId: null,
         teamAppealChoice: null,
         teamSelectedPrinciples: [],
         isTeamCompleted: false

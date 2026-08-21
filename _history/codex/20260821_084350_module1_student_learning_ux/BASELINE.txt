@@ -1,0 +1,4 @@
+Created: 2026-08-21T08:43:51.1033293+09:00
+Base HEAD: 9e6ca58da495e2bdca93cfff700c3b8529c37681
+Scope: Module 1 student self-guided learning UX
+Original files copied before edits.

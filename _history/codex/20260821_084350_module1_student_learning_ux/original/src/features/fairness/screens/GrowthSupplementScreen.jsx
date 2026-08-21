@@ -34,7 +34,7 @@ export default function GrowthSupplementScreen({ viewedStudentIds = [], onStuden
       {/* 동일 기준 측정 안내 배너 */}
       <div 
         style={{
-          backgroundColor: '#edf2ee',
+          backgroundColor: '#f0fdfa',
           border: '1.5px solid var(--color-primary)',
           borderRadius: 'var(--radius-md)',
           padding: '16px 20px',
@@ -62,7 +62,7 @@ export default function GrowthSupplementScreen({ viewedStudentIds = [], onStuden
                 padding: '16px 20px',
                 borderRadius: 'var(--radius-md)',
                 border: isViewed ? '1.5px solid var(--color-primary)' : '1.5px dashed var(--color-border)',
-                backgroundColor: isViewed ? '#edf2ee' : 'white',
+                backgroundColor: isViewed ? '#f0fdfa' : 'white',
                 marginBottom: 0,
                 cursor: 'pointer'
               }}
@@ -83,11 +83,11 @@ export default function GrowthSupplementScreen({ viewedStudentIds = [], onStuden
                 </div>
                 <span 
                   style={{
-                    fontSize: '14px',
+                    fontSize: '12px',
                     fontWeight: 'bold',
                     padding: '3px 10px',
                     borderRadius: '12px',
-                    backgroundColor: isViewed ? '#dce9e3' : 'var(--color-surface-soft)',
+                    backgroundColor: isViewed ? '#ccfbf1' : '#f1f5f9',
                     color: isViewed ? 'var(--color-primary-hover)' : 'var(--color-text-muted)'
                   }}
                 >
@@ -95,12 +95,12 @@ export default function GrowthSupplementScreen({ viewedStudentIds = [], onStuden
                 </span>
               </div>
 
-              <div style={{ backgroundColor: 'white', padding: '12px 14px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)' }}>
-                <div style={{ color: 'var(--color-primary-hover)', fontWeight: 'bold', marginBottom: '5px' }}>{record.title}</div>
+              <div style={{ backgroundColor: 'white', padding: '12px 14px', borderRadius: 'var(--radius-sm)', border: '1px solid #e2e8f0', fontSize: 'var(--font-size-sm)' }}>
+                <div style={{ color: '#0f766e', fontWeight: 'bold', marginBottom: '5px' }}>{record.title}</div>
                 <div style={{ color: 'var(--color-text-muted)', lineHeight: '1.5' }}>{record.desc}</div>
                 <div className="flex gap-2 mt-3" style={{ flexWrap: 'wrap' }}>
                   {relatedOptions.map(option => (
-                    <span key={option.key} style={{ fontSize: '14px', padding: '3px 8px', borderRadius: '10px', backgroundColor: '#efede5', color: '#56605b', fontWeight: '600' }}>
+                    <span key={option.key} style={{ fontSize: '12px', padding: '3px 8px', borderRadius: '10px', backgroundColor: '#f1f5f9', color: '#475569', fontWeight: '600' }}>
                       {option.shortName} 단서 +{record.signals[option.key]}
                     </span>
                   ))}

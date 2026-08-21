@@ -1,10 +1,7 @@
 import React from 'react';
 import { getRecommendationDiff, evaluateTeamRoleBalance } from '../fairnessEngine';
-import AiExchangePanel from '../components/AiExchangePanel';
-import ConceptBridge from '../components/ConceptBridge';
-import { teamQuestions } from '../fairnessLearningData';
 
-export default function ResultScreen({ oldResults = [], newResults = [], questionId, onQuestion, onNext, onPrev }) {
+export default function ResultScreen({ oldResults = [], newResults = [], onNext, onPrev }) {
   const diff = getRecommendationDiff(oldResults, newResults);
   const roleBalance = evaluateTeamRoleBalance(newResults);
 
@@ -32,7 +29,7 @@ export default function ResultScreen({ oldResults = [], newResults = [], questio
                 key={c.id} 
                 style={{ 
                   padding: '12px 14px', 
-                  backgroundColor: 'var(--color-surface-soft)',
+                  backgroundColor: '#f8fafc', 
                   borderRadius: 'var(--radius-sm)', 
                   display: 'flex', 
                   justifyContent: 'space-between',
@@ -42,7 +39,7 @@ export default function ResultScreen({ oldResults = [], newResults = [], questio
               >
                 <div>
                   <span style={{ fontWeight: '600' }}>• {c.name}</span>
-                  <span style={{ fontSize: '14px', color: '#68706b', marginLeft: '6px' }}>({c.keyStrength})</span>
+                  <span style={{ fontSize: '12px', color: '#64748b', marginLeft: '6px' }}>({c.keyStrength})</span>
                 </div>
                 <span style={{ color: 'var(--color-text-muted)', fontWeight: 'bold' }}>{c.score}점</span>
               </div>
@@ -51,7 +48,7 @@ export default function ResultScreen({ oldResults = [], newResults = [], questio
         </div>
 
         {/* 우리 기준 추천 명단 */}
-        <div style={{ backgroundColor: '#edf2ee', padding: '18px', borderRadius: 'var(--radius-md)', border: '2px solid var(--color-primary)' }}>
+        <div style={{ backgroundColor: '#f0fdfa', padding: '18px', borderRadius: 'var(--radius-md)', border: '2px solid var(--color-primary)' }}>
           <h3 style={{ fontSize: 'var(--font-size-base)', fontWeight: 'bold', color: 'var(--color-primary-hover)', textAlign: 'center', marginBottom: '12px' }}>
             우리 기준으로 구성한 대표팀
           </h3>
@@ -64,7 +61,7 @@ export default function ResultScreen({ oldResults = [], newResults = [], questio
                   key={c.id} 
                   style={{ 
                     padding: '12px 14px', 
-                    backgroundColor: isNew ? '#dce9e3' : 'white',
+                    backgroundColor: isNew ? '#ccfbf1' : 'white', 
                     borderRadius: 'var(--radius-sm)', 
                     border: isNew ? '1.5px solid var(--color-primary)' : '1px solid var(--color-border)',
                     display: 'flex', 
@@ -76,16 +73,16 @@ export default function ResultScreen({ oldResults = [], newResults = [], questio
                 >
                   <div>
                     <span>• {c.name}</span>
-                    <span style={{ fontSize: '14px', color: '#2f6b63', marginLeft: '6px' }}>({c.keyStrength})</span>
+                    <span style={{ fontSize: '12px', color: '#0f766e', marginLeft: '6px' }}>({c.keyStrength})</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span style={{ fontSize: '15px', fontWeight: 'bold' }}>{c.score}점</span>
+                    <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{c.score}점</span>
                     {isNew ? (
-                      <span style={{ fontSize: '14px', padding: '2px 7px', borderRadius: '10px', backgroundColor: 'var(--color-primary)', color: 'white', fontWeight: 'bold' }}>
+                      <span style={{ fontSize: '11px', padding: '2px 6px', borderRadius: '10px', backgroundColor: 'var(--color-primary)', color: 'white', fontWeight: 'bold' }}>
                         새로 포함
                       </span>
                     ) : (
-                      <span style={{ fontSize: '14px', padding: '2px 7px', borderRadius: '10px', backgroundColor: '#e7e3d9', color: '#56605b' }}>
+                      <span style={{ fontSize: '11px', padding: '2px 6px', borderRadius: '10px', backgroundColor: '#e2e8f0', color: '#475569' }}>
                         그대로 포함
                       </span>
                     )}
@@ -99,13 +96,13 @@ export default function ResultScreen({ oldResults = [], newResults = [], questio
 
       {/* 이번 구성에 포함되지 않은 친구들 안내 */}
       {diff.excluded.length > 0 && (
-        <div className="p-3 mb-6" style={{ backgroundColor: '#f4f1e9', borderRadius: 'var(--radius-sm)', fontSize: '15px', color: '#68706b' }}>
+        <div className="p-3 mb-6" style={{ backgroundColor: '#f8fafc', borderRadius: 'var(--radius-sm)', fontSize: '13px', color: '#64748b' }}>
           ℹ️ <strong>참고:</strong> 기준이 바뀌면서 이번 구성에는 포함되지 않은 친구: {diff.excluded.map(c => c.name).join(', ')}
         </div>
       )}
 
       {/* 2. 우리 대표팀 역할 구성판 */}
-      <div style={{ backgroundColor: 'var(--color-surface-soft)', padding: '20px', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--color-border)', marginBottom: '24px' }}>
+      <div style={{ backgroundColor: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--color-border)', marginBottom: '24px' }}>
         <h3 style={{ fontSize: 'var(--font-size-base)', fontWeight: 'bold', marginBottom: '14px', color: 'var(--color-secondary)' }}>
           🧩 우리 대표팀 역할 구성판
         </h3>
@@ -142,26 +139,15 @@ export default function ResultScreen({ oldResults = [], newResults = [], questio
 
         {/* 역할 부족 시 질문 */}
         {!roleBalance.isBalanced ? (
-          <div style={{ padding: '10px 14px', backgroundColor: '#f5efe3', borderRadius: 'var(--radius-sm)', border: '1px solid #d7c19c', color: '#71542d', fontSize: 'var(--font-size-sm)' }}>
+          <div style={{ padding: '10px 14px', backgroundColor: '#fffbeb', borderRadius: 'var(--radius-sm)', border: '1px solid #fef08a', color: '#92400e', fontSize: 'var(--font-size-sm)' }}>
             🤔 <strong>생각해 보기:</strong> 개인의 특정 점수는 높지만, 프로젝트 팀 전체에 꼭 필요한 역할(기획/제작/협업/발표) 중 빠진 부분은 없나요?
           </div>
         ) : (
-          <div style={{ padding: '10px 14px', backgroundColor: '#edf2ee', borderRadius: 'var(--radius-sm)', border: '1px solid #b8cfc4', color: '#2f6b63', fontSize: 'var(--font-size-sm)' }}>
-            <strong>네 역할 확인:</strong> 4가지 핵심 역할을 맡을 친구들이 이번 추천에 모두 포함되어 있어요. 실제 팀에서도 서로 역할을 나눌 수 있는지는 대화로 확인해 보세요.
+          <div style={{ padding: '10px 14px', backgroundColor: '#f0fdfa', borderRadius: 'var(--radius-sm)', border: '1px solid #99f6e4', color: '#0f766e', fontSize: 'var(--font-size-sm)' }}>
+            🎉 <strong>역할 균형 완벽:</strong> 4가지 핵심 역할을 맡을 친구들이 모두 대표팀에 골고루 포함되었어요!
           </div>
         )}
       </div>
-
-      <AiExchangePanel
-        questions={teamQuestions}
-        selectedId={questionId}
-        onSelect={onQuestion}
-        title="AI의 대표팀 추천에 설명을 요구해요"
-      />
-
-      <ConceptBridge>
-        공정한 AI는 결과만 보여 주는 것으로 충분하지 않아요. 어떤 기준으로 누구를 골랐는지 질문할 수 있어야 하고, 사람은 그 설명을 다시 검토할 수 있어야 해요.
-      </ConceptBridge>
 
       <div className="bottom-nav-bar">
         <button className="btn-outline" onClick={onPrev}>
@@ -170,10 +156,9 @@ export default function ResultScreen({ oldResults = [], newResults = [], questio
         <button 
           className="btn-primary" 
           onClick={onNext}
-          disabled={!questionId}
           style={{ minHeight: '52px', fontSize: 'var(--font-size-base)' }}
         >
-          {questionId ? '이의제기와 재검토 확인하기 →' : 'AI에게 질문을 하나 골라 주세요'}
+          🙋 이의제기 및 재검토 확인하기 →
         </button>
       </div>
     </div>

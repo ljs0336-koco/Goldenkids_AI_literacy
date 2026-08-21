@@ -1,0 +1,107 @@
+.fairness-app {
+  --font-size-sm: 16px;
+  --font-size-base: 17px;
+  --font-size-lg: 21px;
+  --font-size-xl: 27px;
+  --font-size-2xl: 35px;
+}
+
+.fairness-app main { padding-bottom: 56px; }
+.fairness-app .card { line-height: 1.62; }
+.fairness-app button { font-size: 16px; }
+.fairness-app .app-header-button { min-height: 46px; }
+
+.fair-learning-brief,
+.fair-step-purpose,
+.fair-speaker-card,
+.fair-exchange,
+.fair-concept-bridge,
+.fair-learning-receipt {
+  max-width: 900px;
+  margin: 0 auto 22px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.fair-learning-brief { padding: 24px 26px; }
+.fair-learning-brief h2 { margin: 5px 0 18px; font-size: 25px; line-height: 1.35; }
+.fair-learning-brief-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.fair-learning-brief-grid p { margin: 0; padding: 14px 16px; background: var(--color-surface-soft); border-radius: var(--radius-md); }
+.fair-learning-brief-grid strong { display: block; margin-bottom: 5px; color: var(--color-primary-hover); }
+.fair-learning-brief-grid span { color: var(--color-text-muted); }
+.fair-eyebrow { color: var(--color-primary-hover); font-size: 14px; font-weight: 800; letter-spacing: .04em; }
+.fair-skill-chip { display: inline-flex; gap: 8px; margin: 16px 0 0; padding: 7px 11px; border: 1px solid #c9d4ce; border-radius: var(--radius-full); color: var(--color-text-muted); font-size: 15px; }
+
+.fair-step-purpose { display: grid; grid-template-columns: 1fr 1.3fr; overflow: hidden; }
+.fair-step-purpose div { padding: 13px 17px; display: flex; gap: 9px; align-items: flex-start; }
+.fair-step-purpose div + div { border-left: 1px solid var(--color-border); background: var(--color-surface-soft); }
+.fair-step-purpose strong { flex: 0 0 auto; color: var(--color-primary-hover); }
+
+.fair-speaker-card { display: grid; grid-template-columns: 120px 1fr; gap: 22px; padding: 22px; align-items: center; }
+.fair-speaker-card > img { width: 112px; max-height: 126px; object-fit: contain; }
+.fair-speaker-card h3, .fair-exchange h3 { margin: 4px 0 8px; font-size: 22px; }
+.fair-speaker-card blockquote { margin: 12px 0; padding: 14px 17px; border-left: 4px solid var(--color-primary); background: var(--color-surface-soft); font-weight: 700; }
+.fair-speaker-card p, .fair-exchange > p { color: var(--color-text-muted); margin: 0 0 14px; }
+.fair-choice-row, .fair-question-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+.fair-choice-row button, .fair-question-grid button, .fair-final-choice {
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: #fff;
+  color: var(--color-text-main);
+  padding: 11px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.fair-choice-row button.is-selected, .fair-question-grid button.is-selected, .fair-final-choice.is-selected {
+  border-color: var(--color-primary);
+  background: #e9f0ec;
+  color: var(--color-primary-hover);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.fair-exchange { padding: 22px; background: #fbfaf5; }
+.fair-question-grid { margin: 14px 0; }
+.fair-ai-response { margin-top: 16px; padding: 17px 18px; border: 1px solid #c9d4ce; border-radius: var(--radius-md); background: #eef3ef; }
+.fair-ai-response p { margin: 6px 0 9px; }
+.fair-ai-response small { color: var(--color-text-muted); font-size: 14px; }
+.fair-concept-bridge { padding: 17px 20px; border-left: 5px solid var(--color-accent-warm); background: #f5efe4; }
+.fair-concept-bridge strong { color: #71542d; }
+.fair-concept-bridge p { margin: 5px 0 0; color: #5f5547; }
+
+.fair-final-grid { display: grid; gap: 11px; margin: 14px 0 22px; }
+.fair-final-choice { text-align: left; padding: 15px 17px; }
+.fair-final-choice strong, .fair-final-choice span { display: block; }
+.fair-final-choice span { margin-top: 3px; color: var(--color-text-muted); font-size: 15px; font-weight: 500; }
+.fair-final-choice.is-selected span { color: #45635b; }
+
+.fair-help-backdrop { position: fixed; inset: 0; z-index: 1000; display: flex; justify-content: flex-end; background: rgba(35, 40, 38, .38); }
+.fair-help-drawer { width: min(430px, 92vw); height: 100%; overflow: auto; padding: 38px 28px; background: var(--color-surface); box-shadow: -12px 0 35px rgba(35, 40, 38, .18); }
+.fair-help-drawer h2 { margin: 6px 0 24px; font-size: 30px; }
+.fair-help-drawer p, .fair-help-drawer li { font-size: 17px; line-height: 1.7; }
+.fair-help-drawer li + li { margin-top: 8px; }
+.fair-help-close { float: right; width: 44px; height: 44px; border: 1px solid var(--color-border); border-radius: 50%; background: #fff; font-size: 28px !important; cursor: pointer; }
+
+.fair-learning-receipt { padding: 24px; text-align: left; background: #eef3ef; border-color: #c5d2ca; }
+.fair-learning-receipt h3 { margin: 0 0 14px; color: var(--color-primary-hover); font-size: 23px; }
+.fair-learning-receipt dl { display: grid; grid-template-columns: 155px 1fr; gap: 10px 14px; margin: 0; }
+.fair-learning-receipt dt { font-weight: 800; color: var(--color-primary-hover); }
+.fair-learning-receipt dd { margin: 0; }
+.fair-badge { display: inline-block; margin-bottom: 10px; padding: 7px 12px; border-radius: var(--radius-full); background: var(--color-primary); color: white; font-weight: 800; }
+
+.fair-consequence { padding: 20px; border: 1px solid var(--color-border); border-radius: var(--radius-md); margin-bottom: 22px; }
+.fair-consequence.warning { background: #f6eae6; border-color: #d6aaa0; }
+.fair-consequence.success { background: #eaf1ed; border-color: #afc6b8; }
+.fair-consequence.caution { background: #f5efe3; border-color: #d7c19c; }
+.fair-consequence h3 { margin: 0 0 8px; }
+.fair-consequence p { margin: 6px 0; }
+
+@media (max-width: 700px) {
+  .fairness-app { --font-size-2xl: 30px; }
+  .fair-learning-brief-grid, .fair-step-purpose, .fair-speaker-card { grid-template-columns: 1fr; }
+  .fair-step-purpose div + div { border-left: 0; border-top: 1px solid var(--color-border); }
+  .fair-speaker-card > img { width: 82px; }
+  .fair-learning-receipt dl { grid-template-columns: 1fr; gap: 3px; }
+  .fair-learning-receipt dd { margin-bottom: 10px; }
+}

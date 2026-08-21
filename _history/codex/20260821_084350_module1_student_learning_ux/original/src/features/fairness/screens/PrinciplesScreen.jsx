@@ -44,7 +44,7 @@ export default function PrinciplesScreen({ selectedPrinciples = [], setSelectedP
                 padding: '16px 20px',
                 borderRadius: 'var(--radius-md)',
                 border: isSelected ? '2px solid var(--color-primary)' : '1.5px solid var(--color-border)',
-                backgroundColor: isSelected ? '#edf2ee' : isFull ? 'var(--color-surface-soft)' : 'white',
+                backgroundColor: isSelected ? '#f0fdfa' : isFull ? '#f8fafc' : 'white',
                 opacity: isFull ? 0.7 : 1,
                 cursor: isFull ? 'not-allowed' : 'pointer',
                 display: 'flex',
@@ -66,7 +66,7 @@ export default function PrinciplesScreen({ selectedPrinciples = [], setSelectedP
                   fontWeight: 'bold',
                   padding: '4px 10px',
                   borderRadius: '12px',
-                  backgroundColor: isSelected ? '#dce9e3' : 'var(--color-surface-soft)',
+                  backgroundColor: isSelected ? '#ccfbf1' : '#f1f5f9',
                   color: isSelected ? 'var(--color-primary-hover)' : 'var(--color-text-muted)'
                 }}
               >

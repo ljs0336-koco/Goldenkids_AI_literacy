@@ -16,7 +16,6 @@ import AppealResultScreen from './screens/AppealResultScreen';
 import PrinciplesScreen from './screens/PrinciplesScreen';
 import ProgressStepper from '../../components/ProgressStepper';
 import FairnessWorksheet from './print/FairnessWorksheet';
-import { initialFairnessState } from './useFairnessState';
 
 describe('FairnessLab v5 UI & Flow Integration Tests', () => {
   beforeEach(() => {
@@ -109,53 +108,54 @@ describe('FairnessLab v5 UI & Flow Integration Tests', () => {
   });
 
   /* 7. 활동 추천 5: GrowthHumanCheckScreen */
-  it('7. [활동 추천 5단계] 퀴즈 정답 강요 없이 4개 확인과 학생의 최종 선택으로 완료한다', () => {
+  it('7. [활동 추천 5단계] 4개 체크리스트 확인 및 퀴즈 정답(X) 선택 시에만 완료 버튼이 활성화된다', () => {
     const { rerender } = render(
       <GrowthHumanCheckScreen 
         checklist={['check_sources', 'check_missing']} 
-        finalChoice={null}
+        quizAnswer={null} 
         onToggleCheck={() => {}} 
-        onFinalChoice={() => {}}
+        onAnswerQuiz={() => {}} 
         onNext={() => {}} 
         onPrev={() => {}} 
       />
     );
 
-    expect(screen.getByRole('button', { name: /확인 4개와 나의 선택을 완료해 주세요/i })).toBeDisabled();
-    expect(screen.queryByText(/정답이에요!/i)).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /체크리스트와 퀴즈 정답을 완료해 주세요/i })).toBeDisabled();
 
-    // 모든 확인을 마쳤더라도 학생 선택 전에는 완료하지 않는다.
+    // 4 checks completed, quiz answered incorrectly (O/true)
     rerender(
       <GrowthHumanCheckScreen 
         checklist={['check_sources', 'check_missing', 'check_interest', 'check_human_choice']} 
-        finalChoice={null}
+        quizAnswer={true} 
         onToggleCheck={() => {}} 
-        onFinalChoice={() => {}}
+        onAnswerQuiz={() => {}} 
         onNext={() => {}} 
         onPrev={() => {}} 
       />
     );
 
-    expect(screen.getByRole('button', { name: /확인 4개와 나의 선택을 완료해 주세요/i })).toBeDisabled();
+    expect(screen.getByText(/다시 생각해 보세요!/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /체크리스트와 퀴즈 정답을 완료해 주세요/i })).toBeDisabled();
 
-    // 세 선택 중 어느 것이든 이유를 읽고 선택하면 완료할 수 있다.
+    // 4 checks completed, quiz answered correctly (X/false)
     rerender(
       <GrowthHumanCheckScreen 
         checklist={['check_sources', 'check_missing', 'check_interest', 'check_human_choice']} 
-        finalChoice="ask_student"
+        quizAnswer={false} 
         onToggleCheck={() => {}} 
-        onFinalChoice={() => {}}
+        onAnswerQuiz={() => {}} 
         onNext={() => {}} 
         onPrev={() => {}} 
       />
     );
 
-    expect(screen.getByRole('button', { name: /내 선택으로 탐구 마치기/i })).not.toBeDisabled();
+    expect(screen.getByText(/정답이에요!/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /탐구 완료하기/i })).not.toBeDisabled();
   });
 
   /* 8. 대표팀 활동 1: CandidateScreen */
   it('8. [대표팀 1단계] CandidateScreen: 지원자 8명의 4대 역량과 이전 대회 참여 경험(회수 원자료)이 렌더링된다', () => {
-    render(<CandidateScreen hasViewedAll={true} speakerPath="sample" onSpeakerPath={() => {}} onNext={() => {}} onPrev={() => {}} />);
+    render(<CandidateScreen hasViewedAll={true} onNext={() => {}} onPrev={() => {}} />);
 
     expect(screen.getByText('프로젝트 대표팀 지원자 8명의 기록을 살펴봐요')).toBeInTheDocument();
     expect(screen.getAllByText(/이전 대회 참여 경험:/).length).toBe(8);
@@ -202,28 +202,26 @@ describe('FairnessLab v5 UI & Flow Integration Tests', () => {
   });
 
   /* 11. 대표팀 활동 4: AppealScreen */
-  it('11. [대표팀 4단계] AppealScreen: 모든 대응을 탐색할 수 있고 선택의 결과를 먼저 보여 준다', () => {
+  it('11. [대표팀 4단계] AppealScreen: 한결의 협업 기록 정정(70->92) 및 2번 선택 시에만 진행 허용', () => {
     render(<AppealScreen appealChoice={1} onSelectChoice={() => {}} onProceed={() => {}} onPrev={() => {}} />);
 
-    expect(screen.getByText(/잘못된 70점이 데이터에 남고/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /이 선택 뒤에 생기는 일 확인하기/i })).not.toBeDisabled();
-    expect(screen.queryByText(/올바른 결정을 선택해 주세요/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/공정하지 않아요/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /올바른 결정을 선택해 주세요/i })).toBeDisabled();
   });
 
   /* 12. 대표팀 활동 5: AppealResultScreen */
   it('12. [대표팀 5단계] AppealResultScreen: 한결의 총점 정정 및 대표팀 재계산 결과가 표시된다', () => {
     render(
       <AppealResultScreen 
-        appealChoice={2}
         criteriaWeights={{ problemDiscovery: 20, digitalMaking: 25, communicationCollaboration: 30, presentation: 15, opportunity: 10 }} 
         onNext={() => {}} 
         onPrev={() => {}} 
       />
     );
 
-    expect(screen.getByText(/한결 학생의 기록은 어떻게 되었나요/i)).toBeInTheDocument();
-    expect(screen.getByText(/의사소통·협력: 70점 ➔ 92점/i)).toBeInTheDocument();
-    expect(screen.getByText(/데이터와 절차를 함께 바로잡는 선택/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/한결 학생의 기록 및 총점 정정/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/의사소통·협력: 70점 ➔/i)).toBeInTheDocument();
+    expect(screen.getByText(/92점/i)).toBeInTheDocument();
   });
 
   /* 13. 대표팀 활동 6: PrinciplesScreen */
@@ -271,67 +269,5 @@ describe('FairnessLab v5 UI & Flow Integration Tests', () => {
 
     // Main selection
     expect(screen.getByText('AI 금쪽이와 함께하는 공정한 AI 실험실')).toBeInTheDocument();
-  });
-
-  it('16. [학습 안내] 활동에 들어가면 할 일, 배울 점, AI 리터러시 연결이 바로 보인다', () => {
-    render(<FairnessLabPage />);
-    fireEvent.click(screen.getByText(/활동 추천 실험 시작하기/));
-
-    expect(screen.getByText('내가 할 일')).toBeInTheDocument();
-    expect(screen.getByText('여기서 배우는 것')).toBeInTheDocument();
-    expect(screen.getByText(/데이터 확인 · AI에게 되묻기 · 최종 판단/)).toBeInTheDocument();
-    expect(screen.getAllByText('지금 할 일').length).toBeGreaterThan(0);
-  });
-
-  it('17. [학생 헤더] 모듈 1에는 도움말이 있고 교사 도구와 발표 화면은 노출되지 않는다', () => {
-    render(<FairnessLabPage />);
-
-    expect(screen.getByRole('button', { name: /현재 활동 도움말 열기/i })).toBeInTheDocument();
-    expect(screen.queryByText('교사 도구')).not.toBeInTheDocument();
-    expect(screen.queryByText(/발표 화면/)).not.toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: /현재 활동 도움말 열기/i }));
-    expect(screen.getByRole('dialog', { name: /무엇을 하면 되나요/i })).toBeInTheDocument();
-  });
-
-  it('18. [스피커 연결] 실제 금쪽이 대화 또는 준비된 응답을 고른 뒤 첫 추천으로 진행한다', () => {
-    const onNext = () => {};
-    render(<GrowthInitialScreen speakerPath={null} onSpeakerPath={() => {}} onNext={onNext} />);
-
-    expect(screen.getByRole('button', { name: /대화 방법을 먼저 골라 주세요/i })).toBeDisabled();
-
-    const { unmount } = render(<GrowthInitialScreen speakerPath="sample" onSpeakerPath={() => {}} onNext={onNext} />);
-    expect(screen.getAllByRole('button', { name: /AI 금쪽이의 첫 추천 보기/i }).at(-1)).not.toBeDisabled();
-    unmount();
-  });
-
-  it('19. [AI 핑퐁] 학생이 질문을 골라야 준비된 AI 설명을 확인하고 다음으로 간다', () => {
-    const { rerender } = render(
-      <GrowthTempRecScreen questionId={null} onQuestion={() => {}} onNext={() => {}} onPrev={() => {}} />
-    );
-    expect(screen.getByRole('button', { name: /AI에게 질문을 하나 골라 주세요/i })).toBeDisabled();
-
-    rerender(<GrowthTempRecScreen questionId="missing" onQuestion={() => {}} onNext={() => {}} onPrev={() => {}} />);
-    expect(screen.getByText(/온라인 기록 3개만 보고 있어/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /빠진 기록 찾아보기/i })).not.toBeDisabled();
-  });
-
-  it('20. [탐구 기록] 완료 화면에서 현재 선택이 반영된 활동지를 바로 확인한다', () => {
-    window.localStorage.setItem('ai-literacy-lab:v5', JSON.stringify({
-      ...initialFairnessState,
-      mode: 'growth',
-      growthStep: 5,
-      growthSpeakerPath: 'sample',
-      growthQuestionId: 'missing',
-      growthFinalChoice: 'ask_student',
-      isGrowthCompleted: true
-    }));
-
-    render(<FairnessLabPage />);
-    fireEvent.click(screen.getByRole('button', { name: /내 탐구 기록 보기/i }));
-
-    const recordDialog = screen.getByRole('dialog', { name: /공정한 AI 실험실 나의 탐구 기록/i });
-    expect(recordDialog).toHaveTextContent(/내가 AI에게 던진 질문:.*못 본 기록/s);
-    expect(recordDialog).toHaveTextContent(/내가 최종 선택한 활동 또는 다음 행동:.*하늘이에게/s);
   });
 });

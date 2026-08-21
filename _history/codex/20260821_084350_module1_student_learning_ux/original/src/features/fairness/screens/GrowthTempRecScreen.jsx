@@ -6,10 +6,8 @@ import {
 } from '../fairnessData';
 import { getTopActivityRecommendation, rankActivityRecommendations } from '../fairnessEngine';
 import geumjjokDoctor from '../../../assets/geumjjok/금쪽이_캐릭터_박사_안경콧수염.png';
-import AiExchangePanel from '../components/AiExchangePanel';
-import { growthQuestions } from '../fairnessLearningData';
 
-export default function GrowthTempRecScreen({ questionId, onQuestion, onNext, onPrev }) {
+export default function GrowthTempRecScreen({ onNext, onPrev }) {
   const ranking = rankActivityRecommendations(activityRecommendationInitialRecords, activityRecommendationOptions);
   const firstRecommendation = getTopActivityRecommendation(activityRecommendationInitialRecords, activityRecommendationOptions);
 
@@ -32,41 +30,41 @@ export default function GrowthTempRecScreen({ questionId, onQuestion, onNext, on
       {/* 임시 추천 카드 */}
       <div 
         style={{
-          backgroundColor: '#eef1ef',
-          border: '2px solid var(--color-primary)',
+          backgroundColor: '#eff6ff',
+          border: '2px solid #3b82f6',
           borderRadius: 'var(--radius-lg)',
           padding: '24px',
           textAlign: 'center',
           marginBottom: '24px'
         }}
       >
-        <div style={{ fontSize: '15px', fontWeight: 'bold', color: '#405e69', marginBottom: '4px' }}>
+        <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#1d4ed8', marginBottom: '4px' }}>
           ⭐ 온라인 기록 기준 첫 추천
         </div>
-        <h3 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'bold', color: 'var(--color-primary-hover)', margin: '0 0 12px 0' }}>
+        <h3 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'bold', color: '#1e3a8a', margin: '0 0 12px 0' }}>
           {firstRecommendation.name}
         </h3>
 
         <div className="flex justify-center gap-3 mb-4" style={{ flexWrap: 'wrap' }}>
           {ranking.map(option => (
-            <span key={option.key} style={{ fontSize: 'var(--font-size-sm)', backgroundColor: 'white', padding: '6px 12px', borderRadius: '12px', border: '1px solid var(--color-border)' }}>
+            <span key={option.key} style={{ fontSize: 'var(--font-size-sm)', backgroundColor: 'white', padding: '6px 12px', borderRadius: '12px', border: '1px solid #bfdbfe' }}>
               {option.shortName}: {option.score}점
             </span>
           ))}
         </div>
 
-        <p style={{ margin: '0 0 12px 0', fontSize: 'var(--font-size-base)', fontWeight: '600', color: 'var(--color-primary-hover)' }}>
+        <p style={{ margin: '0 0 12px 0', fontSize: 'var(--font-size-base)', fontWeight: '600', color: '#1e40af' }}>
           "온라인 기록에서는 코딩 활동과 관련된 단서가 가장 많이 보여요."
         </p>
 
         {/* 경고 박스 */}
         <div 
           style={{
-            backgroundColor: '#f3e8e4',
-            border: '1.5px solid #d6aaa0',
+            backgroundColor: '#fef2f2',
+            border: '1.5px solid #f87171',
             borderRadius: 'var(--radius-md)',
             padding: '12px 16px',
-            color: '#78453c',
+            color: '#991b1b',
             fontSize: 'var(--font-size-sm)',
             lineHeight: '1.5',
             textAlign: 'left'
@@ -99,19 +97,12 @@ export default function GrowthTempRecScreen({ questionId, onQuestion, onNext, on
                 <div style={{ fontWeight: 'bold' }}>• {record.title}</div>
                 <div style={{ color: 'var(--color-text-muted)', marginTop: '2px' }}>{record.desc}</div>
               </div>
-              <span style={{ color: '#405e69', fontWeight: 'bold', flexShrink: 0, marginLeft: '12px' }}>
+              <span style={{ color: '#1d4ed8', fontWeight: 'bold', flexShrink: 0, marginLeft: '12px' }}>
                 {record.source}
               </span>
             </div>
           ))}
       </div>
-
-      <AiExchangePanel
-        questions={growthQuestions}
-        selectedId={questionId}
-        onSelect={onQuestion}
-        title="첫 추천을 그대로 넘기지 말고 하나 물어봐요"
-      />
 
       <div className="bottom-nav-bar">
         <button className="btn-outline" onClick={onPrev}>
@@ -120,10 +111,9 @@ export default function GrowthTempRecScreen({ questionId, onQuestion, onNext, on
         <button 
           className="btn-primary" 
           onClick={onNext}
-          disabled={!questionId}
           style={{ minHeight: '52px', fontSize: 'var(--font-size-base)' }}
         >
-          {questionId ? '빠진 기록 찾아보기 →' : 'AI에게 질문을 하나 골라 주세요'}
+          🔍 빠진 기록 찾아보기 →
         </button>
       </div>
     </div>

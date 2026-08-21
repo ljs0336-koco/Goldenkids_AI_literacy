@@ -87,7 +87,7 @@ export const activityRecommendationSupplementRecords = [
   },
   {
     id: "team_prototype",
-    source: "교실 관찰 기록",
+    source: "교사 관찰 기록",
     title: "모둠에서 종이 다리 모형 실험을 이끌었음",
     desc: "친구들과 역할을 나누고 여러 번 고쳐 더 튼튼하게 만들었어요.",
     signals: { coding: 1, science: 3, story: 0, collaboration: 5 }
@@ -104,7 +104,7 @@ export const activityRecommendationChecklist = [
 export const activityRecommendationExitQuiz = {
   question: "AI가 추천한 활동은 그 학생이 반드시 선택해야 하는 가장 알맞은 활동이다.",
   correctAnswer: false, // ❌ 거짓
-  explanation: "AI는 입력된 기록에서 보이는 패턴만 비교해요. 추천은 선택지 중 하나이며 당사자의 관심과 상황, 새로운 가능성을 함께 살펴 최종 선택해야 해요."
+  explanation: "AI는 입력된 기록에서 보이는 패턴만 비교해요. 추천은 선택지 중 하나이며 학생과 교사가 관심, 상황, 새로운 가능성을 함께 살펴 최종 선택해야 해요."
 };
 
 
@@ -300,7 +300,7 @@ export const growthAwardChecklist = [
   { id: "check_both_records", text: "시작 기록과 마지막 기록이 모두 있는가?" },
   { id: "check_same_standard", text: "같은 기준으로 측정한 기록인가?" },
   { id: "check_no_missing", text: "누락되거나 잘못 입력된 기록은 없는가?" },
-  { id: "check_teacher_obs", text: "숫자 외에 사람의 관찰과 실제 활동 과정도 확인했는가?" }
+  { id: "check_teacher_obs", text: "숫자 외에 교사의 관찰과 학생의 활동 과정도 확인했는가?" }
 ];
 
 export const growthAwardExitQuiz = {

@@ -87,32 +87,4 @@ describe('useFairnessState Hook Tests (v5)', () => {
 
     expect(result.current.state).toEqual(initialFairnessState);
   });
-
-  it('5. 학생 대화 경로와 질문·최종 선택은 허용된 값만 저장한다', () => {
-    const sanitized = validateAndSanitizeState({
-      ...initialFairnessState,
-      mode: 'growth',
-      growthSpeakerPath: 'sample',
-      growthQuestionId: 'missing',
-      growthFinalChoice: 'ask_student',
-      teamSpeakerPath: 'speaker',
-      teamQuestionId: 'roles'
-    });
-
-    expect(sanitized.growthSpeakerPath).toBe('sample');
-    expect(sanitized.growthQuestionId).toBe('missing');
-    expect(sanitized.growthFinalChoice).toBe('ask_student');
-    expect(sanitized.teamSpeakerPath).toBe('speaker');
-    expect(sanitized.teamQuestionId).toBe('roles');
-
-    const rejected = validateAndSanitizeState({
-      ...initialFairnessState,
-      growthSpeakerPath: 'microphone_recording',
-      growthQuestionId: 'injected-question',
-      growthFinalChoice: 'ai_decides'
-    });
-    expect(rejected.growthSpeakerPath).toBeNull();
-    expect(rejected.growthQuestionId).toBeNull();
-    expect(rejected.growthFinalChoice).toBeNull();
-  });
 });

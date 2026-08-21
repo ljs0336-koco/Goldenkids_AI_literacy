@@ -7,7 +7,6 @@ import {
   projectTeamCandidates
 } from '../fairnessData';
 import { getTopActivityRecommendation } from '../fairnessEngine';
-import { growthFinalChoices, growthQuestions } from '../fairnessLearningData';
 
 export default function FairnessWorksheet({ state }) {
   const isGrowth = state?.mode === 'growth';
@@ -24,16 +23,9 @@ export default function FairnessWorksheet({ state }) {
     allRecommendationRecords,
     activityRecommendationOptions
   );
-  const growthQuestion = growthQuestions.find(item => item.id === state?.growthQuestionId)?.label;
-  const growthChoice = growthFinalChoices.find(item => item.id === state?.growthFinalChoice)?.title;
-  const appealSummary = {
-    1: '결과를 그대로 두었을 때 잘못된 데이터가 남는 문제를 확인함',
-    2: '한결의 기록을 70점에서 92점으로 정정하고 같은 기준으로 다시 계산함',
-    3: '기록은 그대로 둔 채 한결만 예외로 포함할 때 생기는 문제를 확인함'
-  }[state?.teamAppealChoice];
 
   return (
-    <div className="fairness-worksheet" style={{ padding: '20px' }}>
+    <div className="print-only" style={{ display: 'none', padding: '20px' }}>
       <style>
         {`
           @media print {
@@ -55,7 +47,7 @@ export default function FairnessWorksheet({ state }) {
           <h2 style={{ borderBottom: '2px solid black', paddingBottom: '8px' }}>
             [AI 금쪽이 활동 추천 활동지] 학습 데이터 탐구
           </h2>
-          <p style={{ textAlign: 'right', fontSize: '12px', margin: '0 0 10px 0' }}>
+          <p style={{ textAlign: 'right', fontSize: '11px', margin: '0 0 10px 0' }}>
             권장 활용 주제: 학습 데이터의 누락과 AI 추천
           </p>
 
@@ -103,7 +95,6 @@ export default function FairnessWorksheet({ state }) {
           </div>
 
           <h3>3. 나의 생각 정리하기</h3>
-          <p>• 내가 AI에게 던진 질문: {growthQuestion || '____________________________________'}</p>
           <p>Q. 같은 추천 규칙을 사용했는데도 AI 금쪽이의 추천 활동이 달라진 이유는 무엇일까요?</p>
           <p style={{ borderBottom: '1px solid black', height: '24px' }}></p>
           <p style={{ borderBottom: '1px solid black', height: '24px' }}></p>
@@ -111,8 +102,7 @@ export default function FairnessWorksheet({ state }) {
           <h3>4. 사람이 최종 선택하기</h3>
           <p>• AI 추천에서 참고할 점: _________________________________________________</p>
           <p>• AI가 알지 못하는 정보: _________________________________________________</p>
-          <p>• 내가 최종 선택한 활동 또는 다음 행동: {growthChoice || '________________________'}</p>
-          <p>• 그렇게 선택한 이유: __________________________________________________</p>
+          <p>• 학생과 교사가 선택한 활동과 이유: ______________________________________</p>
         </div>
       )}
 
@@ -122,7 +112,7 @@ export default function FairnessWorksheet({ state }) {
           <h2 style={{ borderBottom: '2px solid black', paddingBottom: '8px' }}>
             [프로젝트 대표팀 구성 활동지] AI 공정성 탐구
           </h2>
-          <p style={{ textAlign: 'right', fontSize: '12px', margin: '0 0 10px 0' }}>
+          <p style={{ textAlign: 'right', fontSize: '11px', margin: '0 0 10px 0' }}>
             권장 활용 주제: AI 공정성과 책임 있는 의사결정
           </p>
 
@@ -158,8 +148,8 @@ export default function FairnessWorksheet({ state }) {
           </p>
 
           <h3>3. 이의제기 및 데이터 정정</h3>
-          <p>• 내가 살펴본 대응: {appealSummary || '________________________________________'}</p>
-          <p>• 다시 생각한 점: 데이터 오류, 모두에게 적용되는 기준, 재검토 절차를 함께 확인해야 해요.</p>
+          <p>• 한결 학생의 의사소통·협력 점수 정정: 70점 ➔ 92점 (전산 오류 확인 및 바로잡음)</p>
+          <p>• 원칙: 대표팀 명단 변화와 관계없이 잘못된 데이터는 반드시 사실대로 바로잡아야 해요.</p>
 
           <h3>4. 우리가 선정한 공정한 AI 운영 원칙 (3가지)</h3>
           <ul style={{ paddingLeft: '20px', margin: '4px 0' }}>

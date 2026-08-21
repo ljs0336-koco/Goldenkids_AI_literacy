@@ -7,9 +7,7 @@ export default function AppHeader({
   onReset,
   onPrint,
   isPresentation,
-  setIsPresentation,
-  studentMode = false,
-  onHelp
+  setIsPresentation
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -46,19 +44,7 @@ export default function AppHeader({
       </div>
 
       <div className="app-header-tools relative" ref={menuRef}>
-        {studentMode && onHelp && (
-          <button
-            type="button"
-            className="btn-outline app-header-button"
-            onClick={onHelp}
-            aria-label="현재 활동 도움말 열기"
-          >
-            <span aria-hidden="true">?</span>
-            <span className="app-header-button-label">도움말</span>
-          </button>
-        )}
-
-        {!studentMode && onPrint && (
+        {onPrint && (
           <button
             type="button"
             className="btn-outline app-header-button"
@@ -70,21 +56,19 @@ export default function AppHeader({
           </button>
         )}
 
-        {!studentMode && (
-          <button
-            type="button"
-            className="btn-outline app-header-button"
-            onClick={() => setMenuOpen(open => !open)}
-            aria-haspopup="menu"
-            aria-expanded={menuOpen}
-            aria-label="교사 도구 열기"
-          >
-            <span aria-hidden="true">•••</span>
-            <span className="app-header-button-label">교사 도구</span>
-          </button>
-        )}
+        <button
+          type="button"
+          className="btn-outline app-header-button"
+          onClick={() => setMenuOpen(open => !open)}
+          aria-haspopup="menu"
+          aria-expanded={menuOpen}
+          aria-label="교사 도구 열기"
+        >
+          <span aria-hidden="true">•••</span>
+          <span className="app-header-button-label">교사 도구</span>
+        </button>
 
-        {!studentMode && menuOpen && (
+        {menuOpen && (
           <div className="app-header-menu" role="menu">
             <button
               type="button"

@@ -34,12 +34,12 @@ export default function CriteriaScreen({ weights, setWeights, onCalculate, onPre
       {/* 안내 배너 */}
       <div 
         style={{
-          backgroundColor: '#edf0ed',
-          border: '1.5px solid #c7d2cc',
+          backgroundColor: '#eff6ff',
+          border: '1.5px solid #bfdbfe',
           borderRadius: 'var(--radius-md)',
           padding: '16px 20px',
           marginBottom: '24px',
-          color: '#405e55',
+          color: '#1e40af',
           fontSize: 'var(--font-size-sm)',
           lineHeight: '1.6'
         }}
@@ -61,7 +61,7 @@ export default function CriteriaScreen({ weights, setWeights, onCalculate, onPre
                 padding: '20px',
                 borderRadius: 'var(--radius-md)',
                 border: isSelected ? '2px solid var(--color-primary)' : '1.5px solid var(--color-border)',
-                backgroundColor: isSelected ? '#edf2ee' : 'white',
+                backgroundColor: isSelected ? '#f0fdfa' : 'white',
                 marginBottom: 0,
                 cursor: 'pointer'
               }}
@@ -76,11 +76,11 @@ export default function CriteriaScreen({ weights, setWeights, onCalculate, onPre
                 </h3>
                 <span 
                   style={{
-                    fontSize: '15px',
+                    fontSize: '13px',
                     fontWeight: 'bold',
                     padding: '4px 10px',
                     borderRadius: '12px',
-                    backgroundColor: isSelected ? '#dce9e3' : 'var(--color-surface-soft)',
+                    backgroundColor: isSelected ? '#ccfbf1' : '#f1f5f9',
                     color: isSelected ? 'var(--color-primary-hover)' : 'var(--color-text-muted)'
                   }}
                 >
@@ -93,21 +93,21 @@ export default function CriteriaScreen({ weights, setWeights, onCalculate, onPre
               </p>
 
               {/* 기준별 반영 가중치 요약 */}
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', fontSize: '14px' }}>
-                <span style={{ backgroundColor: '#e8edef', color: '#405e69', padding: '3px 8px', borderRadius: '6px' }}>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', fontSize: '12px' }}>
+                <span style={{ backgroundColor: '#eff6ff', color: '#1e40af', padding: '3px 8px', borderRadius: '6px' }}>
                   기획 {preset.weights.problemDiscovery}%
                 </span>
-                <span style={{ backgroundColor: '#f2e9e2', color: '#87583e', padding: '3px 8px', borderRadius: '6px' }}>
+                <span style={{ backgroundColor: '#fff7ed', color: '#c2410c', padding: '3px 8px', borderRadius: '6px' }}>
                   제작 {preset.weights.digitalMaking}%
                 </span>
-                <span style={{ backgroundColor: '#e9efe8', color: '#58725e', padding: '3px 8px', borderRadius: '6px' }}>
+                <span style={{ backgroundColor: '#f0fdf4', color: '#15803d', padding: '3px 8px', borderRadius: '6px' }}>
                   협업 {preset.weights.communicationCollaboration}%
                 </span>
-                <span style={{ backgroundColor: '#ece9ef', color: '#655d70', padding: '3px 8px', borderRadius: '6px' }}>
+                <span style={{ backgroundColor: '#faf5ff', color: '#7e22ce', padding: '3px 8px', borderRadius: '6px' }}>
                   발표 {preset.weights.presentation}%
                 </span>
                 {preset.weights.opportunity > 0 && (
-                  <span style={{ backgroundColor: '#f4eddf', color: '#806235', padding: '3px 8px', borderRadius: '6px', fontWeight: 'bold' }}>
+                  <span style={{ backgroundColor: '#fefce8', color: '#a16207', padding: '3px 8px', borderRadius: '6px', fontWeight: 'bold' }}>
                     🌱 참여 기회 {preset.weights.opportunity}%
                   </span>
                 )}

@@ -6,8 +6,8 @@ export default function PrinciplesScreen({ selectedPrinciples = [], setSelectedP
   const [pageIndex, setPageIndex] = useState(0);
   const principle = principles[pageIndex];
   const isSelected = selectedPrinciples.includes(principle);
-  const isFull = selectedPrinciples.length >= 3 && !isSelected;
-  const isExactThree = selectedPrinciples.length === 3;
+  const isFull = selectedPrinciples.length >= 2 && !isSelected;
+  const isReady = selectedPrinciples.length === 2;
 
   const toggle = () => {
     if (isFull) return;
@@ -19,8 +19,9 @@ export default function PrinciplesScreen({ selectedPrinciples = [], setSelectedP
   return (
     <div className="card fair-story-page">
       <div className="text-center mb-4">
-        <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '0 0 8px' }}>지키고 싶은 원칙 3개를 골라요</h2>
-        <p className="fair-one-line-help">원칙을 한 장씩 넘겨 보고, 가장 중요하다고 생각하는 세 장을 저장하세요.</p>
+        <span className="fair-eyebrow">다음 선택을 위한 약속</span>
+        <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '4px 0 8px' }}>꼭 지키고 싶은 약속 두 가지를 골라요</h2>
+        <p className="fair-one-line-help">세 장을 차례로 읽고 다음 프로젝트 팀을 구성할 때 반드시 지킬 두 장을 선택하세요.</p>
       </div>
 
       <button
@@ -33,7 +34,7 @@ export default function PrinciplesScreen({ selectedPrinciples = [], setSelectedP
       >
         <span>운영 원칙 {pageIndex + 1}</span>
         <strong style={{ fontSize: '25px' }}>{principle}</strong>
-        <small>{isSelected ? '선택했어요 · 다시 누르면 취소' : isFull ? '이미 세 개를 골랐어요' : '이 원칙 선택하기'}</small>
+        <small>{isSelected ? '선택했어요 · 다시 누르면 취소' : isFull ? '이미 두 개를 골랐어요' : '이 약속 선택하기'}</small>
       </button>
 
       <PageTurnNav
@@ -45,14 +46,14 @@ export default function PrinciplesScreen({ selectedPrinciples = [], setSelectedP
         nextLabel="다음 원칙"
       />
 
-      <p className="text-center" style={{ fontWeight: 800, color: isExactThree ? 'var(--color-primary-hover)' : 'var(--color-text-muted)' }}>
-        내가 고른 원칙 {selectedPrinciples.length} / 3개
+      <p className="text-center" style={{ fontWeight: 800, color: isReady ? 'var(--color-primary-hover)' : 'var(--color-text-muted)' }}>
+        내가 고른 약속 {selectedPrinciples.length} / 2개
       </p>
 
       <div className="bottom-nav-bar">
         <button className="btn-outline" onClick={onPrev}>← 이전</button>
-        <button className="btn-primary" onClick={onComplete} disabled={!isExactThree} style={{ minHeight: '52px' }}>
-          {isExactThree ? '원칙 3개 저장하고 마치기 →' : '원칙을 3개 골라 주세요'}
+        <button className="btn-primary" onClick={onComplete} disabled={!isReady} style={{ minHeight: '52px' }}>
+          {isReady ? '약속 두 가지 저장하고 결과 보기 →' : '약속을 두 가지 골라 주세요'}
         </button>
       </div>
     </div>

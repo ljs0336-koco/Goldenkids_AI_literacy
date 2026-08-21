@@ -94,25 +94,41 @@ describe('useFairnessState Hook Tests (v5)', () => {
       mode: 'growth',
       growthSpeakerPath: 'sample',
       growthQuestionId: 'missing',
+      growthCareerChoices: ['environmentalEngineering', 'greenTech'],
       growthFinalChoice: 'ask_and_research',
       teamSpeakerPath: 'speaker',
-      teamQuestionId: 'roles'
+      teamQuestionId: 'roles',
+      teamAppealChoice: 2,
+      teamSelectedPrinciples: [
+        '팀의 목표와 선택 기준을 먼저 공개한다.',
+        '빠지거나 잘못된 기록은 고친 뒤 같은 기준으로 다시 살핀다.',
+        '결과에 질문하고 다시 검토할 수 있는 방법을 마련한다.'
+      ]
     });
 
     expect(sanitized.growthSpeakerPath).toBe('sample');
     expect(sanitized.growthQuestionId).toBe('missing');
+    expect(sanitized.growthCareerChoices).toEqual(['environmentalEngineering', 'greenTech']);
     expect(sanitized.growthFinalChoice).toBe('ask_and_research');
     expect(sanitized.teamSpeakerPath).toBe('speaker');
     expect(sanitized.teamQuestionId).toBe('roles');
+    expect(sanitized.teamAppealChoice).toBe(2);
+    expect(sanitized.teamSelectedPrinciples).toHaveLength(2);
 
     const rejected = validateAndSanitizeState({
       ...initialFairnessState,
       growthSpeakerPath: 'microphone_recording',
       growthQuestionId: 'injected-question',
-      growthFinalChoice: 'ai_decides'
+      growthCareerChoices: ['software', 'software', 'not-a-career', 'greenTech', 'scienceCommunication'],
+      growthFinalChoice: 'ai_decides',
+      teamAppealChoice: 9,
+      teamSelectedPrinciples: ['판단 기준을 미리 공개한다.', '<script>']
     });
     expect(rejected.growthSpeakerPath).toBeNull();
     expect(rejected.growthQuestionId).toBeNull();
+    expect(rejected.growthCareerChoices).toEqual(['software', 'greenTech']);
     expect(rejected.growthFinalChoice).toBeNull();
+    expect(rejected.teamAppealChoice).toBeNull();
+    expect(rejected.teamSelectedPrinciples).toEqual([]);
   });
 });

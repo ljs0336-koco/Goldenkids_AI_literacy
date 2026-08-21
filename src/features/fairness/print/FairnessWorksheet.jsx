@@ -4,7 +4,8 @@ import {
   activityRecommendationOptions,
   activityRecommendationStudent,
   activityRecommendationSupplementRecords,
-  projectTeamCandidates
+  projectTeamCandidates,
+  projectTeamPresets
 } from '../fairnessData';
 import { getTopActivityRecommendation, rankActivityRecommendations } from '../fairnessEngine';
 import { growthFinalChoices, growthQuestions } from '../fairnessLearningData';
@@ -26,6 +27,11 @@ export default function FairnessWorksheet({ state }) {
   ).filter(option => option.key !== firstRecommendation?.key).slice(0, 3);
   const growthQuestion = growthQuestions.find(item => item.id === state?.growthQuestionId)?.label;
   const growthChoice = growthFinalChoices.find(item => item.id === state?.growthFinalChoice)?.title;
+  const selectedCareers = (state?.growthCareerChoices || [])
+    .map(id => activityRecommendationOptions.find(option => option.key === id))
+    .filter(Boolean);
+  const selectedTeamPreset = projectTeamPresets.find(preset => state?.teamCriteriaWeights
+    && Object.keys(preset.weights).every(key => preset.weights[key] === state.teamCriteriaWeights[key]));
   const appealSummary = {
     1: '결과를 그대로 두었을 때 잘못된 데이터가 남는 문제를 확인함',
     2: '한결의 기록을 70점에서 92점으로 정정하고 같은 기준으로 다시 계산함',
@@ -59,7 +65,8 @@ export default function FairnessWorksheet({ state }) {
             살펴볼 점: AI가 받은 자료에 따라 진로 제안이 어떻게 달라지는가
           </p>
 
-          <p><strong>상황:</strong> AI 금쪽이가 {activityRecommendationStudent.grade} {activityRecommendationStudent.name}의 성적표와 코딩 기록을 보고 어울리는 직업을 떠올립니다.</p>
+          <p><strong>하늘이의 고민:</strong> {activityRecommendationStudent.worry}</p>
+          <p><strong>상황:</strong> AI 금쪽이가 {activityRecommendationStudent.grade} {activityRecommendationStudent.name}의 성적표와 코딩 기록만 보고 어울리는 직업을 먼저 떠올립니다.</p>
 
           <h3>1. AI가 처음 받은 {activityRecommendationStudent.name}의 자료</h3>
           <table>
@@ -93,9 +100,9 @@ export default function FairnessWorksheet({ state }) {
             </tbody>
           </table>
 
-          <h3>4. 새롭게 보인 꿈 후보</h3>
+          <h3>4. 내가 더 알아보기로 한 꿈 후보</h3>
           <ul>
-            {expandedSuggestions.map(option => <li key={option.key}><strong>{option.name}</strong> — {option.why}</li>)}
+            {(selectedCareers.length > 0 ? selectedCareers : expandedSuggestions.slice(0, 2)).map(option => <li key={option.key}><strong>{option.name}</strong> — {option.why}</li>)}
           </ul>
 
           <h3>5. 내가 질문하고 선택한 다음 탐색</h3>
@@ -108,17 +115,17 @@ export default function FairnessWorksheet({ state }) {
         </div>
       )}
 
-      {/* 프로젝트 대표팀 구성 활동지 */}
+      {/* 프로젝트 팀 구성 활동지 */}
       {isTeam && (
         <div>
           <h2 style={{ borderBottom: '2px solid black', paddingBottom: '8px' }}>
-            [프로젝트 대표팀 구성 활동지] AI 공정성 탐구
+            [AI가 고른 프로젝트 팀 다시 보기]
           </h2>
           <p style={{ textAlign: 'right', fontSize: '12px', margin: '0 0 10px 0' }}>
-            권장 활용 주제: AI 공정성과 책임 있는 의사결정
+            살펴볼 점: AI의 선택에는 자료, 기준, 재검토 절차가 필요하다
           </p>
 
-          <h3>1. 지원자 8명의 역량 및 이전 대회 참여 경험</h3>
+          <h3>1. AI가 받은 지원자 기록</h3>
           <table>
             <thead>
               <tr>
@@ -141,19 +148,14 @@ export default function FairnessWorksheet({ state }) {
           </table>
 
           <h3>2. 우리가 선택한 팀 구성 기준</h3>
-          <p>
-            • 기획: {state.teamCriteriaWeights?.problemDiscovery ?? '___'}% / 
-            제작: {state.teamCriteriaWeights?.digitalMaking ?? '___'}% / 
-            협업: {state.teamCriteriaWeights?.communicationCollaboration ?? '___'}% / 
-            발표: {state.teamCriteriaWeights?.presentation ?? '___'}% / 
-            참여 기회: {state.teamCriteriaWeights?.opportunity ?? '0'}%
-          </p>
+          <p>• {selectedTeamPreset?.name || '________________________________________'}</p>
+          <p>• 중요하게 본 것: {selectedTeamPreset?.focus?.join(' · ') || '________________________________________'}</p>
 
           <h3>3. 이의제기 및 데이터 정정</h3>
           <p>• 내가 살펴본 대응: {appealSummary || '________________________________________'}</p>
           <p>• 다시 생각한 점: 데이터 오류, 모두에게 적용되는 기준, 재검토 절차를 함께 확인해야 해요.</p>
 
-          <h3>4. 우리가 선정한 공정한 AI 운영 원칙 (3가지)</h3>
+          <h3>4. 다음 팀 구성에서 지킬 약속 (2가지)</h3>
           <ul style={{ paddingLeft: '20px', margin: '4px 0' }}>
             {state.teamSelectedPrinciples && state.teamSelectedPrinciples.length > 0 ? (
               state.teamSelectedPrinciples.map((p, idx) => <li key={idx}>[V] {p}</li>)
@@ -161,7 +163,6 @@ export default function FairnessWorksheet({ state }) {
               <>
                 <li>1. ____________________________________________________</li>
                 <li>2. ____________________________________________________</li>
-                <li>3. ____________________________________________________</li>
               </>
             )}
           </ul>
@@ -170,8 +171,8 @@ export default function FairnessWorksheet({ state }) {
 
       {!isGrowth && !isTeam && (
         <div>
-          <h2>공정한 AI 실험실 활동지</h2>
-          <p>실험을 선택하여 진행한 후 인쇄해 주세요.</p>
+          <h2>AI의 선택을 다시 본 나의 탐구 기록</h2>
+          <p>이야기를 하나 선택해 진행한 뒤 기록을 열어 주세요.</p>
         </div>
       )}
     </div>

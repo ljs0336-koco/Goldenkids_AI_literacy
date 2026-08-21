@@ -12,19 +12,13 @@ export default function CriteriaScreen({ weights, setWeights, onCalculate, onPre
   const [pageIndex, setPageIndex] = useState(selectedIndex);
   const preset = projectTeamPresets[pageIndex];
   const isSelected = matchesWeights(preset, weights);
-  const weightItems = [
-    ['기획', preset.weights.problemDiscovery],
-    ['제작', preset.weights.digitalMaking],
-    ['협업', preset.weights.communicationCollaboration],
-    ['발표', preset.weights.presentation],
-    ['참여 기회', preset.weights.opportunity]
-  ];
 
   return (
     <div className="card fair-story-page">
       <div className="text-center mb-4">
-        <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '0 0 8px' }}>팀을 보는 기준을 한 장씩 비교해요</h2>
-        <p className="fair-one-line-help">정답은 없어요. 대회의 목표에 가장 잘 맞는 기준 한 장을 골라 보세요.</p>
+        <span className="fair-eyebrow">같은 기록, 다른 기준</span>
+        <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '4px 0 8px' }}>이 프로젝트에서 무엇을 중요하게 볼까요?</h2>
+        <p className="fair-one-line-help">기준을 한 장씩 읽고 프로젝트의 목표에 가장 알맞다고 생각하는 한 장을 고르세요.</p>
       </div>
 
       <button
@@ -32,19 +26,16 @@ export default function CriteriaScreen({ weights, setWeights, onCalculate, onPre
         className={`fair-question-page ${isSelected ? 'is-selected' : ''}`}
         onClick={() => setWeights(preset.weights)}
         aria-pressed={isSelected}
-        style={{ minHeight: '250px' }}
+        style={{ minHeight: '280px' }}
       >
         <span>기준 {pageIndex + 1}</span>
         <strong style={{ fontSize: '27px' }}>{preset.name}</strong>
         <small style={{ color: 'var(--color-text-muted)', fontWeight: 600 }}>{preset.desc}</small>
-        <div className="flex gap-2" style={{ marginTop: '14px', flexWrap: 'wrap' }}>
-          {weightItems.filter(([, value]) => value > 0).map(([label, value]) => (
-            <span key={label} style={{ padding: '5px 9px', borderRadius: 'var(--radius-full)', background: 'var(--color-surface-soft)', color: 'var(--color-text-main)' }}>
-              {label} {value}%
-            </span>
-          ))}
+        <div className="fair-focus-tags" aria-label="이 기준이 중요하게 보는 것">
+          {preset.focus.map(item => <b key={item}>{item}</b>)}
         </div>
-        <small>{isSelected ? '이 기준을 선택했어요' : '이 기준 선택하기'}</small>
+        <p className="fair-criterion-tradeoff"><strong>함께 생각할 점</strong>{preset.tradeoff}</p>
+        <em>{isSelected ? '우리 팀의 기준으로 선택했어요' : '이 기준 선택하기'}</em>
       </button>
 
       <PageTurnNav

@@ -6,8 +6,8 @@ export default function MiniSpeakerNote({ prompt }) {
     <aside className="fair-speaker-whisper" aria-label="금쪽이 대화 제안">
       <img src={geumjjokMain} alt="" aria-hidden="true" />
       <p>
-        <strong>금쪽이와도 대화해 보세요</strong>
-        <span>“{prompt}”</span>
+        <strong>금쪽이 스피커가 곁에 있다면</strong>
+        <span>이렇게 한 번 더 물어봐도 좋아요. “{prompt}”</span>
       </p>
     </aside>
   );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -14,11 +14,29 @@ import ResultScreen from './screens/ResultScreen';
 import AppealScreen from './screens/AppealScreen';
 import AppealResultScreen from './screens/AppealResultScreen';
 import PrinciplesScreen from './screens/PrinciplesScreen';
-import ProgressStepper from '../../components/ProgressStepper';
+import CompletionScreen from './screens/CompletionScreen';
 import FairnessWorksheet from './print/FairnessWorksheet';
-import { initialFairnessState } from './useFairnessState';
+import { projectTeamPresets } from './fairnessData';
 
-describe('FairnessLab v5 paged student flow', () => {
+function GrowthChoiceHarness() {
+  const [selected, setSelected] = useState([]);
+  const toggle = id => setSelected(current => current.includes(id)
+    ? current.filter(item => item !== id)
+    : current.length < 2 ? [...current, id] : current);
+  return <GrowthDeltaScreen selectedCareerIds={selected} onToggleCareer={toggle} onNext={() => {}} onPrev={() => {}} />;
+}
+
+function CriteriaHarness() {
+  const [weights, setWeights] = useState(null);
+  return <CriteriaScreen weights={weights} setWeights={setWeights} onCalculate={() => {}} onPrev={() => {}} />;
+}
+
+function PrincipleHarness() {
+  const [selected, setSelected] = useState([]);
+  return <PrinciplesScreen selectedPrinciples={selected} setSelectedPrinciples={setSelected} onComplete={() => {}} onPrev={() => {}} />;
+}
+
+describe('Fairness module story-led student flow', () => {
   beforeEach(() => window.localStorage.clear());
   afterEach(() => window.localStorage.clear());
 
@@ -31,42 +49,44 @@ describe('FairnessLab v5 paged student flow', () => {
     expect(container.textContent).not.toMatch(/2차시|5차시/);
   });
 
-  it('2. 활동 선택 화면에서 두 실험의 목적과 시작 버튼을 확인한다', () => {
+  it('2. 활동 선택 화면은 프로그램명이 아니라 학생이 만날 질문을 보여 준다', () => {
     render(<FairnessLabPage />);
+    expect(screen.getByRole('heading', { name: 'AI의 선택, 그대로 믿어도 될까?' })).toBeInTheDocument();
     expect(screen.getByText('AI가 하늘이의 꿈을 골라 줘도 될까?')).toBeInTheDocument();
-    expect(screen.getByText('우리 학교 프로젝트 대표팀을 만들어라!')).toBeInTheDocument();
-    expect(screen.getByText(/하늘이의 꿈 탐색 시작하기/)).toBeInTheDocument();
-    expect(screen.getByText(/대표팀 구성 시작하기/)).toBeInTheDocument();
+    expect(screen.getByText('프로젝트 팀을 AI에게 맡겨도 될까?')).toBeInTheDocument();
+    expect(screen.queryByText('공정한 AI 실험실')).not.toBeInTheDocument();
   });
 
-  it('3. 첫 장은 AI가 받은 성적표와 아직 모르는 하늘이의 이야기를 구분한다', () => {
+  it('3. 진로 활동은 점수보다 하늘이의 소개와 고민으로 시작한다', () => {
     render(<GrowthInitialScreen onNext={() => {}} />);
-    expect(screen.getByText('AI가 받은 자료')).toBeInTheDocument();
-    expect(screen.getByText('하늘이의 성적표')).toBeInTheDocument();
-    expect(screen.getByText((_, element) => element?.tagName === 'SPAN' && element.textContent === '정보 92점')).toBeInTheDocument();
-    expect(screen.getByText('이 자료에는 없는 것')).toBeInTheDocument();
-    expect(screen.getByText(/AI의 첫 번째 추측/)).toBeInTheDocument();
-    expect(screen.queryByText('✅ 기록됨')).not.toBeInTheDocument();
-    expect(screen.queryByText(/체험 활동 4가지/)).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '하늘이를 소개해요' })).toBeInTheDocument();
+    expect(screen.getByText(/내가 잘하면서도 즐겁게 할 수 있는 일/)).toBeInTheDocument();
+    expect(screen.queryByText('정보 92점')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /하늘이와 AI에게 물어보기/ })).not.toBeDisabled();
   });
 
-  it('4. 첫 진로 제안은 실제 자료와 이유를 보여 주고 인공적인 추천 점수는 표시하지 않는다', () => {
+  it('4. AI가 받은 자료, 첫 직업, 되묻기를 장면 순서대로 보여 준다', () => {
     render(<GrowthTempRecScreen questionId={null} onQuestion={() => {}} onNext={() => {}} onPrev={() => {}} />);
+    expect(screen.getByRole('heading', { name: /AI는 하늘이의 모든 모습을 알고 있을까요/ })).toBeInTheDocument();
+    expect(screen.getByText('정보 92점 · 수학 86점 · 과학 78점 · 국어 74점')).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /소프트웨어 개발자/ })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /다음 장면/ }));
     expect(screen.getByRole('heading', { name: /소프트웨어 개발자/ })).toBeInTheDocument();
-    expect(screen.getByText('정보 92점')).toBeInTheDocument();
-    expect(screen.getByText('코딩 과제 8번 모두 제출')).toBeInTheDocument();
-    expect(screen.queryByText(/단서 점수|현재 1위|적합도/)).not.toBeInTheDocument();
-    expect(screen.getByText(/하늘이가 어떤 삶을 꿈꾸는지/)).toBeInTheDocument();
+    expect(screen.queryByText(/단서 점수|적합도/)).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /다음 장면/ }));
+    expect(screen.getByText('AI 금쪽이에게 하나만 더 물어보세요')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /물어볼 질문 하나를 골라 주세요/ })).toBeDisabled();
   });
 
-  it('5. 빠진 기록은 한 장씩 확인하며 현재 장을 확인해야 다음 장으로 간다', () => {
+  it('5. 성적표 밖의 이야기는 한 장씩 AI에게 알려 준다', () => {
     const { rerender } = render(
       <GrowthSupplementScreen viewedStudentIds={[]} onStudentViewed={() => {}} onNext={() => {}} onPrev={() => {}} />
     );
     expect(screen.getByLabelText('4장 중 1장')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '이 이야기를 AI에게 알려주기' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /다음 이야기/ })).toBeDisabled();
-    expect(screen.getByRole('button', { name: /새로운 모습 4가지를 차례로 확인해 주세요/ })).toBeDisabled();
 
     rerender(
       <GrowthSupplementScreen
@@ -76,142 +96,128 @@ describe('FairnessLab v5 paged student flow', () => {
         onPrev={() => {}}
       />
     );
-    expect(screen.getByRole('button', { name: /새롭게 떠오른 꿈 후보 보기/ })).not.toBeDisabled();
+    expect(screen.getByRole('button', { name: /새롭게 보이는 꿈 후보/ })).not.toBeDisabled();
   });
 
-  it('6. 처음 직업 한 가지에서 서로 다른 꿈 후보 세 가지로 가능성이 넓어진다', () => {
-    render(<GrowthDeltaScreen onNext={() => {}} onPrev={() => {}} />);
-    expect(screen.getByRole('heading', { name: /소프트웨어 개발자/ })).toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: /환경공학자/ })).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /넓어진 꿈 후보를 먼저 확인해 주세요/ })).toBeDisabled();
-
-    fireEvent.click(screen.getByRole('button', { name: '넓어진 꿈 →' }));
-    expect(screen.getByRole('heading', { name: /환경공학자/ })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /과학 커뮤니케이터/ })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /환경 문제를 해결하는 소프트웨어 개발자/ })).toBeInTheDocument();
-    expect(screen.queryByText(/점 →|현재 1위|단서 점수/)).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /하늘이의 다음 탐색 정하기/ })).not.toBeDisabled();
+  it('6. 꿈 후보 네 가지를 한 장씩 보고 두 가지를 선택한다', () => {
+    render(<GrowthChoiceHarness />);
+    expect(screen.getByRole('heading', { name: '처음에는 직업 하나만 보였어요' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /다음 가능성/ }));
+    fireEvent.click(screen.getByRole('button', { name: /이 꿈을 더 알아보기/ }));
+    fireEvent.click(screen.getByRole('button', { name: /다음 가능성/ }));
+    fireEvent.click(screen.getByRole('button', { name: /이 꿈을 더 알아보기/ }));
+    expect(screen.getByText('더 알아볼 꿈 2 / 2개 선택')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /다음 가능성/ }));
+    fireEvent.click(screen.getByRole('button', { name: /다음 가능성/ }));
+    expect(screen.getByRole('button', { name: /두 가지 꿈을 더 알아볼 방법/ })).not.toBeDisabled();
   });
 
-  it('7. 최종 판단은 OX 퀴즈가 아니라 확인 장과 학생 선택으로 마친다', () => {
-    const { rerender } = render(
-      <GrowthHumanCheckScreen checklist={[]} finalChoice={null} onToggleCheck={() => {}} onFinalChoice={() => {}} onNext={() => {}} onPrev={() => {}} />
-    );
-    expect(screen.getByLabelText('4장 중 1장')).toBeInTheDocument();
-    expect(screen.queryByText(/정답이에요/)).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /확인한 뒤 나의 행동을 골라 주세요/ })).toBeDisabled();
-
-    rerender(
+  it('7. 진로 활동은 반복 체크리스트 대신 실제 다음 행동을 고른다', () => {
+    render(
       <GrowthHumanCheckScreen
-        checklist={['check_sources', 'check_missing', 'check_interest', 'check_human_choice']}
+        selectedCareerIds={['environmentalEngineering', 'greenTech']}
         finalChoice="ask_and_research"
-        onToggleCheck={() => {}}
         onFinalChoice={() => {}}
         onNext={() => {}}
         onPrev={() => {}}
       />
     );
-    expect(screen.getByText(/하늘이에게 마음이 가는 꿈을 묻고/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /내가 고른 다음 탐색 저장하기/ })).not.toBeDisabled();
+    expect(screen.getByText(/환경공학자/)).toBeInTheDocument();
+    expect(screen.getByText(/환경 문제를 해결하는 소프트웨어 개발자/)).toBeInTheDocument();
+    expect(screen.queryByText(/확인했나요/)).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /하늘이의 탐색 계획 완성하기/ })).not.toBeDisabled();
   });
 
-  it('8. 지원자 8명은 그리드가 아니라 한 명씩 넘겨 본다', () => {
-    render(<CandidateScreen hasViewedAll onViewAll={() => {}} onNext={() => {}} onPrev={() => {}} />);
-    expect(screen.getByLabelText('8장 중 1장')).toBeInTheDocument();
-    expect(screen.getAllByText(/이전 대회 참여/)).toHaveLength(1);
-    expect(screen.getByRole('button', { name: /팀 구성 기준 정하기/ })).not.toBeDisabled();
+  it('8. 팀 활동은 프로젝트 목표와 AI의 첫 명단으로 시작한다', () => {
+    render(<CandidateScreen onViewAll={() => {}} onNext={() => {}} onPrev={() => {}} />);
+    expect(screen.getByRole('heading', { name: '프로젝트 팀을 꾸려야 해요' })).toBeInTheDocument();
+    expect(screen.getByText(/학교를 더 편리하게 만들 네 명/)).toBeInTheDocument();
+    expect(screen.queryByText(/지원자 1/)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'AI의 첫 팀 →' }));
+    expect(screen.getByRole('heading', { name: 'AI는 네 명을 아주 빠르게 골랐어요' })).toBeInTheDocument();
+    expect(screen.getByText('현재 기록이 높은 학생을 먼저 본 결과')).toBeInTheDocument();
   });
 
-  it('9. 팀 기준 4개도 한 장씩 비교하고 하나를 선택한다', () => {
-    const { rerender } = render(<CriteriaScreen weights={null} setWeights={() => {}} onCalculate={() => {}} onPrev={() => {}} />);
-    expect(screen.getByLabelText('4장 중 1장')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /마음에 드는 기준을 골라 주세요/ })).toBeDisabled();
-
-    rerender(
-      <CriteriaScreen
-        weights={{ problemDiscovery: 30, digitalMaking: 35, communicationCollaboration: 20, presentation: 15, opportunity: 0 }}
-        setWeights={() => {}}
-        onCalculate={() => {}}
-        onPrev={() => {}}
-      />
-    );
+  it('9. 팀 기준은 백분율보다 중요하게 보는 가치와 주의점을 보여 준다', () => {
+    render(<CriteriaHarness />);
+    expect(screen.getByText('지금 기록된 수행')).toBeInTheDocument();
+    expect(screen.getByText('빠른 결과')).toBeInTheDocument();
+    expect(screen.queryByText(/기획 30%|제작 35%/)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /현재 역량 중심/ }));
     expect(screen.getByRole('button', { name: /이 기준으로 AI 추천 보기/ })).not.toBeDisabled();
   });
 
-  it('10. 대표팀 결과는 기존 명단, 새 명단, 역할 확인 순서로 넘긴다', () => {
-    const oldTeam = [{ id: 'narae', name: '나래', score: 85, keyStrength: '디지털 제작' }];
-    const newTeam = [{ id: 'bora', name: '보라', score: 88, keyStrength: '협업', problemDiscovery: 80, digitalMaking: 85, communicationCollaboration: 90, presentation: 80 }];
+  it('10. 팀 결과는 기준 전후, 기회 변화, 역할 확인 순서로 넘긴다', () => {
+    const oldTeam = [
+      { id: 'narae', name: '나래', keyStrength: '디지털 제작', problemDiscovery: 81, digitalMaking: 95, communicationCollaboration: 70, presentation: 82 },
+      { id: 'daon', name: '다온', keyStrength: '기획', problemDiscovery: 90, digitalMaking: 65, communicationCollaboration: 80, presentation: 80 }
+    ];
+    const newTeam = [
+      { id: 'bora', name: '보라', keyStrength: '협업', problemDiscovery: 80, digitalMaking: 85, communicationCollaboration: 90, presentation: 80 },
+      { id: 'daon', name: '다온', keyStrength: '기획', problemDiscovery: 90, digitalMaking: 65, communicationCollaboration: 80, presentation: 80 }
+    ];
     render(<ResultScreen oldResults={oldTeam} newResults={newTeam} questionId="why" onQuestion={() => {}} onNext={() => {}} onPrev={() => {}} />);
-
-    expect(screen.getByText('기존 기준으로 구성한 대표팀')).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: /다음 결과/ }));
-    expect(screen.getByText('우리 기준으로 구성한 대표팀')).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: /다음 결과/ }));
-    expect(screen.getByText('네 역할이 모두 있나요?')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /이의제기 상황 보기/ })).not.toBeDisabled();
+    expect(screen.getByText('AI의 처음 기준')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /다음 비교/ }));
+    expect(screen.getByText('새로 포함된 학생')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /다음 비교/ }));
+    expect(screen.getByText('네 역할이 모두 보이나요?')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /잘못된 기록이 발견된 장면/ })).not.toBeDisabled();
   });
 
-  it('11. 이의제기 대응 3개도 한 장씩 탐색하고 선택의 결과를 본다', () => {
+  it('11. 기록 오류 대응은 세 가지 선택과 그 영향을 보여 준다', () => {
     render(<AppealScreen appealChoice={1} onSelectChoice={() => {}} onProceed={() => {}} onPrev={() => {}} />);
     expect(screen.getByLabelText('3장 중 1장')).toBeInTheDocument();
     expect(screen.getByText(/잘못된 70점이 데이터에 남고/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /내 선택 뒤에 생기는 일 보기/ })).not.toBeDisabled();
   });
 
-  it('12. 기록 정정 선택 뒤에는 70점에서 92점으로 바뀐 결과를 보여 준다', () => {
+  it('12. 기록 정정 결과는 기록, 팀, 재검토 원칙을 나눠 보여 준다', () => {
     render(
       <AppealResultScreen
         appealChoice={2}
-        criteriaWeights={{ problemDiscovery: 20, digitalMaking: 25, communicationCollaboration: 30, presentation: 15, opportunity: 10 }}
+        criteriaWeights={projectTeamPresets[2].weights}
         onNext={() => {}}
         onPrev={() => {}}
       />
     );
-    expect(screen.getByText(/의사소통·협력: 70점 ➔ 92점/)).toBeInTheDocument();
-    expect(screen.getByText(/데이터와 절차를 함께 바로잡는 선택/)).toBeInTheDocument();
+    expect(screen.getByText('70점')).toBeInTheDocument();
+    expect(screen.getByText('92점')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /다음 결과/ }));
+    expect(screen.getByRole('heading', { name: '네 명의 프로젝트 팀' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /다음 결과/ }));
+    expect(screen.getByText('기록')).toBeInTheDocument();
+    expect(screen.getByText('기준')).toBeInTheDocument();
+    expect(screen.getByText('절차')).toBeInTheDocument();
   });
 
-  it('13. 운영 원칙 5개는 한 장씩 보고 정확히 3개를 고른다', () => {
-    const { rerender } = render(<PrinciplesScreen selectedPrinciples={[]} setSelectedPrinciples={() => {}} onComplete={() => {}} onPrev={() => {}} />);
-    expect(screen.getByLabelText('5장 중 1장')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /원칙을 3개 골라 주세요/ })).toBeDisabled();
-
-    rerender(
-      <PrinciplesScreen
-        selectedPrinciples={['판단 기준을 미리 공개한다.', '데이터의 출처, 누락, 오류를 확인한다.', '결과가 여러 사람에게 미치는 영향을 비교한다.']}
-        setSelectedPrinciples={() => {}}
-        onComplete={() => {}}
-        onPrev={() => {}}
-      />
-    );
-    expect(screen.getByRole('button', { name: /원칙 3개 저장하고 마치기/ })).not.toBeDisabled();
+  it('13. 운영 약속 세 장 중 정확히 두 장을 고른다', () => {
+    render(<PrincipleHarness />);
+    expect(screen.getByLabelText('3장 중 1장')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /팀의 목표와 선택 기준/ }));
+    fireEvent.click(screen.getByRole('button', { name: /다음 원칙/ }));
+    fireEvent.click(screen.getByRole('button', { name: /빠지거나 잘못된 기록/ }));
+    expect(screen.getByText('내가 고른 약속 2 / 2개')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /약속 두 가지 저장/ })).not.toBeDisabled();
   });
 
-  it('14. 진행 단계가 끝나면 네 단계가 모두 완료로 표시된다', () => {
-    render(<ProgressStepper steps={['① AI가 본 기록', '② 빠진 기록', '③ 추천 비교', '④ 내가 선택']} currentStep={4} />);
-    expect(document.querySelectorAll('.step-item.is-completed')).toHaveLength(4);
-  });
-
-  it('15. 활동 진입과 활동 고르기로 돌아가기가 동작한다', () => {
+  it('14. 활동 진입 뒤 진행 단계도 이야기 순서로 표시된다', () => {
     render(<FairnessLabPage />);
-    fireEvent.click(screen.getByText(/하늘이의 꿈 탐색 시작하기/));
-    expect(screen.getByText(/AI는 지금 하늘이의 성적표와 코딩 기록만 보고 있어요/)).toBeInTheDocument();
-    expect(screen.getByText('① AI가 받은 자료')).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: /활동 고르기/ }));
-    expect(screen.getByText('AI 금쪽이와 함께하는 공정한 AI 실험실')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('하늘이 만나기'));
+    expect(screen.getByText('① 하늘이의 고민')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '하늘이를 소개해요' })).toBeInTheDocument();
   });
 
-  it('16. 긴 안내 대신 손가락 행동 지시와 접이식 이유 도움말을 제공한다', () => {
+  it('15. 손가락 행동 지시와 접이식 이유 도움말을 제공한다', () => {
     render(<FairnessLabPage />);
-    fireEvent.click(screen.getByText(/하늘이의 꿈 탐색 시작하기/));
+    fireEvent.click(screen.getByText('하늘이 만나기'));
     expect(screen.getByText('이 화면에서는')).toBeInTheDocument();
-    expect(screen.getByText(/AI가 받은 하늘이의 자료를 살펴보세요/)).toBeInTheDocument();
+    expect(screen.getByText(/하늘이의 고민을 읽고/)).toBeInTheDocument();
     fireEvent.click(screen.getByLabelText('이 활동을 하는 이유 보기'));
-    expect(screen.getByText(/어떤 정보로 진로를 떠올렸는지 알아야/)).toBeInTheDocument();
-    expect(screen.queryByText('내가 할 일')).not.toBeInTheDocument();
+    expect(screen.getByText(/실제 사람의 고민과 선택에 영향/)).toBeInTheDocument();
   });
 
-  it('17. 학생 헤더에는 도움말이 있고 교사 도구와 발표 화면은 없다', () => {
+  it('16. 학생 헤더에는 도움말이 있고 교사 도구와 발표 화면은 없다', () => {
     render(<FairnessLabPage />);
     expect(screen.getByRole('button', { name: /현재 활동 도움말 열기/ })).toBeInTheDocument();
     expect(screen.queryByText('교사 도구')).not.toBeInTheDocument();
@@ -219,37 +225,31 @@ describe('FairnessLab v5 paged student flow', () => {
     expect(screen.getByRole('dialog', { name: /무엇을 하면 되나요/ })).toBeInTheDocument();
   });
 
-  it('18. 금쪽이 대화는 작은 제안일 뿐 진행 조건이 아니다', () => {
-    render(<GrowthInitialScreen onNext={() => {}} />);
-    expect(screen.getByText('금쪽이와도 대화해 보세요')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /AI가 떠올린 첫 직업 보기/ })).not.toBeDisabled();
-    expect(screen.queryByText(/대화 방법을 먼저 골라/)).not.toBeInTheDocument();
+  it('17. 금쪽이 스피커 대화는 작은 선택 제안이고 진행 조건은 아니다', () => {
+    render(<CandidateScreen onViewAll={() => {}} onNext={() => {}} onPrev={() => {}} />);
+    expect(screen.queryByText(/금쪽이 스피커가 곁에 있다면/)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'AI의 첫 팀 →' }));
+    expect(screen.getByText('금쪽이 스피커가 곁에 있다면')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /AI가 사용한 기준/ })).not.toBeDisabled();
   });
 
-  it('19. AI 질문도 한 장씩 넘겨 보고 한 질문을 고르면 다음으로 간다', () => {
-    const first = render(<GrowthTempRecScreen questionId={null} onQuestion={() => {}} onNext={() => {}} onPrev={() => {}} />);
-    expect(screen.getByLabelText('3장 중 1장')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /질문 하나를 골라 주세요/ })).toBeDisabled();
-    first.unmount();
-
-    render(<GrowthTempRecScreen questionId="why" onQuestion={() => {}} onNext={() => {}} onPrev={() => {}} />);
-    expect(screen.getByText(/정보 성적이 높고 코딩 과제를 꾸준히/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /성적표에 없는 하늘이의 모습 보기/ })).not.toBeDisabled();
-  });
-
-  it('20. 완료 화면에서 현재 선택이 반영된 탐구 기록을 확인한다', () => {
-    window.localStorage.setItem('ai-literacy-lab:v5', JSON.stringify({
-      ...initialFairnessState,
-      mode: 'growth',
-      growthStep: 5,
-      growthQuestionId: 'missing',
-      growthFinalChoice: 'ask_and_research',
-      isGrowthCompleted: true
-    }));
-    render(<FairnessLabPage />);
-    fireEvent.click(screen.getByRole('button', { name: /내 탐구 기록 보기/ }));
-    const dialog = screen.getByRole('dialog', { name: /공정한 AI 실험실 나의 탐구 기록/ });
-    expect(dialog).toHaveTextContent(/내가 AI에게 던진 질문:.*하늘이가 좋아하는 일도 알고 있어/s);
-    expect(dialog).toHaveTextContent(/내가 고른 다음 행동:.*하늘이에게/s);
+  it('18. 완료 화면은 긴 인증서보다 처음과 달라진 결과를 보여 준다', () => {
+    render(
+      <CompletionScreen
+        mode="growth"
+        state={{
+          growthCareerChoices: ['environmentalEngineering', 'greenTech'],
+          growthQuestionId: 'missing',
+          growthFinalChoice: 'ask_and_research'
+        }}
+        onOpenRecord={() => {}}
+        onReset={() => {}}
+        onBackToActivities={() => {}}
+      />
+    );
+    expect(screen.getByText('처음')).toBeInTheDocument();
+    expect(screen.getByText('내가 확인한 뒤')).toBeInTheDocument();
+    expect(screen.getByText(/환경공학자 · 환경 소프트웨어 개발자/)).toBeInTheDocument();
+    expect(screen.getByText(/답보다 먼저 빠진 이야기/)).toBeInTheDocument();
   });
 });

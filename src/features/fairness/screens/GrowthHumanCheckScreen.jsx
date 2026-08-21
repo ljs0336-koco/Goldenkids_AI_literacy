@@ -1,85 +1,64 @@
 import React, { useState } from 'react';
-import { activityRecommendationChecklist } from '../fairnessData';
+import { activityRecommendationOptions } from '../fairnessData';
 import { growthFinalChoices } from '../fairnessLearningData';
 import PageTurnNav from '../components/PageTurnNav';
 import ConceptBridge from '../components/ConceptBridge';
 
-export default function GrowthHumanCheckScreen({ checklist = [], onToggleCheck, finalChoice, onFinalChoice, onNext, onPrev }) {
-  const firstUnchecked = activityRecommendationChecklist.findIndex(item => !checklist.includes(item.id));
-  const [checkIndex, setCheckIndex] = useState(firstUnchecked >= 0 ? firstUnchecked : 0);
+export default function GrowthHumanCheckScreen({ selectedCareerIds = [], finalChoice, onFinalChoice, onNext, onPrev }) {
   const selectedChoiceIndex = Math.max(0, growthFinalChoices.findIndex(item => item.id === finalChoice));
-  const [choicePageOverride, setChoicePageOverride] = useState(null);
-  const choiceIndex = choicePageOverride ?? selectedChoiceIndex;
-  const isAllChecked = activityRecommendationChecklist.every(item => checklist.includes(item.id));
-  const checkItem = activityRecommendationChecklist[checkIndex];
-  const isCurrentChecked = checklist.includes(checkItem.id);
-  const choice = growthFinalChoices[choiceIndex];
+  const [pageOverride, setPageOverride] = useState(null);
+  const pageIndex = pageOverride ?? selectedChoiceIndex;
+  const choice = growthFinalChoices[pageIndex];
+  const selectedCareers = selectedCareerIds
+    .map(id => activityRecommendationOptions.find(option => option.key === id))
+    .filter(Boolean);
+  const isSelected = finalChoice === choice.id;
 
   return (
     <div className="card fair-story-page">
       <div className="text-center mb-4">
-        <div style={{ fontSize: '38px' }}>{isAllChecked ? '🧭' : '🔍'}</div>
-        <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '4px 0 8px' }}>
-          {isAllChecked ? '이제 하늘이의 꿈을 더 알아볼 방법을 골라요' : '진로 제안을 믿기 전에 확인할 것을 살펴봐요'}
-        </h2>
-        <p className="fair-one-line-help">
-          {isAllChecked ? '선택지를 넘겨 보고 가장 필요한 다음 행동을 골라 보세요.' : '내용을 읽고 확인했다면 버튼을 눌러 다음 장으로 가세요.'}
-        </p>
+        <div className="fair-scene-emoji" aria-hidden="true">🧭</div>
+        <span className="fair-eyebrow">직업을 정하는 대신 탐색을 시작해요</span>
+        <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '4px 0 8px' }}>하늘이가 다음에 해 볼 일을 골라요</h2>
+        <p className="fair-one-line-help">AI의 제안을 실제 경험과 정보로 확인할 방법을 한 가지 선택하세요.</p>
       </div>
 
-      {!isAllChecked ? (
-        <>
-          <article className={`fair-record-page ${isCurrentChecked ? 'is-viewed' : ''}`} style={{ display: 'grid', placeItems: 'center', textAlign: 'center' }}>
-            <span className="fair-eyebrow">확인할 점 {checkIndex + 1}</span>
-            <h3 style={{ maxWidth: '620px' }}>{checkItem.text}</h3>
-            <button
-              type="button"
-              className={isCurrentChecked ? 'btn-outline fair-record-confirm' : 'btn-primary fair-record-confirm'}
-              onClick={() => onToggleCheck(checkItem.id)}
-            >
-              {isCurrentChecked ? '확인했어요' : '☝ 확인했어요'}
-            </button>
-          </article>
-          <PageTurnNav
-            current={checkIndex}
-            total={activityRecommendationChecklist.length}
-            onPrev={() => setCheckIndex(index => Math.max(0, index - 1))}
-            onNext={() => setCheckIndex(index => Math.min(activityRecommendationChecklist.length - 1, index + 1))}
-            disableNext={!isCurrentChecked}
-            prevLabel="이전 확인"
-            nextLabel="다음 확인"
-          />
-        </>
-      ) : (
-        <>
-          <button
-            type="button"
-            className={`fair-question-page ${finalChoice === choice.id ? 'is-selected' : ''}`}
-            onClick={() => onFinalChoice(choice.id)}
-            aria-pressed={finalChoice === choice.id}
-          >
-            <span>내가 할 수 있는 다음 행동</span>
-            <strong>{choice.title}</strong>
-            <small>{choice.note}</small>
-          </button>
-          <PageTurnNav
-            current={choiceIndex}
-            total={growthFinalChoices.length}
-            onPrev={() => setChoicePageOverride(Math.max(0, choiceIndex - 1))}
-            onNext={() => setChoicePageOverride(Math.min(growthFinalChoices.length - 1, choiceIndex + 1))}
-            prevLabel="이전 선택"
-            nextLabel="다음 선택"
-          />
-          <ConceptBridge>
-            진로 추천 AI를 잘 쓰는 방법은 직업 이름을 바로 고르는 것이 아니라, 근거를 확인하고 당사자의 목소리를 들으며 가능성을 넓히는 것이에요.
-          </ConceptBridge>
-        </>
-      )}
+      <section className="fair-selected-careers" aria-label="하늘이가 더 알아볼 꿈">
+        <small>하늘이가 더 알아볼 꿈</small>
+        <div>
+          {selectedCareers.map(career => <strong key={career.key}>{career.name}</strong>)}
+        </div>
+      </section>
+
+      <button
+        type="button"
+        className={`fair-question-page fair-next-action ${isSelected ? 'is-selected' : ''}`}
+        onClick={() => onFinalChoice(choice.id)}
+        aria-pressed={isSelected}
+      >
+        <span>다음 행동 {pageIndex + 1}</span>
+        <strong>{choice.title}</strong>
+        <small>{choice.note}</small>
+        <em>{isSelected ? '하늘이의 다음 행동으로 골랐어요' : '이 행동 선택하기'}</em>
+      </button>
+
+      <PageTurnNav
+        current={pageIndex}
+        total={growthFinalChoices.length}
+        onPrev={() => setPageOverride(Math.max(0, pageIndex - 1))}
+        onNext={() => setPageOverride(Math.min(growthFinalChoices.length - 1, pageIndex + 1))}
+        prevLabel="이전 행동"
+        nextLabel="다음 행동"
+      />
+
+      <ConceptBridge>
+        AI가 직업 이름을 제안해도 마지막 선택은 하늘이의 몫이에요. 사람의 마음을 묻고, 실제 정보를 찾고, 직접 경험해 보며 가능성을 좁혀 가요.
+      </ConceptBridge>
 
       <div className="bottom-nav-bar">
-        <button className="btn-outline" onClick={onPrev}>← 이전</button>
-        <button className="btn-primary" onClick={onNext} disabled={!isAllChecked || !finalChoice} style={{ minHeight: '52px' }}>
-          {isAllChecked && finalChoice ? '내가 고른 다음 탐색 저장하기 →' : '확인한 뒤 나의 행동을 골라 주세요'}
+        <button className="btn-outline" onClick={onPrev}>← 꿈 후보 다시 보기</button>
+        <button className="btn-primary" onClick={onNext} disabled={!finalChoice} style={{ minHeight: '52px' }}>
+          {finalChoice ? '하늘이의 탐색 계획 완성하기 →' : '다음 행동 하나를 골라 주세요'}
         </button>
       </div>
     </div>

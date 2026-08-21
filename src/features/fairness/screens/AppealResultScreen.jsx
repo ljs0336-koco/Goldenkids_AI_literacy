@@ -1,80 +1,100 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { projectTeamCandidates, projectTeamPresets } from '../fairnessData';
-import { calculateTeamCandidateScore, evaluateTeamCandidates } from '../fairnessEngine';
+import { evaluateTeamCandidates } from '../fairnessEngine';
 import { appealConsequences } from '../fairnessLearningData';
 import ConceptBridge from '../components/ConceptBridge';
+import PageTurnNav from '../components/PageTurnNav';
 import geumjjokTouched from '../../../assets/geumjjok/금쪽이_표정_감동.png';
 
 export default function AppealResultScreen({ appealChoice = 2, criteriaWeights, onNext, onPrev }) {
+  const [pageIndex, setPageIndex] = useState(0);
   const activeWeights = criteriaWeights || projectTeamPresets[1].weights;
   const beforeResults = evaluateTeamCandidates(projectTeamCandidates, activeWeights);
   const hangyeolBefore = projectTeamCandidates.find(candidate => candidate.id === 'hangyeol');
-  const hangyeolCorrected = { ...hangyeolBefore, communicationCollaboration: 92 };
-  const correctedCandidates = projectTeamCandidates.map(candidate => candidate.id === 'hangyeol' ? hangyeolCorrected : candidate);
+  const correctedCandidates = projectTeamCandidates.map(candidate => candidate.id === 'hangyeol'
+    ? { ...candidate, communicationCollaboration: 92 }
+    : candidate);
   const correctedResults = evaluateTeamCandidates(correctedCandidates, activeWeights);
-  const hangyeolScoreBefore = calculateTeamCandidateScore(hangyeolBefore, activeWeights);
-  const hangyeolScoreAfter = calculateTeamCandidateScore(hangyeolCorrected, activeWeights);
   const consequence = appealConsequences[appealChoice] || appealConsequences[2];
 
   let shownResults = beforeResults;
   if (appealChoice === 2) shownResults = correctedResults;
   if (appealChoice === 3 && !beforeResults.some(candidate => candidate.id === 'hangyeol')) {
-    shownResults = [...beforeResults.slice(0, 3), { ...hangyeolBefore, score: hangyeolScoreBefore, forcedException: true }];
+    shownResults = [...beforeResults.slice(0, 3), { ...hangyeolBefore, forcedException: true }];
   }
 
-  const title = appealChoice === 2
-    ? '기록을 바로잡고 다시 계산한 결과예요'
-    : appealChoice === 1
-      ? '결과를 그대로 두면 무엇이 남을까요?'
-      : '한 사람만 예외로 넣으면 무엇이 달라질까요?';
-
   return (
-    <div className="card" style={{ maxWidth: '850px', margin: '0 auto' }}>
-      <div className="text-center mb-6">
-        <img src={geumjjokTouched} alt="생각을 정리하는 금쪽이" style={{ width: '64px', height: 'auto', marginBottom: '8px' }} />
-        <h2 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'bold', marginBottom: '8px' }}>{title}</h2>
-        <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-base)' }}>
-          내가 고른 대응이 데이터, 규칙, 대표팀 명단에 어떤 영향을 남기는지 함께 살펴봐요.
-        </p>
+    <div className="card fair-story-page">
+      <div className="text-center mb-4">
+        <img src={geumjjokTouched} alt="생각을 정리하는 금쪽이" className="fair-scene-character" />
+        <span className="fair-eyebrow">내 선택 뒤에 생긴 일</span>
+        <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '4px 0 8px' }}>
+          {pageIndex === 0 ? '한결이의 기록은 바로잡혔을까요?' : pageIndex === 1 ? '프로젝트 팀에는 어떤 결과가 남았을까요?' : '공정한 재검토에는 세 가지가 함께 필요해요'}
+        </h2>
       </div>
 
-      <div className={`fair-consequence ${consequence.tone}`}>
-        <h3>{consequence.title}</h3>
-        <p>{consequence.summary}</p>
-        <p><strong>판단의 단서:</strong> {consequence.lesson}</p>
-      </div>
+      {pageIndex === 0 && (
+        <>
+          <div className={`fair-consequence ${consequence.tone}`} role="status">
+            <h3>{consequence.title}</h3>
+            <p>{consequence.summary}</p>
+          </div>
+          <section className={`fair-record-change ${appealChoice === 2 ? 'is-corrected' : ''}`}>
+            <small>한결이의 의사소통·협력 기록</small>
+            {appealChoice === 2 ? (
+              <div><del>70점</del><span aria-hidden="true">→</span><strong>92점</strong></div>
+            ) : (
+              <div><strong>70점 그대로</strong><span>확인된 실제 기록은 92점이에요.</span></div>
+            )}
+          </section>
+        </>
+      )}
 
-      <section style={{ backgroundColor: '#f4f1e9', padding: '18px 20px', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--color-border)', marginBottom: '20px' }}>
-        <h3 style={{ marginTop: 0, fontSize: 'var(--font-size-lg)' }}>한결 학생의 기록은 어떻게 되었나요?</h3>
-        {appealChoice === 2 ? (
-          <>
-            <p><strong>의사소통·협력: 70점 ➔ 92점</strong>으로 기록을 정정했어요.</p>
-            <p style={{ marginBottom: 0 }}>선택한 기준의 계산 점수도 <strong>{hangyeolScoreBefore}점 ➔ {hangyeolScoreAfter}점</strong>으로 달라졌어요.</p>
-          </>
-        ) : (
-          <p style={{ marginBottom: 0 }}><strong>의사소통·협력 70점이 그대로 남아 있어요.</strong> 실제로 확인된 92점과 데이터가 아직 일치하지 않아요.</p>
-        )}
-      </section>
+      {pageIndex === 1 && (
+        <section className="fair-final-team" aria-labelledby="appeal-team-title">
+          <span className="fair-eyebrow">내 대응 뒤에 보이는 팀</span>
+          <h3 id="appeal-team-title">네 명의 프로젝트 팀</h3>
+          <ol>
+            {shownResults.map(candidate => (
+              <li key={candidate.id} className={candidate.id === 'hangyeol' ? 'is-highlighted' : ''}>
+                <strong>{candidate.name}</strong>
+                <span>{candidate.forcedException ? '기록은 고치지 않고 예외로 포함' : candidate.keyStrength}</span>
+              </li>
+            ))}
+          </ol>
+          <p>{appealChoice === 2
+            ? '명단이 바뀌는지와 관계없이, 확인된 기록은 먼저 사실에 맞게 고쳐야 해요.'
+            : '명단만 조정해도 잘못된 기록과 설명하기 어려운 절차는 그대로 남아요.'}</p>
+        </section>
+      )}
 
-      <section style={{ marginBottom: '22px' }} aria-labelledby="appeal-result-team-title">
-        <h3 id="appeal-result-team-title" style={{ fontSize: 'var(--font-size-lg)' }}>이 선택 뒤 화면에 보이는 대표팀</h3>
-        <div className="flex flex-col gap-2">
-          {shownResults.map(candidate => (
-            <div key={candidate.id} style={{ padding: '12px 15px', backgroundColor: candidate.id === 'hangyeol' ? '#e9f0ec' : 'white', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', display: 'flex', justifyContent: 'space-between', gap: '12px' }}>
-              <span><strong>{candidate.name}</strong>{candidate.forcedException ? ' · 예외로 포함' : ''}</span>
-              <span>{candidate.score}점</span>
-            </div>
-          ))}
-        </div>
-      </section>
+      {pageIndex === 2 && (
+        <section className="fair-review-rules">
+          <ol>
+            <li><strong>기록</strong><span>빠지거나 틀린 자료를 확인하고 고쳐요.</span></li>
+            <li><strong>기준</strong><span>누구에게나 설명할 수 있는 같은 기준을 사용해요.</span></li>
+            <li><strong>절차</strong><span>결과에 질문하고 다시 살필 방법을 마련해요.</span></li>
+          </ol>
+          <ConceptBridge>
+            공정성은 마음에 드는 명단이 나왔는지만 보는 일이 아니에요. 사실에 맞는 기록, 공개된 기준, 다시 검토할 절차를 함께 살펴야 해요.
+          </ConceptBridge>
+        </section>
+      )}
 
-      <ConceptBridge>
-        공정성은 “마음에 드는 명단이 나왔는가”만으로 판단하지 않아요. 사실에 맞는 데이터, 모두에게 설명 가능한 기준, 오류를 다시 검토하는 절차를 함께 살펴야 해요.
-      </ConceptBridge>
+      <PageTurnNav
+        current={pageIndex}
+        total={3}
+        onPrev={() => setPageIndex(index => Math.max(0, index - 1))}
+        onNext={() => setPageIndex(index => Math.min(2, index + 1))}
+        prevLabel="이전 결과"
+        nextLabel="다음 결과"
+      />
 
       <div className="bottom-nav-bar">
-        <button className="btn-outline" onClick={onPrev}>← 선택 바꾸기</button>
-        <button className="btn-primary" onClick={onNext} style={{ minHeight: '52px' }}>내가 지킬 운영 원칙 정하기 →</button>
+        <button className="btn-outline" onClick={onPrev}>← 대응 다시 고르기</button>
+        <button className="btn-primary" onClick={onNext} disabled={pageIndex !== 2} style={{ minHeight: '52px' }}>
+          {pageIndex === 2 ? '다음 팀 구성에서 지킬 약속 정하기 →' : '재검토 과정을 끝까지 확인해 주세요'}
+        </button>
       </div>
     </div>
   );

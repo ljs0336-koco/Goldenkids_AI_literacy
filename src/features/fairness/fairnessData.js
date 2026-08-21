@@ -12,6 +12,8 @@ export const activityRecommendationStudent = {
   id: "haneul",
   name: "하늘이",
   grade: "초등학교 6학년",
+  introduction: "새로운 것을 만들고 친구들과 아이디어를 나누는 시간을 좋아해요. 하지만 좋아하는 일을 어떤 직업과 이어 볼 수 있을지는 아직 잘 모르겠어요.",
+  worry: "내가 잘하면서도 즐겁게 할 수 있는 일은 무엇일까?",
   reportCard: [
     { subject: "정보", score: 92 },
     { subject: "수학", score: 86 },
@@ -142,6 +144,13 @@ export const projectTeamRoles = [
   { key: "presentation", label: "🎤 발표·표현", color: "var(--color-purple)" }
 ];
 
+export const projectTeamMission = {
+  eyebrow: "학교 생활 아이디어 발표회",
+  title: "우리 학교를 더 편리하게 만들 네 명의 프로젝트 팀이 필요해요",
+  description: "문제를 찾고, 아이디어를 만들고, 친구들과 협력해 발표까지 해낼 팀을 꾸려야 해요.",
+  aiRequest: "지원자 기록을 보고 네 명을 먼저 골라 줘."
+};
+
 export const projectTeamCandidates = [
   {
     id: "narae",
@@ -239,35 +248,41 @@ export const projectTeamPresets = [
     id: "preset1",
     name: "🏅 현재 역량 중심",
     desc: "각 역할에서 현재 수행이 높은 학생을 살펴봐요.",
+    focus: ["지금 기록된 수행", "빠른 결과"],
+    tradeoff: "현재 기록이 높지 않거나 아직 참여 기회가 적었던 학생은 잘 보이지 않을 수 있어요.",
     weights: { problemDiscovery: 30, digitalMaking: 35, communicationCollaboration: 20, presentation: 15, opportunity: 0 }
   },
   {
     id: "preset2",
     name: "🧩 역할 균형 중심",
     desc: "서로 다른 강점을 가진 학생들로 팀을 구성해요.",
+    focus: ["서로 다른 강점", "네 역할의 균형"],
+    tradeoff: "개인의 전체 기록보다 팀 안에서 맡을 역할을 더 중요하게 봐요.",
     weights: { problemDiscovery: 25, digitalMaking: 25, communicationCollaboration: 25, presentation: 25, opportunity: 0 }
   },
   {
     id: "preset3",
     name: "⚖️ 여러 조건을 함께 고려",
     desc: "개인 역량과 팀의 역할 균형을 함께 살펴봐요.",
+    focus: ["현재 역량", "협력", "참여 기회"],
+    tradeoff: "여러 조건을 함께 보지만 무엇을 더 중요하게 둘지는 사람이 설명해야 해요.",
     weights: { problemDiscovery: 20, digitalMaking: 25, communicationCollaboration: 30, presentation: 15, opportunity: 10 }
   },
   {
     id: "preset4",
     name: "🌱 참여 기회도 고려",
     desc: "필요한 역량을 확인하면서 이전 참여 기회도 함께 고려해요.",
+    focus: ["처음 얻는 기회", "팀에 필요한 역량"],
+    tradeoff: "참여 기회를 고려하는 이유와 적용 방법을 모두에게 미리 알려야 해요.",
     weights: { problemDiscovery: 20, digitalMaking: 20, communicationCollaboration: 25, presentation: 15, opportunity: 20 }
   }
 ];
 
-// 공정한 AI 운영 원칙 (3가지 선택)
+// 프로젝트 팀 추천을 다시 살필 때 필요한 핵심 운영 원칙 (2가지 선택)
 export const principles = [
-  "판단 기준을 미리 공개한다.",
-  "데이터의 출처, 누락, 오류를 확인한다.",
-  "결과가 여러 사람에게 미치는 영향을 비교한다.",
-  "이의제기와 재검토 절차를 마련한다.",
-  "AI의 추천을 참고하되 사람이 근거를 확인하고 최종 판단한다."
+  "팀의 목표와 선택 기준을 먼저 공개한다.",
+  "빠지거나 잘못된 기록은 고친 뒤 같은 기준으로 다시 살핀다.",
+  "결과에 질문하고 다시 검토할 수 있는 방법을 마련한다."
 ];
 
 // ==========================================

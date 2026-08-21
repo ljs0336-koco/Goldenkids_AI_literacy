@@ -17,22 +17,23 @@ export default function GrowthSupplementScreen({ viewedStudentIds = [], onStuden
     <div className="card fair-story-page">
       <div className="text-center mb-4">
         <img src={geumjjokIdea} alt="아이디어 금쪽이" style={{ width: '62px', height: 'auto', marginBottom: '6px' }} />
-        <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '0 0 8px' }}>성적표에 없는 {activityRecommendationStudent.name}의 모습을 확인해요</h2>
-        <p className="fair-one-line-help">한 장씩 읽으며 하늘이가 좋아하는 일과 바라는 일을 찾아보세요.</p>
+        <span className="fair-eyebrow">AI가 아직 듣지 못한 이야기</span>
+        <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '4px 0 8px' }}>{activityRecommendationStudent.name}을 기록보다 더 알아가요</h2>
+        <p className="fair-one-line-help">이야기를 한 장씩 읽고, AI에게 새로 알려 주세요.</p>
       </div>
 
       <article className={`fair-record-page ${isViewed ? 'is-viewed' : ''}`}>
         <span className="fair-eyebrow">{record.source}</span>
         <h3>{record.title}</h3>
         <p>{record.desc}</p>
-        <p className="fair-record-reveal"><strong>이제 알게 된 점</strong><span>{record.reveals}</span></p>
+        <p className="fair-record-reveal"><strong>이 이야기에서 보이는 하늘이</strong><span>{record.reveals}</span></p>
         <button
           type="button"
           className={isViewed ? 'btn-outline fair-record-confirm' : 'btn-primary fair-record-confirm'}
           onClick={() => onStudentViewed?.(record.id)}
           disabled={isViewed}
         >
-          {isViewed ? '이 이야기를 읽었어요' : '☝ 이 이야기 읽었어요'}
+          {isViewed ? 'AI에게 알려 줬어요' : '이 이야기를 AI에게 알려주기'}
         </button>
       </article>
 
@@ -47,13 +48,13 @@ export default function GrowthSupplementScreen({ viewedStudentIds = [], onStuden
       />
 
       <p className="text-center" style={{ color: allViewed ? 'var(--color-primary-hover)' : 'var(--color-text-muted)', fontWeight: 800 }}>
-        {activityRecommendationStudent.name}의 새로운 모습 {viewedCount} / {activityRecommendationSupplementRecords.length}개 확인
+        AI에게 알려 준 하늘이의 이야기 {viewedCount} / {activityRecommendationSupplementRecords.length}
       </p>
 
       <div className="bottom-nav-bar">
         <button className="btn-outline" onClick={onPrev}>← 이전</button>
         <button className="btn-primary" onClick={onNext} disabled={!allViewed} style={{ minHeight: '52px' }}>
-          {allViewed ? '새롭게 떠오른 꿈 후보 보기 →' : `새로운 모습 ${activityRecommendationSupplementRecords.length}가지를 차례로 확인해 주세요`}
+          {allViewed ? '새롭게 보이는 꿈 후보 살펴보기 →' : `하늘이의 이야기 ${activityRecommendationSupplementRecords.length}가지를 차례로 알려 주세요`}
         </button>
       </div>
     </div>

@@ -91,6 +91,23 @@
 
 .fair-story-page { max-width: 850px; min-height: 520px; margin: 0 auto; display: flex; flex-direction: column; }
 .fair-story-page > .bottom-nav-bar { margin-top: auto; }
+.fair-opening-page { padding-top: 34px; }
+.fair-opening-heading { max-width: 690px; margin: 0 auto 24px; text-align: center; }
+.fair-opening-heading h2 { margin: 5px 0 8px; font-size: var(--font-size-2xl); }
+.fair-opening-heading p { margin: 0; color: var(--color-text-muted); }
+.fair-person-intro { display: grid; grid-template-columns: 92px 1fr; gap: 20px; align-items: center; padding: 24px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-lg); background: #fffdf8; }
+.fair-person-avatar { width: 84px; height: 84px; display: grid; place-items: center; border-radius: 50%; background: #dfe8e3; color: #38564d; font-size: 22px; font-weight: 900; }
+.fair-person-intro small { color: var(--color-text-muted); font-weight: 800; }
+.fair-person-intro h3 { margin: 3px 0 7px; font-size: 24px; }
+.fair-person-intro p { margin: 0; color: var(--color-text-muted); }
+.fair-story-quote { margin: 18px 0; padding: 22px 24px; border: 0; border-left: 5px solid #bda77e; border-radius: 0 var(--radius-md) var(--radius-md) 0; background: #f7f3eb; color: #423c33; font-size: 24px; font-weight: 800; line-height: 1.5; }
+.fair-story-quote span { display: block; margin-bottom: 6px; color: #756a58; font-size: 14px; }
+.fair-ai-invitation { display: flex; gap: 16px; align-items: center; max-width: 620px; margin-left: auto; padding: 15px 18px; border: 1px solid #c8d4cd; border-radius: var(--radius-lg); background: #eef3ef; }
+.fair-ai-invitation img { width: 62px; height: 62px; object-fit: contain; }
+.fair-ai-invitation small { color: var(--color-primary-hover); font-weight: 800; }
+.fair-ai-invitation p { margin: 2px 0 0; font-weight: 750; }
+.fair-scene-character { width: 62px; height: auto; margin-bottom: 5px; }
+.fair-scene-emoji { font-size: 40px; }
 .fair-story-section { max-width: 780px; }
 .fair-one-line-help { margin: 0 0 16px; color: var(--color-text-muted); }
 .fair-data-story { display: grid; grid-template-columns: 1fr 54px 1fr; gap: 14px; align-items: stretch; margin: 22px 0 16px; }
@@ -111,6 +128,16 @@
 .fair-evidence-list strong, .fair-evidence-list span { display: block; }
 .fair-evidence-list strong { margin-bottom: 5px; color: var(--color-text); }
 .fair-evidence-list span { color: var(--color-text-muted); line-height: 1.55; }
+.fair-plain-record-list { margin: 18px 0; padding: 0; list-style: none; }
+.fair-plain-record-list li { display: grid; gap: 2px; padding: 13px 4px; border-bottom: 1px solid var(--color-border); }
+.fair-plain-record-list small { color: var(--color-text-muted); font-size: 14px; font-weight: 700; }
+.fair-plain-record-list strong { font-size: 17px; }
+.fair-first-answer { max-width: 680px; margin: 0 auto; padding: 30px; border: 1.5px solid #b7c6be; border-radius: var(--radius-lg); background: #f8faf8; text-align: center; }
+.fair-first-answer > span { color: var(--color-primary-hover); font-size: 14px; font-weight: 800; }
+.fair-first-answer h3 { margin: 8px 0; font-size: 31px; }
+.fair-first-answer > p { color: var(--color-text-muted); }
+.fair-first-answer-reason { display: grid; gap: 3px; margin: 20px 0; padding: 14px 16px; border-radius: var(--radius-md); background: #fff; }
+.fair-first-answer-reason strong { color: var(--color-primary-hover); }
 .fair-inline-details { margin: 10px 0 18px; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
 .fair-inline-details summary { padding: 12px 2px; color: var(--color-primary-hover); font-weight: 800; cursor: pointer; }
 .fair-inline-details > div, .fair-inline-details > ul { margin: 0 0 14px; }
@@ -139,6 +166,25 @@
 .fair-career-options h3 { margin: 0 0 9px; font-size: 21px; }
 .fair-career-options p { margin: 0 0 12px; color: var(--color-text-muted); }
 .fair-career-options small { display: block; color: var(--color-primary-hover); font-size: 14px; font-weight: 700; line-height: 1.55; }
+.fair-before-card { max-width: 660px; margin: 0 auto; padding: 30px; border: 1px dashed #c2ac88; border-radius: var(--radius-lg); background: #faf6ed; text-align: center; }
+.fair-before-card > span { color: var(--color-text-muted); font-size: 14px; font-weight: 800; }
+.fair-before-card h3 { margin: 8px 0; font-size: 29px; }
+.fair-before-card p { color: var(--color-text-muted); }
+.fair-before-card > strong { display: block; margin-top: 18px; color: #71542d; }
+.fair-career-page { width: 100%; min-height: 300px; padding: 30px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 7px; border: 1.5px solid var(--color-border-strong); border-radius: var(--radius-lg); background: #fff; color: var(--color-text-main); text-align: left; cursor: pointer; }
+.fair-career-page > span { color: var(--color-text-muted); font-size: 14px; font-weight: 800; }
+.fair-career-page > strong { font-size: 28px; }
+.fair-career-page p { margin: 2px 0 7px; color: var(--color-text-muted); }
+.fair-career-page small { color: var(--color-primary-hover); font-size: 15px; line-height: 1.55; }
+.fair-career-page em, .fair-next-action em, .fair-question-page > em { margin-top: 12px; color: var(--color-primary-hover); font-style: normal; font-weight: 850; }
+.fair-career-page.is-selected { border-color: var(--color-primary); background: #edf2ee; box-shadow: 0 0 0 1px var(--color-primary); }
+.fair-career-page:disabled { cursor: default; opacity: .6; }
+.fair-selection-count { margin: 9px 0; text-align: center; color: var(--color-primary-hover); font-weight: 850; }
+.fair-selected-careers { margin-bottom: 16px; padding: 16px 18px; border-radius: var(--radius-md); background: #f5efe4; }
+.fair-selected-careers small { color: #71542d; font-weight: 800; }
+.fair-selected-careers > div { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 7px; }
+.fair-selected-careers strong { padding: 7px 10px; border-radius: var(--radius-full); background: #fff; }
+.fair-next-action small { color: var(--color-text-muted); font-weight: 600; line-height: 1.55; }
 .fair-record-confirm { width: 100%; min-height: 48px; margin-top: 18px; }
 .fair-concept-bridge { padding: 17px 20px; border-left: 5px solid var(--color-accent-warm); background: #f5efe4; }
 .fair-concept-bridge strong { color: #71542d; }
@@ -171,6 +217,68 @@
 .fair-consequence h3 { margin: 0 0 8px; }
 .fair-consequence p { margin: 6px 0; }
 
+.fair-mission-card { padding: 28px; border: 1.5px solid #c3b69f; border-radius: var(--radius-lg); background: #faf6ed; }
+.fair-mission-card > span { color: #71542d; font-size: 14px; font-weight: 850; }
+.fair-mission-card h3 { margin: 6px 0 18px; font-size: 27px; }
+.fair-role-strip { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.fair-role-strip strong { padding: 11px 13px; border: 1px solid #ddd2bf; border-radius: var(--radius-md); background: #fff; }
+.fair-mission-card blockquote { margin: 19px 0 0; padding: 15px 17px; border-left: 4px solid var(--color-primary); background: #edf2ee; font-weight: 800; }
+.fair-first-team { padding: 24px; border: 1.5px solid var(--color-border-strong); border-radius: var(--radius-lg); background: #fff; }
+.fair-first-team-heading > span { color: var(--color-primary-hover); font-size: 14px; font-weight: 850; }
+.fair-first-team-heading h3 { margin: 4px 0 16px; font-size: 24px; }
+.fair-first-team ol, .fair-final-team ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin: 0; padding: 0; list-style: none; }
+.fair-first-team li, .fair-final-team li { display: grid; gap: 2px; padding: 12px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+.fair-first-team li span, .fair-final-team li span { color: var(--color-text-muted); font-size: 14px; }
+.fair-first-team > p { margin: 17px 0 0; color: var(--color-text-muted); }
+.fair-dossier ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0; list-style: none; }
+.fair-dossier li { display: grid; padding: 9px 11px; border-radius: var(--radius-sm); background: #f7f5ef; }
+.fair-dossier li span { color: var(--color-text-muted); font-size: 14px; }
+.fair-focus-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.fair-focus-tags b { padding: 7px 10px; border-radius: var(--radius-full); background: #edf2ee; color: var(--color-primary-hover); font-size: 15px; }
+.fair-criterion-tradeoff { display: grid; gap: 2px; margin: 15px 0 2px; color: var(--color-text-muted); font-size: 15px; }
+.fair-criterion-tradeoff strong { font-size: 14px; color: #71542d; }
+.fair-team-comparison { padding: 24px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-lg); background: #fff; }
+.fair-team-strip > small { color: var(--color-text-muted); font-weight: 800; }
+.fair-team-strip > div { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.fair-team-strip strong { padding: 9px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-full); background: #faf9f5; }
+.fair-team-strip strong.is-changed { border-color: #9fb9ab; background: #e9f0ec; color: var(--color-primary-hover); }
+.fair-comparison-arrow { margin: 11px 0; color: var(--color-accent-warm); font-size: 28px; text-align: center; }
+.fair-team-comparison > p { margin: 18px 0 0; padding-top: 15px; border-top: 1px solid var(--color-border); color: var(--color-text-muted); }
+.fair-opportunity-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.fair-opportunity-comparison article { min-height: 230px; padding: 24px; border: 1.5px solid var(--color-border-strong); border-radius: var(--radius-lg); background: #fff; }
+.fair-opportunity-comparison article.is-full { grid-column: 1 / -1; }
+.fair-opportunity-comparison article > small { color: var(--color-primary-hover); font-weight: 850; }
+.fair-opportunity-comparison article > div { display: grid; gap: 3px; margin-top: 15px; }
+.fair-opportunity-comparison article span, .fair-opportunity-comparison article p { color: var(--color-text-muted); }
+.fair-role-checks { margin-top: 14px; }
+.fair-role-checks > div { display: flex; justify-content: space-between; gap: 16px; padding: 11px 2px; border-bottom: 1px solid var(--color-border); }
+.fair-record-change { min-height: 220px; padding: 28px; display: grid; align-content: center; justify-items: center; gap: 18px; border: 1.5px solid #d3b5a7; border-radius: var(--radius-lg); background: #faf0eb; text-align: center; }
+.fair-record-change.is-corrected { border-color: #a7bfb2; background: #edf3ef; }
+.fair-record-change small { color: var(--color-text-muted); font-size: 15px; font-weight: 800; }
+.fair-record-change > div { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: center; }
+.fair-record-change del { color: #9b6257; font-size: 27px; }
+.fair-record-change strong { color: var(--color-primary-hover); font-size: 32px; }
+.fair-record-change span { color: var(--color-text-muted); }
+.fair-final-team { padding: 25px; border: 1.5px solid var(--color-border-strong); border-radius: var(--radius-lg); background: #fff; }
+.fair-final-team h3 { margin: 5px 0 16px; font-size: 25px; }
+.fair-final-team li.is-highlighted { border-color: #9eb9aa; background: #edf2ee; }
+.fair-final-team > p { margin: 17px 0 0; color: var(--color-text-muted); }
+.fair-review-rules > ol { display: grid; gap: 10px; margin: 0 0 18px; padding: 0; list-style: none; }
+.fair-review-rules > ol li { display: grid; grid-template-columns: 90px 1fr; gap: 12px; padding: 16px 18px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: #fff; }
+.fair-review-rules > ol strong { color: var(--color-primary-hover); }
+.fair-review-rules > ol span { color: var(--color-text-muted); }
+.fair-completion-page { max-width: 850px; margin: 0 auto; }
+.fair-completion-page header h2 { margin: 5px auto 8px; max-width: 720px; font-size: var(--font-size-2xl); }
+.fair-completion-page header > p { max-width: 680px; margin: 0 auto 24px; color: var(--color-text-muted); }
+.fair-before-after { display: grid; grid-template-columns: 1fr 46px 1fr; gap: 12px; align-items: stretch; margin: 22px 0; }
+.fair-before-after > article { padding: 22px; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: #faf8f2; }
+.fair-before-after > article.is-after { border-color: #a9beb3; background: #edf2ee; }
+.fair-before-after > article small { color: var(--color-text-muted); font-weight: 850; }
+.fair-before-after > article h3 { margin: 5px 0 8px; font-size: 22px; }
+.fair-before-after > article p { margin: 0; color: var(--color-text-muted); }
+.fair-before-after > div { display: grid; place-items: center; color: var(--color-accent-warm); font-size: 28px; }
+.fair-closing-sentence { margin: 20px 0 0; padding: 17px 20px; border-radius: var(--radius-md); background: #2f3935; color: #fff; text-align: center; font-weight: 800; }
+
 @media (max-width: 700px) {
   .fairness-app { --font-size-2xl: 30px; }
   .fair-learning-brief-grid, .fair-speaker-card { grid-template-columns: 1fr; }
@@ -181,6 +289,14 @@
   .fair-data-story { grid-template-columns: 1fr; }
   .fair-data-arrow { transform: rotate(90deg); min-height: 28px; }
   .fair-evidence-list, .fair-career-options { grid-template-columns: 1fr; }
+  .fair-person-intro { grid-template-columns: 1fr; text-align: center; }
+  .fair-person-avatar { margin: 0 auto; }
+  .fair-story-quote { font-size: 21px; }
+  .fair-ai-invitation { margin-left: 0; }
+  .fair-role-strip, .fair-first-team ol, .fair-final-team ol, .fair-dossier ul, .fair-opportunity-comparison { grid-template-columns: 1fr; }
+  .fair-before-after { grid-template-columns: 1fr; }
+  .fair-before-after > div { transform: rotate(90deg); min-height: 28px; }
+  .fair-review-rules > ol li { grid-template-columns: 1fr; gap: 3px; }
   .fair-story-page { min-height: 0; }
   .fair-page-turn { grid-template-columns: 1fr 1fr; }
   .fair-page-dots { grid-column: 1 / -1; grid-row: 1; justify-content: center; }

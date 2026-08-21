@@ -38,8 +38,8 @@ export default function FairnessLabPage() {
   };
 
   const getSteps = () => {
-    if (state.mode === 'growth') return ['① AI가 받은 자료', '② 하늘이의 이야기', '③ 꿈 후보 비교', '④ 다음 탐색'];
-    if (state.mode === 'team') return ['① 지원자 기록', '② 팀 구성 기준', '③ 추천 설명', '④ 이의제기·검토'];
+    if (state.mode === 'growth') return ['① 하늘이의 고민', '② AI의 첫 생각', '③ 하늘이의 이야기', '④ 꿈 탐색 계획'];
+    if (state.mode === 'team') return ['① 프로젝트와 첫 팀', '② 팀 구성 기준', '③ 결과 비교', '④ 기록 정정·재검토'];
     return [];
   };
 
@@ -47,10 +47,10 @@ export default function FairnessLabPage() {
     const { mode, growthStep, teamStep, isGrowthCompleted, isTeamCompleted } = state;
     if (mode === 'growth') {
       if (growthStep === 5 || isGrowthCompleted) return { currentStep: 4, subStepIndex: 0, subStepTotal: 1 };
-      if (growthStep <= 1) return { currentStep: 0, subStepIndex: growthStep, subStepTotal: 2 };
-      if (growthStep === 2) return { currentStep: 1, subStepIndex: 0, subStepTotal: 1 };
-      if (growthStep === 3) return { currentStep: 2, subStepIndex: 0, subStepTotal: 1 };
-      return { currentStep: 3, subStepIndex: 0, subStepTotal: 1 };
+      if (growthStep === 0) return { currentStep: 0, subStepIndex: 0, subStepTotal: 1 };
+      if (growthStep === 1) return { currentStep: 1, subStepIndex: 0, subStepTotal: 1 };
+      if (growthStep === 2) return { currentStep: 2, subStepIndex: 0, subStepTotal: 1 };
+      return { currentStep: 3, subStepIndex: Math.max(0, growthStep - 3), subStepTotal: 2 };
     }
     if (mode === 'team') {
       if (teamStep === 6 || isTeamCompleted) return { currentStep: 4, subStepIndex: 0, subStepTotal: 1 };
@@ -77,10 +77,13 @@ export default function FairnessLabPage() {
     if (!current.includes(studentId)) updateState({ growthViewedStudentIds: [...current, studentId] });
   };
 
-  const handleToggleChecklist = checkId => {
-    const current = state.growthChecklist || [];
-    const updated = current.includes(checkId) ? current.filter(id => id !== checkId) : [...current, checkId];
-    updateState({ growthChecklist: updated });
+  const handleToggleCareer = careerId => {
+    const current = state.growthCareerChoices || [];
+    if (current.includes(careerId)) {
+      updateState({ growthCareerChoices: current.filter(id => id !== careerId) });
+      return;
+    }
+    if (current.length < 2) updateState({ growthCareerChoices: [...current, careerId] });
   };
 
   const handleCompleteGrowth = () => {
@@ -129,12 +132,18 @@ export default function FairnessLabPage() {
             />
           );
         case 3:
-          return <GrowthDeltaScreen onNext={() => goToGrowthStep(4)} onPrev={() => goToGrowthStep(2)} />;
+          return (
+            <GrowthDeltaScreen
+              selectedCareerIds={state.growthCareerChoices}
+              onToggleCareer={handleToggleCareer}
+              onNext={() => goToGrowthStep(4)}
+              onPrev={() => goToGrowthStep(2)}
+            />
+          );
         case 4:
           return (
             <GrowthHumanCheckScreen
-              checklist={state.growthChecklist}
-              onToggleCheck={handleToggleChecklist}
+              selectedCareerIds={state.growthCareerChoices}
               finalChoice={state.growthFinalChoice}
               onFinalChoice={value => updateState({ growthFinalChoice: value })}
               onNext={handleCompleteGrowth}
@@ -237,7 +246,7 @@ export default function FairnessLabPage() {
   return (
     <div className="app-container fairness-app">
       <AppHeader
-        title="공정한 AI 실험실"
+        title="AI의 선택, 그대로 믿어도 될까?"
         showBackButton={state.mode !== null}
         onBackToActivities={() => selectMode(null)}
         studentMode
@@ -263,7 +272,7 @@ export default function FairnessLabPage() {
         isOpen={isWorksheetOpen}
         onClose={() => setIsWorksheetOpen(false)}
         onPrint={() => window.print()}
-        title="공정한 AI 실험실 나의 탐구 기록"
+        title="AI의 선택을 다시 본 나의 탐구 기록"
       >
         <FairnessWorksheet state={state} />
       </WorksheetModal>

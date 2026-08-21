@@ -1,5 +1,11 @@
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 
+const allowedTeamPrinciples = [
+  '팀의 목표와 선택 기준을 먼저 공개한다.',
+  '빠지거나 잘못된 기록은 고친 뒤 같은 기준으로 다시 살핀다.',
+  '결과에 질문하고 다시 검토할 수 있는 방법을 마련한다.'
+];
+
 export const initialFairnessState = {
   version: 'v5',
   mode: null, // 'growth'(꿈·진로 탐색 내부 호환 키) | 'team' | null
@@ -10,6 +16,7 @@ export const initialFairnessState = {
   growthQuizAnswer: null,
   growthSpeakerPath: null,
   growthQuestionId: null,
+  growthCareerChoices: [],
   growthFinalChoice: null,
   teamCriteriaWeights: null,
   teamHasViewedAll: false,
@@ -45,6 +52,12 @@ export function validateAndSanitizeState(rawState) {
   const validGrowthFinalChoice = ['ask_and_research', 'try_project', 'explore_more'].includes(rawState.growthFinalChoice)
     ? rawState.growthFinalChoice
     : null;
+  const validGrowthCareerChoices = Array.isArray(rawState.growthCareerChoices)
+    ? rawState.growthCareerChoices.filter((id, index, values) => (
+      ['software', 'environmentalEngineering', 'scienceCommunication', 'greenTech'].includes(id)
+      && values.indexOf(id) === index
+    )).slice(0, 2)
+    : [];
   const validTeamSpeakerPath = rawState.teamSpeakerPath === 'speaker' || rawState.teamSpeakerPath === 'sample'
     ? rawState.teamSpeakerPath
     : null;
@@ -66,13 +79,18 @@ export function validateAndSanitizeState(rawState) {
     growthQuizAnswer: typeof rawState.growthQuizAnswer === 'boolean' ? rawState.growthQuizAnswer : null,
     growthSpeakerPath: validGrowthSpeakerPath,
     growthQuestionId: validGrowthQuestionId,
+    growthCareerChoices: validGrowthCareerChoices,
     growthFinalChoice: validGrowthFinalChoice,
     teamCriteriaWeights: validTeamCriteriaWeights,
     teamHasViewedAll: Boolean(rawState.teamHasViewedAll),
     teamSpeakerPath: validTeamSpeakerPath,
     teamQuestionId: validTeamQuestionId,
-    teamAppealChoice: typeof rawState.teamAppealChoice === 'number' ? rawState.teamAppealChoice : null,
-    teamSelectedPrinciples: Array.isArray(rawState.teamSelectedPrinciples) ? rawState.teamSelectedPrinciples : [],
+    teamAppealChoice: [1, 2, 3].includes(rawState.teamAppealChoice) ? rawState.teamAppealChoice : null,
+    teamSelectedPrinciples: Array.isArray(rawState.teamSelectedPrinciples)
+      ? rawState.teamSelectedPrinciples.filter((item, index, values) => (
+        allowedTeamPrinciples.includes(item) && values.indexOf(item) === index
+      )).slice(0, 2)
+      : [],
     isGrowthCompleted: Boolean(rawState.isGrowthCompleted),
     isTeamCompleted: Boolean(rawState.isTeamCompleted)
   };
@@ -117,6 +135,7 @@ export function useFairnessState() {
         growthQuizAnswer: null,
         growthSpeakerPath: null,
         growthQuestionId: null,
+        growthCareerChoices: [],
         growthFinalChoice: null,
         isGrowthCompleted: false
       });

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getRecommendationDiff, evaluateTeamRoleBalance } from '../fairnessEngine';
+import { evaluateTeamRoleBalance, getRecommendationDiff } from '../fairnessEngine';
 import { teamQuestions } from '../fairnessLearningData';
 import AiExchangePanel from '../components/AiExchangePanel';
 import PageTurnNav from '../components/PageTurnNav';
@@ -12,20 +12,18 @@ const roleLabels = [
   ['presentation', '발표·표현']
 ];
 
-function TeamList({ title, team, highlightedIds = [] }) {
+function NameStrip({ label, team, changedIds = [] }) {
   return (
-    <section className="fair-record-page">
-      <span className="fair-eyebrow">대표팀 명단</span>
-      <h3>{title}</h3>
-      <div className="flex flex-col gap-2" style={{ marginTop: '16px' }}>
+    <div className="fair-team-strip">
+      <small>{label}</small>
+      <div>
         {team.map(candidate => (
-          <div key={candidate.id} style={{ padding: '12px 14px', display: 'flex', justifyContent: 'space-between', gap: '10px', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', background: highlightedIds.includes(candidate.id) ? '#edf2ee' : 'white' }}>
-            <span><strong>{candidate.name}</strong> · {candidate.keyStrength}</span>
-            <span>{candidate.score}점{highlightedIds.includes(candidate.id) ? ' · 새로 포함' : ''}</span>
-          </div>
+          <strong key={candidate.id} className={changedIds.includes(candidate.id) ? 'is-changed' : ''}>
+            {candidate.name}{changedIds.includes(candidate.id) ? ' · 새로 포함' : ''}
+          </strong>
         ))}
       </div>
-    </section>
+    </div>
   );
 }
 
@@ -33,30 +31,66 @@ export default function ResultScreen({ oldResults = [], newResults = [], questio
   const [pageIndex, setPageIndex] = useState(0);
   const diff = getRecommendationDiff(oldResults, newResults);
   const roleBalance = evaluateTeamRoleBalance(newResults);
+  const hasChanges = diff.newlyAdded.length > 0 || diff.excluded.length > 0;
 
   return (
     <div className="card fair-story-page">
       <div className="text-center mb-4">
-        <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '0 0 8px' }}>
-          {pageIndex === 0 ? '기존 기준의 추천부터 봐요' : pageIndex === 1 ? '내가 고른 기준의 추천이에요' : '명단보다 중요한 것을 확인해요'}
+        <span className="fair-eyebrow">기준이 결과에 남긴 흔적</span>
+        <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '4px 0 8px' }}>
+          {pageIndex === 0 ? '기준을 바꾸면 팀도 달라질까요?' : pageIndex === 1 ? '누구의 기회가 달라졌을까요?' : '명단이 프로젝트의 목표와 맞는지 확인해요'}
         </h2>
         <p className="fair-one-line-help">
-          {pageIndex < 2 ? '장을 넘기며 어떤 친구가 달라졌는지 살펴보세요.' : '팀에 필요한 역할과 AI의 설명을 확인하세요.'}
+          {pageIndex < 2 ? '이름만 비교하지 말고 어떤 기준 때문에 달라졌는지 생각해 보세요.' : '필요한 역할과 AI의 설명을 마지막으로 확인하세요.'}
         </p>
       </div>
 
-      {pageIndex === 0 && <TeamList title="기존 기준으로 구성한 대표팀" team={oldResults} />}
-      {pageIndex === 1 && <TeamList title="우리 기준으로 구성한 대표팀" team={newResults} highlightedIds={diff.newlyAddedIds} />}
+      {pageIndex === 0 && (
+        <section className="fair-team-comparison" aria-label="기준 변경 전후 팀 비교">
+          <NameStrip label="AI의 처음 기준" team={oldResults} />
+          <div className="fair-comparison-arrow" aria-hidden="true">↓</div>
+          <NameStrip label="내가 고른 기준" team={newResults} changedIds={diff.newlyAddedIds} />
+          <p>{hasChanges ? '기준을 바꾸자 새로 기회를 얻은 학생과 명단에서 빠진 학생이 생겼어요.' : '이번에는 명단이 같지만, 무엇을 중요하게 보았는지는 달라졌어요.'}</p>
+        </section>
+      )}
+
+      {pageIndex === 1 && (
+        <section className="fair-opportunity-comparison">
+          {hasChanges ? (
+            <>
+              <article>
+                <small>새로 포함된 학생</small>
+                {diff.newlyAdded.map(candidate => (
+                  <div key={candidate.id}><strong>{candidate.name}</strong><span>{candidate.keyStrength}</span></div>
+                ))}
+              </article>
+              <article>
+                <small>이번 명단에서 빠진 학생</small>
+                {diff.excluded.map(candidate => (
+                  <div key={candidate.id}><strong>{candidate.name}</strong><span>{candidate.keyStrength}</span></div>
+                ))}
+              </article>
+            </>
+          ) : (
+            <article className="is-full">
+              <small>명단이 같아도 확인할 것</small>
+              <h3>같은 네 명이 나왔다고 기준이 중요하지 않은 것은 아니에요</h3>
+              <p>팀의 목표가 바뀌거나 기록이 수정되면 결과가 달라질 수 있어요. 어떤 기준을 썼는지 남겨야 다음 결과도 설명할 수 있어요.</p>
+            </article>
+          )}
+        </section>
+      )}
+
       {pageIndex === 2 && (
         <>
           <section className="fair-record-page">
-            <span className="fair-eyebrow">팀 역할 확인</span>
-            <h3>네 역할이 모두 있나요?</h3>
-            <div className="flex flex-col gap-2" style={{ marginTop: '14px' }}>
+            <span className="fair-eyebrow">프로젝트 역할 확인</span>
+            <h3>네 역할이 모두 보이나요?</h3>
+            <div className="fair-role-checks">
               {roleLabels.map(([key, label]) => (
-                <div key={key} style={{ padding: '11px 13px', display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--color-border)' }}>
+                <div key={key}>
                   <span>{label}</span>
-                  <strong>{roleBalance[key] ? '담당 있음' : '더 살펴보기'}</strong>
+                  <strong>{roleBalance[key] ? '맡을 사람이 보여요' : '한 번 더 살펴봐요'}</strong>
                 </div>
               ))}
             </div>
@@ -65,10 +99,10 @@ export default function ResultScreen({ oldResults = [], newResults = [], questio
             questions={teamQuestions}
             selectedId={questionId}
             onSelect={onQuestion}
-            title="AI의 대표팀 추천에 한 가지를 물어보세요"
+            title="AI의 팀 추천에 한 가지를 물어보세요"
           />
           <ConceptBridge>
-            공정한 AI는 결과만 보여 주는 것으로 충분하지 않아요. 어떤 기준으로 골랐는지 질문하고 다시 검토할 수 있어야 해요.
+            공정한 추천은 명단만 보여 주는 것으로 끝나지 않아요. 목표와 기준을 설명하고, 빠진 역할이나 달라진 기회를 다시 살펴볼 수 있어야 해요.
           </ConceptBridge>
         </>
       )}
@@ -78,14 +112,14 @@ export default function ResultScreen({ oldResults = [], newResults = [], questio
         total={3}
         onPrev={() => setPageIndex(index => Math.max(0, index - 1))}
         onNext={() => setPageIndex(index => Math.min(2, index + 1))}
-        prevLabel="이전 결과"
-        nextLabel="다음 결과"
+        prevLabel="이전 비교"
+        nextLabel="다음 비교"
       />
 
       <div className="bottom-nav-bar">
         <button className="btn-outline" onClick={onPrev}>← 기준 바꾸기</button>
         <button className="btn-primary" onClick={onNext} disabled={pageIndex !== 2 || !questionId} style={{ minHeight: '52px' }}>
-          {pageIndex !== 2 ? '마지막 장까지 확인해 주세요' : questionId ? '이의제기 상황 보기 →' : 'AI에게 질문을 하나 골라 주세요'}
+          {pageIndex !== 2 ? '역할 확인 장면까지 넘겨 보세요' : questionId ? '잘못된 기록이 발견된 장면 보기 →' : 'AI에게 물어볼 질문을 골라 주세요'}
         </button>
       </div>
     </div>

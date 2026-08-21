@@ -2,6 +2,11 @@ import React from 'react';
 import geumjjokCelebration from '../../../assets/geumjjok/금쪽이_표정_꽃화관.png';
 import { growthFinalChoices, growthQuestions, teamQuestions } from '../fairnessLearningData';
 
+const speakerLabels = {
+  speaker: '금쪽이 챗봇과 직접 대화함',
+  sample: '준비된 응답으로 실험함'
+};
+
 export default function CompletionScreen({ mode, state = {}, onOpenRecord, onReset, onBackToActivities }) {
   const isGrowth = mode === 'growth';
   const growthQuestion = growthQuestions.find(item => item.id === state.growthQuestionId)?.label || '첫 추천에 질문함';
@@ -28,6 +33,7 @@ export default function CompletionScreen({ mode, state = {}, onOpenRecord, onRes
         <h3 id="learning-receipt-title">나의 AI 리터러시 탐구 기록</h3>
         {isGrowth ? (
           <dl>
+            <dt>AI와 시작한 방법</dt><dd>{speakerLabels[state.growthSpeakerPath] || '금쪽이 응답을 살펴봄'}</dd>
             <dt>내가 던진 질문</dt><dd>{growthQuestion}</dd>
             <dt>내가 확인한 것</dt><dd>온라인 기록과 빠져 있던 오프라인·관심 기록을 비교함</dd>
             <dt>나의 최종 행동</dt><dd>{finalChoice}</dd>
@@ -35,6 +41,7 @@ export default function CompletionScreen({ mode, state = {}, onOpenRecord, onRes
           </dl>
         ) : (
           <dl>
+            <dt>AI와 시작한 방법</dt><dd>{speakerLabels[state.teamSpeakerPath] || '금쪽이 응답을 살펴봄'}</dd>
             <dt>내가 던진 질문</dt><dd>{teamQuestion}</dd>
             <dt>내가 바꾼 것</dt><dd>팀에 필요한 가치와 기준을 직접 선택함</dd>
             <dt>나의 재검토</dt><dd>{appealLabels[state.teamAppealChoice] || '잘못된 기록의 영향을 살펴봄'}</dd>

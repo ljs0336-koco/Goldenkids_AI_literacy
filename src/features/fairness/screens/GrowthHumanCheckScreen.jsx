@@ -1,97 +1,85 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { activityRecommendationChecklist } from '../fairnessData';
 import { growthFinalChoices } from '../fairnessLearningData';
+import PageTurnNav from '../components/PageTurnNav';
 import ConceptBridge from '../components/ConceptBridge';
 
-export default function GrowthHumanCheckScreen({
-  checklist = [],
-  onToggleCheck,
-  finalChoice,
-  onFinalChoice,
-  onNext,
-  onPrev
-}) {
+export default function GrowthHumanCheckScreen({ checklist = [], onToggleCheck, finalChoice, onFinalChoice, onNext, onPrev }) {
+  const firstUnchecked = activityRecommendationChecklist.findIndex(item => !checklist.includes(item.id));
+  const [checkIndex, setCheckIndex] = useState(firstUnchecked >= 0 ? firstUnchecked : 0);
+  const selectedChoiceIndex = Math.max(0, growthFinalChoices.findIndex(item => item.id === finalChoice));
+  const [choicePageOverride, setChoicePageOverride] = useState(null);
+  const choiceIndex = choicePageOverride ?? selectedChoiceIndex;
   const isAllChecked = activityRecommendationChecklist.every(item => checklist.includes(item.id));
-  const canComplete = isAllChecked && Boolean(finalChoice);
+  const checkItem = activityRecommendationChecklist[checkIndex];
+  const isCurrentChecked = checklist.includes(checkItem.id);
+  const choice = growthFinalChoices[choiceIndex];
 
   return (
-    <div className="card" style={{ maxWidth: '800px', margin: '0 auto' }}>
-      <div className="text-center mb-6">
-        <div style={{ fontSize: '40px', marginBottom: '8px' }}>🔍</div>
-        <h2 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'bold', marginBottom: '8px' }}>
-          확인을 마친 뒤, 내가 다음 행동을 정해요
+    <div className="card fair-story-page">
+      <div className="text-center mb-4">
+        <div style={{ fontSize: '38px' }}>{isAllChecked ? '🧭' : '🔍'}</div>
+        <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: '4px 0 8px' }}>
+          {isAllChecked ? '이제 내가 다음 행동을 정해요' : '추천 전에 확인할 것을 한 장씩 살펴봐요'}
         </h2>
-        <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-base)' }}>
-          정답 하나를 맞히는 문제가 아니에요. AI 추천을 참고하되, 하늘이의 상황을 더 잘 확인할 수 있는 선택을 해 보세요.
+        <p className="fair-one-line-help">
+          {isAllChecked ? '선택지를 넘겨 보고 가장 필요한 다음 행동을 골라 보세요.' : '내용을 읽고 확인했다면 버튼을 눌러 다음 장으로 가세요.'}
         </p>
       </div>
 
-      <section className="mb-6 p-5" style={{ backgroundColor: '#f4f1e9', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--color-border)' }}>
-        <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'bold', marginBottom: '14px', color: 'var(--color-secondary)' }}>
-          먼저, 내가 확인한 것에 표시해요
-        </h3>
-        <div className="flex flex-col gap-2">
-          {activityRecommendationChecklist.map(item => {
-            const isChecked = checklist.includes(item.id);
-            return (
-              <div
-                key={item.id}
-                onClick={() => onToggleCheck(item.id)}
-                style={{
-                  backgroundColor: isChecked ? '#e9f0ec' : 'white',
-                  border: isChecked ? '1.5px solid var(--color-primary)' : '1px solid var(--color-border)',
-                  padding: '13px 16px',
-                  borderRadius: 'var(--radius-sm)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  cursor: 'pointer'
-                }}
-                role="checkbox"
-                aria-checked={isChecked}
-                tabIndex={0}
-                onKeyDown={event => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    onToggleCheck(item.id);
-                  }
-                }}
-              >
-                <input type="checkbox" checked={isChecked} readOnly style={{ width: '20px', height: '20px', accentColor: 'var(--color-primary)' }} />
-                <span style={{ fontSize: 'var(--font-size-base)', fontWeight: isChecked ? 'bold' : '500' }}>{item.text}</span>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      <section aria-labelledby="growth-final-choice-title">
-        <h3 id="growth-final-choice-title" style={{ fontSize: 'var(--font-size-lg)', marginBottom: '6px' }}>이제 나는 어떻게 할까요?</h3>
-        <p style={{ marginTop: 0, color: 'var(--color-text-muted)' }}>어떤 선택이든 이유를 읽고 결정할 수 있어요. 선택은 나중에 다시 바꿔도 괜찮아요.</p>
-        <div className="fair-final-grid" role="group" aria-label="최종 행동 선택">
-          {growthFinalChoices.map(choice => (
+      {!isAllChecked ? (
+        <>
+          <article className={`fair-record-page ${isCurrentChecked ? 'is-viewed' : ''}`} style={{ display: 'grid', placeItems: 'center', textAlign: 'center' }}>
+            <span className="fair-eyebrow">확인할 점 {checkIndex + 1}</span>
+            <h3 style={{ maxWidth: '620px' }}>{checkItem.text}</h3>
             <button
-              key={choice.id}
               type="button"
-              className={`fair-final-choice ${finalChoice === choice.id ? 'is-selected' : ''}`}
-              aria-pressed={finalChoice === choice.id}
-              onClick={() => onFinalChoice(choice.id)}
+              className={isCurrentChecked ? 'btn-outline fair-record-confirm' : 'btn-primary fair-record-confirm'}
+              onClick={() => onToggleCheck(checkItem.id)}
             >
-              <strong>{choice.title}</strong>
-              <span>{choice.note}</span>
+              {isCurrentChecked ? '확인했어요' : '☝ 확인했어요'}
             </button>
-          ))}
-        </div>
-      </section>
-
-      <ConceptBridge>
-        AI에게 추천을 받는 능력만큼, 추천의 근거를 확인하고 당사자의 목소리를 들어 최종 행동을 정하는 능력도 AI 리터러시예요.
-      </ConceptBridge>
+          </article>
+          <PageTurnNav
+            current={checkIndex}
+            total={activityRecommendationChecklist.length}
+            onPrev={() => setCheckIndex(index => Math.max(0, index - 1))}
+            onNext={() => setCheckIndex(index => Math.min(activityRecommendationChecklist.length - 1, index + 1))}
+            disableNext={!isCurrentChecked}
+            prevLabel="이전 확인"
+            nextLabel="다음 확인"
+          />
+        </>
+      ) : (
+        <>
+          <button
+            type="button"
+            className={`fair-question-page ${finalChoice === choice.id ? 'is-selected' : ''}`}
+            onClick={() => onFinalChoice(choice.id)}
+            aria-pressed={finalChoice === choice.id}
+          >
+            <span>내가 할 수 있는 다음 행동</span>
+            <strong>{choice.title}</strong>
+            <small>{choice.note}</small>
+          </button>
+          <PageTurnNav
+            current={choiceIndex}
+            total={growthFinalChoices.length}
+            onPrev={() => setChoicePageOverride(Math.max(0, choiceIndex - 1))}
+            onNext={() => setChoicePageOverride(Math.min(growthFinalChoices.length - 1, choiceIndex + 1))}
+            prevLabel="이전 선택"
+            nextLabel="다음 선택"
+          />
+          <ConceptBridge>
+            AI에게 추천을 받는 것만큼, 근거를 확인하고 당사자의 목소리를 들어 다음 행동을 정하는 것도 AI 리터러시예요.
+          </ConceptBridge>
+        </>
+      )}
 
       <div className="bottom-nav-bar">
         <button className="btn-outline" onClick={onPrev}>← 이전</button>
-        <button className="btn-primary" onClick={onNext} disabled={!canComplete} style={{ minHeight: '52px' }}>
-          {canComplete ? '내 선택으로 탐구 마치기 →' : '확인 4개와 나의 선택을 완료해 주세요'}
+        <button className="btn-primary" onClick={onNext} disabled={!isAllChecked || !finalChoice} style={{ minHeight: '52px' }}>
+          {isAllChecked && finalChoice ? '내 선택으로 탐구 마치기 →' : '확인한 뒤 나의 행동을 골라 주세요'}
         </button>
       </div>
     </div>

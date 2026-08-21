@@ -5,9 +5,10 @@ import WorksheetModal from '../../components/WorksheetModal';
 import { useFairnessState } from './useFairnessState';
 import FairnessWorksheet from './print/FairnessWorksheet';
 import ModeSelectScreen from './screens/ModeSelectScreen';
+import LearningBrief from './components/LearningBrief';
 import StepPurposeBar from './components/StepPurposeBar';
 import FairnessHelpDrawer from './components/FairnessHelpDrawer';
-import { fairnessStepPurposes } from './fairnessLearningData';
+import { fairnessLearningBriefs, fairnessStepPurposes } from './fairnessLearningData';
 import './fairness.css';
 
 import GrowthInitialScreen from './screens/GrowthInitialScreen';
@@ -107,6 +108,8 @@ export default function FairnessLabPage() {
         case 0:
           return (
             <GrowthInitialScreen
+              speakerPath={state.growthSpeakerPath}
+              onSpeakerPath={value => updateState({ growthSpeakerPath: value })}
               onNext={() => goToGrowthStep(1)}
             />
           );
@@ -164,6 +167,8 @@ export default function FairnessLabPage() {
           <CandidateScreen
             hasViewedAll={state.teamHasViewedAll}
             onViewAll={() => updateState({ teamHasViewedAll: true })}
+            speakerPath={state.teamSpeakerPath}
+            onSpeakerPath={value => updateState({ teamSpeakerPath: value })}
             onNext={() => goToTeamStep(1)}
             onPrev={() => selectMode(null)}
           />
@@ -246,6 +251,7 @@ export default function FairnessLabPage() {
       <main className="container mt-4 no-print">
         {state.mode && (
           <>
+            {stepIndex === 0 && <LearningBrief brief={fairnessLearningBriefs[state.mode]} />}
             <ProgressStepper
               steps={getSteps()}
               currentStep={stepperInfo.currentStep}

@@ -32,20 +32,9 @@ export default function ClaimIntroScreen({ onNext, onPrev }) {
       </div>
 
       <article className="verification-draft-paper" aria-label="AI가 쓴 학교숲 소개문 초안">
-        <header className="verification-draft-paper__header">
-          <div className="verification-draft-paper__masthead">
-            <span className="verification-draft-paper__pub">{claimCase.publication}</span>
-            <span className="verification-draft-paper__tag">📰 기사 초안 원문</span>
-          </div>
-          <strong className="verification-draft-paper__title">우리 학교숲을 소개합니다</strong>
-        </header>
-        <div className="verification-draft-paper__body">
-          {claimCase.aiAnswer.map(sentence => <p key={sentence}>{sentence}</p>)}
-        </div>
-        <footer className="verification-draft-paper__footer">
-          <span className="verification-draft-paper__stamp">⚠️ 사람 확인 필요</span>
-          <span>가상 기사 초안 · 공개하기 전에 사람의 확인이 필요해요.</span>
-        </footer>
+        <header><small>{claimCase.publication}</small><strong>우리 학교숲을 소개합니다</strong></header>
+        {claimCase.aiAnswer.map(sentence => <p key={sentence}>{sentence}</p>)}
+        <footer>가상 기사 초안 · 공개하기 전에 사람의 확인이 필요해요.</footer>
       </article>
 
       <p className="verification-editor-question">기사를 발행하기 전에 <strong>확인할 수 있는 문장으로 나누고 근거를 찾아야 해요.</strong></p>

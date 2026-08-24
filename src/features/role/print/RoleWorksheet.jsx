@@ -1,112 +1,61 @@
 import React from 'react';
-import { roleScenarios, aiPersonas, workTasks, rolePrinciples } from '../roleData';
+import { aiPersonas, rolePrinciples, roleScenarios, taskZoneOptions, workTasks } from '../roleData';
+
+const cell = { border: '1px solid #bbb7ad', padding: '8px', verticalAlign: 'top' };
 
 export default function RoleWorksheet({ state }) {
-  const isPersona = state?.mode === 'persona';
-  const isTask = state?.mode === 'task';
+  const scenario = roleScenarios.find(item => item.id === state?.currentScenarioId) || roleScenarios[0];
+  const persona = aiPersonas.find(item => item.id === state?.userPersonaChoices?.[scenario.id]);
+  const recipe = scenario.recipes.find(item => item.id === state?.personaRecipeChoices?.[scenario.id]);
+  const principle = state?.selectedPrinciples?.[0] || rolePrinciples[0];
 
   return (
-    <div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto', fontFamily: 'sans-serif', color: '#111' }}>
-      {/* 워크시트 헤더 */}
-      <div style={{ borderBottom: '2px solid #000', paddingBottom: '12px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+    <div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto', color: '#111', fontFamily: 'sans-serif' }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', paddingBottom: '12px', marginBottom: '20px', borderBottom: '2px solid #222' }}>
         <div>
-          <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#555' }}>AI 리터러시 실험실 활동지</span>
-          <h1 style={{ fontSize: '20px', fontWeight: 'bold', margin: '4px 0 0 0' }}>
-            {isPersona ? '🎭 [활동 1] 나에게 맞는 AI 페르소나 탐구' : isTask ? '🔀 [활동 2] 미래 업무 3구역 분류 & 공존 설계' : '✨ AI 역할 선택소 탐구 활동지'}
-          </h1>
+          <span style={{ color: '#555', fontSize: '12px', fontWeight: 'bold' }}>AI 리터러시 활동 기록</span>
+          <h1 style={{ margin: '4px 0 0', fontSize: '21px' }}>AI에게 무엇을 맡길까?</h1>
         </div>
-        <div style={{ textAlign: 'right', fontSize: '13px' }}>
-          <div>___학년 ___반 ___번</div>
-          <div style={{ marginTop: '4px' }}>이름: _______________</div>
-        </div>
-      </div>
+        <div style={{ fontSize: '13px', textAlign: 'right' }}>___학년 ___반 ___번<br />이름: _______________</div>
+      </header>
 
-      {/* 활동 1: 페르소나 탐구 기록 */}
-      <div style={{ marginBottom: '28px' }}>
-        <h2 style={{ fontSize: '15px', fontWeight: 'bold', borderLeft: '4px solid #0d9488', paddingLeft: '8px', marginBottom: '12px' }}>
-          1. 4색 AI 금쪽이 페르소나 매칭 기록
-        </h2>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', textAlign: 'left' }}>
-          <thead>
-            <tr style={{ backgroundColor: '#f1f5f9' }}>
-              <th style={{ border: '1px solid #cbd5e1', padding: '6px 8px', width: '35%' }}>탐구한 일상 상황</th>
-              <th style={{ border: '1px solid #cbd5e1', padding: '6px 8px', width: '25%' }}>내가 선택한 역할</th>
-              <th style={{ border: '1px solid #cbd5e1', padding: '6px 8px', width: '40%' }}>선택한 이유 & 배운 점</th>
-            </tr>
-          </thead>
+      <section style={{ marginBottom: '25px' }}>
+        <h2 style={{ paddingLeft: '8px', borderLeft: '4px solid #2f6b63', fontSize: '16px' }}>1. AI에게 어떻게 부탁할까?</h2>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
           <tbody>
-            {roleScenarios.slice(0, 4).map(sc => {
-              const choiceId = state?.userPersonaChoices?.[sc.id];
-              const choicePersona = aiPersonas.find(p => p.id === choiceId);
+            <tr><th style={{ ...cell, width: '24%', background: '#f1efe9', textAlign: 'left' }}>내가 고른 상황</th><td style={cell}>{scenario.situationTitle}</td></tr>
+            <tr><th style={{ ...cell, background: '#f1efe9', textAlign: 'left' }}>먼저 고른 역할</th><td style={cell}>{persona ? persona.name : '선택하지 않음'}</td></tr>
+            <tr><th style={{ ...cell, background: '#f1efe9', textAlign: 'left' }}>완성한 부탁</th><td style={cell}>{recipe?.prompt || '활동에서 부탁 문장을 완성해 보세요.'}</td></tr>
+          </tbody>
+        </table>
+        <p style={{ margin: '9px 0 0', fontSize: '12px' }}><strong>핵심:</strong> 역할 + 할 일 + 조건과 순서를 말하면 AI의 도움을 더 또렷하게 정할 수 있어요.</p>
+      </section>
+
+      <section style={{ marginBottom: '25px' }}>
+        <h2 style={{ paddingLeft: '8px', borderLeft: '4px solid #526c78', fontSize: '16px' }}>2. AI에게 어디까지 맡길까?</h2>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px' }}>
+          <thead><tr style={{ background: '#f1efe9' }}><th style={cell}>학교 축제의 일</th><th style={cell}>내 선택</th><th style={cell}>도구와 사람의 역할</th></tr></thead>
+          <tbody>
+            {workTasks.map(task => {
+              const chosen = taskZoneOptions.find(option => option.id === state?.taskClassifications?.[task.id]);
               return (
-                <tr key={sc.id}>
-                  <td style={{ border: '1px solid #cbd5e1', padding: '6px 8px' }}>
-                    {sc.icon} {sc.situationTitle}
-                  </td>
-                  <td style={{ border: '1px solid #cbd5e1', padding: '6px 8px', fontWeight: 'bold' }}>
-                    {choicePersona ? `${choicePersona.icon} ${choicePersona.name}` : '(선택 안 됨)'}
-                  </td>
-                  <td style={{ border: '1px solid #cbd5e1', padding: '6px 8px', color: '#475569' }}>
-                    {choicePersona ? sc.roleGuidance : ''}
-                  </td>
+                <tr key={task.id}>
+                  <td style={cell}><strong>{task.title}</strong></td>
+                  <td style={cell}>{chosen?.shortLabel || '선택하지 않음'}</td>
+                  <td style={cell}>{task.aiPart} → {task.humanPart}</td>
                 </tr>
               );
             })}
           </tbody>
         </table>
-      </div>
+      </section>
 
-      {/* 활동 2: 업무 3구역 분류 기록 */}
-      <div style={{ marginBottom: '28px' }}>
-        <h2 style={{ fontSize: '15px', fontWeight: 'bold', borderLeft: '4px solid #7c3aed', paddingLeft: '8px', marginBottom: '12px' }}>
-          2. 미래 업무 3구역 분류 결과
-        </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', fontSize: '11px', marginBottom: '12px' }}>
-          <div style={{ border: '1px solid #bfdbfe', borderRadius: '4px', padding: '8px', backgroundColor: '#eff6ff' }}>
-            <strong>🤖 AI 주로 수행:</strong>
-            <ul style={{ paddingLeft: '14px', margin: '4px 0 0 0' }}>
-              {workTasks.filter(t => state?.taskClassifications?.[t.id] === 'ai_auto').map(t => (
-                <li key={t.id}>{t.title}</li>
-              ))}
-            </ul>
-          </div>
-          <div style={{ border: '1px solid #99f6e4', borderRadius: '4px', padding: '8px', backgroundColor: '#f0fdfa' }}>
-            <strong>🤝 인간-AI 협업:</strong>
-            <ul style={{ paddingLeft: '14px', margin: '4px 0 0 0' }}>
-              {workTasks.filter(t => state?.taskClassifications?.[t.id] === 'collaboration').map(t => (
-                <li key={t.id}>{t.title}</li>
-              ))}
-            </ul>
-          </div>
-          <div style={{ border: '1px solid #e9d5ff', borderRadius: '4px', padding: '8px', backgroundColor: '#faf5ff' }}>
-            <strong>👤 인간 최종 결정:</strong>
-            <ul style={{ paddingLeft: '14px', margin: '4px 0 0 0' }}>
-              {workTasks.filter(t => state?.taskClassifications?.[t.id] === 'human_lead').map(t => (
-                <li key={t.id}>{t.title}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* 활동 3: 인간 고유의 3대 가치 성찰 및 서약 */}
-      <div style={{ border: '1.5px solid #000', borderRadius: '6px', padding: '14px', backgroundColor: '#fcfcfc' }}>
-        <h2 style={{ fontSize: '14px', fontWeight: 'bold', margin: '0 0 8px 0' }}>
-          3. 나의 AI 공존 서약 및 성찰
-        </h2>
-        <div style={{ fontSize: '12px', lineHeight: '1.6', marginBottom: '10px' }}>
-          <strong>내가 지키기로 약속한 공존 원칙:</strong>
-          <ul style={{ paddingLeft: '18px', margin: '4px 0' }}>
-            {(state?.selectedPrinciples && state.selectedPrinciples.length > 0 ? state.selectedPrinciples : rolePrinciples.slice(0, 2)).map((p, idx) => (
-              <li key={idx}>{p}</li>
-            ))}
-          </ul>
-        </div>
-        <div style={{ borderTop: '1px dashed #ccc', paddingTop: '8px', fontSize: '12px' }}>
-          <strong>💡 배운 점과 다짐:</strong>
-          <div style={{ height: '45px', borderBottom: '1px solid #ccc', marginTop: '6px' }}></div>
-        </div>
-      </div>
+      <section style={{ padding: '14px', border: '1.5px solid #222', borderRadius: '6px', background: '#fcfcfa' }}>
+        <h2 style={{ margin: '0 0 8px', fontSize: '15px' }}>3. 내가 먼저 지킬 원칙</h2>
+        <p style={{ margin: '0 0 12px', fontSize: '12px', fontWeight: 'bold' }}>{principle}</p>
+        <p style={{ margin: 0, fontSize: '12px' }}><strong>기억할 흐름:</strong> AI·자동화 → 사람 확인 → 수정 → 사람 최종 결정</p>
+        <div style={{ height: '46px', marginTop: '10px', borderTop: '1px dashed #bbb' }}><span style={{ fontSize: '11px' }}>다음에 AI를 쓸 때 내가 해 볼 일:</span></div>
+      </section>
     </div>
   );
 }

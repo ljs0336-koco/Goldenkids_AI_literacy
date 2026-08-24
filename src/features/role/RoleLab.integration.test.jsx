@@ -1,198 +1,146 @@
-import React from 'react';
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import React, { useState } from 'react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RoleLabPage from './RoleLabPage';
-import PersonaScenarioScreen from './screens/persona/PersonaScenarioScreen';
+import { rolePrinciples } from './roleData';
+import RoleWorksheet from './print/RoleWorksheet';
 import PersonaCompareScreen from './screens/persona/PersonaCompareScreen';
 import PersonaFeedbackScreen from './screens/persona/PersonaFeedbackScreen';
-import TaskClassifyScreen from './screens/task/TaskClassifyScreen';
+import PersonaScenarioScreen from './screens/persona/PersonaScenarioScreen';
 import TaskAnalysisScreen from './screens/task/TaskAnalysisScreen';
-import RoleWorksheet from './print/RoleWorksheet';
+import TaskClassifyScreen from './screens/task/TaskClassifyScreen';
 
-describe('RoleLab Module 3 UI & Flow Integration Tests', () => {
+describe('모듈 3 초보자용 페이지 흐름', () => {
   beforeEach(() => {
     window.localStorage.clear();
+    window.scrollTo = vi.fn();
   });
+  afterEach(() => window.localStorage.clear());
 
-  afterEach(() => {
-    window.localStorage.clear();
-  });
-
-  /* 1. 차시 표기 미노출 검증 */
-  it('1. [공통] 학생 화면 및 인쇄 활동지에 "6차시" 등 차시 번호가 전혀 노출되지 않는다', () => {
+  it('차시 번호와 교사 도구 없이 두 활동의 목적을 먼저 보여 준다', () => {
     render(<RoleLabPage />);
-
+    expect(screen.getAllByText('AI에게 무엇을 맡길까?').length).toBeGreaterThan(0);
+    expect(screen.getByText('AI는 이런 때 도울 수 있어요')).toBeInTheDocument();
+    expect(screen.getByText('AI에게 어떻게 부탁할까?')).toBeInTheDocument();
+    expect(screen.getByText('AI에게 어디까지 맡길까?')).toBeInTheDocument();
     expect(screen.queryByText(/6차시/)).not.toBeInTheDocument();
-    expect(screen.getByText(/상황별 AI 역할 탐구 · 약 10분/)).toBeInTheDocument();
-    expect(screen.getByText(/AI와 인간의 역할 분담 · 약 15분/)).toBeInTheDocument();
+    expect(screen.queryByText(/교사 도구/)).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /도움말/ })).toBeInTheDocument();
 
-    const { container } = render(<RoleWorksheet state={{ mode: 'persona' }} />);
+    const { container } = render(<RoleWorksheet state={{}} />);
     expect(container.textContent).not.toContain('6차시');
   });
 
-  /* 2. 활동 선택 화면 */
-  it('2. [선택 화면] 모듈 3 메인 선택 화면에 페르소나 매칭과 업무 분류 카드가 렌더링된다', () => {
-    render(<RoleLabPage />);
+  it('활동 A는 네 상황만 보여 주고 한 상황부터 시작하게 한다', () => {
+    const onSelect = vi.fn();
+    render(<PersonaScenarioScreen userPersonaChoices={{}} onSelectScenario={onSelect} onPrev={() => {}} />);
 
-    expect(screen.getByText('AI 금쪽이와 함께하는 AI 역할 선택소')).toBeInTheDocument();
-    expect(screen.getByText('나에게 맞는 AI 페르소나 매칭')).toBeInTheDocument();
-    expect(screen.getAllByText('미래 업무 3구역 분류소').length).toBeGreaterThan(0);
-    expect(screen.getByText(/페르소나 매칭 시작하기/)).toBeInTheDocument();
-    expect(screen.getByText(/업무 분류 시작하기/)).toBeInTheDocument();
+    expect(screen.getByText('AI에게 이런 부탁도 할 수 있어요')).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: /이 상황 해보기/ })).toHaveLength(4);
+    expect(screen.queryByText(/3개 이상/)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /학교 축제 포스터 아이디어/ }));
+    expect(onSelect).toHaveBeenCalledWith('sc_02');
   });
 
-  /* 3. 페르소나 1단계: PersonaScenarioScreen & 3개 권장 가이드 */
-  it('3. [페르소나 1단계] PersonaScenarioScreen: 3개 상황 권장 가이드와 8가지 일상 상황 카드가 렌더링된다', () => {
+  it('같은 부탁은 A/B 두 답을 중심으로 보여 주고 C는 작은 버튼 뒤에 연다', () => {
+    render(<PersonaCompareScreen scenarioId="sc_01" onChoosePersona={() => {}} onNext={() => {}} onPrev={() => {}} />);
+
+    expect(screen.getByText('같은 부탁, 다른 답')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /A공감 친구/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /B생각 코치/ })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /C설명 박사/ })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /다른 선택지를 고르고 싶다면/ }));
+    expect(screen.getByRole('button', { name: /C설명 박사/ })).toBeInTheDocument();
+  });
+
+  it('두 역할을 묶은 부탁에서 프롬프트 뜻과 스피커 연결을 짧게 보여 준다', () => {
+    const { container } = render(
+      <PersonaFeedbackScreen
+        scenarioId="sc_01"
+        userChoice="friend"
+        recipeChoice="friend_then_coach"
+        onChooseRecipe={() => {}}
+        onComplete={() => {}}
+        onPrev={() => {}}
+      />
+    );
+
+    expect(screen.getByText('한 역할보다, 필요한 순서대로')).toBeInTheDocument();
+    expect(container.textContent).toContain('역할+할 일+조건과 순서');
+    expect(screen.getByText(/‘프롬프트’라고 해요/)).toBeInTheDocument();
+    expect(screen.getByText(/금쪽이 스피커가 있다면/)).toBeInTheDocument();
+  });
+
+  it('활동 B 도입은 자동화와 AI의 차이를 먼저 설명한다', () => {
     render(
-      <PersonaScenarioScreen 
-        currentScenarioId="sc_01" 
-        userPersonaChoices={{}} 
-        onSelectScenario={() => {}} 
-        onPrev={() => {}} 
+      <TaskClassifyScreen
+        introSeen={false}
+        currentTaskIndex={0}
+        onStart={() => {}}
+        onPrev={() => {}}
       />
     );
 
-    expect(screen.getByText('탐구할 일상·학습 상황을 골라주세요')).toBeInTheDocument();
-    expect(screen.getByText(/3개 이상/)).toBeInTheDocument();
-    expect(screen.getByText('친구 금쪽이')).toBeInTheDocument();
-    expect(screen.getByText('성장 코치 금쪽이')).toBeInTheDocument();
-    expect(screen.getByText(/수학 시험 점수 고민/)).toBeInTheDocument();
+    expect(screen.getByText('우리도 이미 ‘도구와 일 나누기’를 해요')).toBeInTheDocument();
+    expect(screen.getByText('잠깐, 자동화가 모두 AI는 아니에요.')).toBeInTheDocument();
+    expect(screen.getByText('문구나 번역 초안')).toBeInTheDocument();
   });
 
-  /* 4. 페르소나 2단계: PersonaCompareScreen */
-  it('4. [페르소나 2단계] PersonaCompareScreen: 상황에 대한 4색 AI 금쪽이의 실시간 응답이 비교 렌더링된다', () => {
-    render(
-      <PersonaCompareScreen 
-        scenarioId="sc_01" 
-        userChoice="friend" 
-        onChoosePersona={() => {}} 
-        onNext={() => {}} 
-        onPrev={() => {}} 
-      />
-    );
-
-    expect(screen.getByText('4색 AI 금쪽이의 실시간 응답을 비교해요')).toBeInTheDocument();
-    expect(screen.getByText(/수학 시험을 망쳐서 너무 속상해/)).toBeInTheDocument();
-    expect(screen.getByText(/정말 속상했겠다... 열심히 준비했을 텐데/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /피드백 & 교육적 교훈 보기/i })).not.toBeDisabled();
+  it('과업 선택 결과는 같은 화면에서 나타나고 다음 버튼을 따로 눌러야 한다', () => {
+    const next = vi.fn();
+    function Harness() {
+      const [classifications, setClassifications] = useState({});
+      return (
+        <TaskClassifyScreen
+          introSeen
+          currentTaskIndex={0}
+          taskClassifications={classifications}
+          onClassifyTask={(taskId, zone) => setClassifications({ [taskId]: zone })}
+          onNextTask={next}
+          onPrevTask={() => {}}
+          onFinish={() => {}}
+          onPrev={() => {}}
+        />
+      );
+    }
+    render(<Harness />);
+    expect(screen.getByRole('button', { name: /다음 일/ })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: /A규칙으로 자동 정리/ }));
+    expect(screen.getByText(/도구가 할 일/)).toBeInTheDocument();
+    expect(screen.getByText(/사람이 확인할 일/)).toBeInTheDocument();
+    expect(next).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: /다음 일/ }));
+    expect(next).toHaveBeenCalledOnce();
   });
 
-  /* 5. 페르소나 3단계: PersonaFeedbackScreen & 다각적 역할 조합 & 안전 경계 */
-  it('5. [페르소나 3단계] PersonaFeedbackScreen: 다각적 2단계 역할 조합, 안전 경계 주의사항 및 프롬프트 팁이 표시된다', () => {
-    render(
-      <PersonaFeedbackScreen 
-        scenarioId="sc_01" 
-        userChoice="friend" 
-        onChooseOtherScenario={() => {}} 
-        onComplete={() => {}} 
-        onPrev={() => {}} 
-      />
-    );
-
-    expect(screen.getByText(/친구 금쪽이를 선택하셨네요!/)).toBeInTheDocument();
-    expect(screen.getByText(/권장되는 2단계 역할 조합/)).toBeInTheDocument();
-    expect(screen.getByText(/진짜 사람 친구나 전문 상담사를 대신할 수 없어요/)).toBeInTheDocument();
-    expect(screen.getByText(/실전 프롬프트 꿀팁 보기/)).toBeInTheDocument();
-
-    // Click to expand prompt tip
-    fireEvent.click(screen.getByText(/실전 프롬프트 꿀팁 보기/));
-    expect(screen.getByText(/마법의 프롬프트/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /페르소나 탐구 마무리하기/i })).toBeInTheDocument();
-  });
-
-  /* 6. 업무 분류 1단계: TaskClassifyScreen & 말풍선 힌트 */
-  it('6. [업무 분류 1단계] TaskClassifyScreen: 12개 업무 중 12개 전체 분류 전에는 완료 버튼이 비활성화된다', () => {
-    const { rerender } = render(
-      <TaskClassifyScreen 
-        taskClassifications={{ task_01: 'ai_auto' }} 
-        onClassifyTask={() => {}} 
-        onNext={() => {}} 
-        onPrev={() => {}} 
-      />
-    );
-
-    expect(screen.getByRole('button', { name: /12개 업무를 모두 분류해 주세요/i })).toBeDisabled();
-
-    // Click hint button
-    const hintBtn = screen.getByText(/금쪽이 힌트/);
-    fireEvent.click(hintBtn);
-    expect(screen.getByText(/금쪽이의 힌트/)).toBeInTheDocument();
-
-    // All 12 classified
-    const all = {
-      task_01: 'ai_auto', task_02: 'human_lead', task_03: 'collaboration',
-      task_04: 'ai_auto', task_05: 'ai_auto', task_06: 'human_lead',
-      task_07: 'collaboration', task_08: 'collaboration', task_09: 'human_lead',
-      task_10: 'ai_auto', task_11: 'collaboration', task_12: 'human_lead'
+  it('역할 지도는 점수와 비율 대신 사람·상황·책임 질문으로 이어진다', () => {
+    const classifications = {
+      task_01: 'ai_auto',
+      task_02: 'collaboration',
+      task_03: 'collaboration',
+      task_04: 'human_lead'
     };
-
-    rerender(
-      <TaskClassifyScreen 
-        taskClassifications={all} 
-        onClassifyTask={() => {}} 
-        onNext={() => {}} 
-        onPrev={() => {}} 
-      />
+    const { rerender, container } = render(
+      <TaskAnalysisScreen page={0} taskClassifications={classifications} selectedPrinciples={[]} onNextPage={() => {}} onPrevPage={() => {}} onComplete={() => {}} />
     );
+    expect(screen.getByText('도구가 시작하고, 사람이 끝내요')).toBeInTheDocument();
+    expect(container.textContent).not.toMatch(/\d+%/);
+    expect(container.textContent).not.toContain('인간만의');
 
-    expect(screen.getByRole('button', { name: /분류 결과 & 가치 분석 보기/i })).not.toBeDisabled();
+    rerender(<TaskAnalysisScreen page={1} taskClassifications={classifications} selectedPrinciples={[]} onNextPage={() => {}} onPrevPage={() => {}} onComplete={() => {}} />);
+    expect(screen.getByText('누가 영향을 받을까?')).toBeInTheDocument();
+    expect(screen.getByText('AI가 모르는 맥락은?')).toBeInTheDocument();
+    expect(screen.getByText('누가 마지막으로 확인할까?')).toBeInTheDocument();
+
+    rerender(<TaskAnalysisScreen page={2} taskClassifications={classifications} selectedPrinciples={[rolePrinciples[0]]} onSelectPrinciple={() => {}} onNextPage={() => {}} onPrevPage={() => {}} onComplete={() => {}} />);
+    expect(screen.getByRole('button', { name: /활동 마치기/ })).not.toBeDisabled();
   });
 
-  /* 7. 업무 분류 2단계: TaskAnalysisScreen */
-  it('7. [업무 분류 2단계] TaskAnalysisScreen: 3구역 분포도와 인간 고유 가치 성찰 및 원칙 2개 이상 선택 요구', () => {
-    const all = {
-      task_01: 'ai_auto', task_02: 'human_lead', task_03: 'collaboration',
-      task_04: 'ai_auto', task_05: 'ai_auto', task_06: 'human_lead',
-      task_07: 'collaboration', task_08: 'collaboration', task_09: 'human_lead',
-      task_10: 'ai_auto', task_11: 'collaboration', task_12: 'human_lead'
-    };
-
-    const { rerender } = render(
-      <TaskAnalysisScreen 
-        taskClassifications={all} 
-        selectedPrinciples={['목적에 맞는 AI 역할 선택: 단순 위로가 필요할 땐 친구형, 생각을 키울 땐 코치형 AI를 선택해요.']} 
-        onSelectPrinciples={() => {}} 
-        onNext={() => {}} 
-        onPrev={() => {}} 
-      />
-    );
-
-    expect(screen.getByText('미래 업무 분류 결과와 인간의 고유 가치')).toBeInTheDocument();
-    expect(screen.getByText(/AI에게 넘길 수 없는 인간만의 3가지 고유 가치/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /공존 원칙을 2개 이상 선택해 주세요/i })).toBeDisabled();
-
-    rerender(
-      <TaskAnalysisScreen 
-        taskClassifications={all} 
-        selectedPrinciples={[
-          '목적에 맞는 AI 역할 선택: 단순 위로가 필요할 땐 친구형, 생각을 키울 땐 코치형 AI를 선택해요.',
-          '생각의 주도권 유지: AI에게 완성된 정답을 요구하기보다, 질문을 던져 스스로 해결하는 힘을 길러요.'
-        ]} 
-        onSelectPrinciples={() => {}} 
-        onNext={() => {}} 
-        onPrev={() => {}} 
-      />
-    );
-
-    expect(screen.getByRole('button', { name: /공존 설계도 완성하기/i })).not.toBeDisabled();
-  });
-
-  /* 8. 전체 앱 내비게이션 및 모드 전환 */
-  it('8. [전체 앱] 모듈 3 진입 및 페르소나/업무 모드 전환이 정상 작동한다', () => {
+  it('전체 앱에서 활동 선택 후 네 상황 화면으로 이동한다', () => {
     render(<RoleLabPage />);
-
-    // Click '페르소나 매칭 시작하기'
-    const personaBtn = screen.getByText(/페르소나 매칭 시작하기/);
-    fireEvent.click(personaBtn);
-
-    expect(screen.getByText('탐구할 일상·학습 상황을 골라주세요')).toBeInTheDocument();
-    expect(screen.getByText('① 상황 탐색')).toBeInTheDocument();
-
-    // Click '활동 고르기'
-    const backBtn = screen.getByRole('button', { name: /활동 고르기/i });
-    fireEvent.click(backBtn);
-
-    expect(screen.getByText('AI 금쪽이와 함께하는 AI 역할 선택소')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /AI에게 어떻게 부탁할까/ }));
+    expect(screen.getByText('AI에게 이런 부탁도 할 수 있어요')).toBeInTheDocument();
+    expect(screen.getByText('① 상황 고르기')).toBeInTheDocument();
   });
 });

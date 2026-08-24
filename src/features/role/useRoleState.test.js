@@ -1,89 +1,56 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
-import { useRoleState, initialRoleState, validateAndSanitizeRoleState } from './useRoleState';
+import { act, renderHook } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { initialRoleState, useRoleState, validateAndSanitizeRoleState } from './useRoleState';
 
-describe('useRoleState Hook Tests (v2)', () => {
-  beforeEach(() => {
-    window.localStorage.clear();
-  });
+describe('useRoleState v3', () => {
+  beforeEach(() => window.localStorage.clear());
+  afterEach(() => window.localStorage.clear());
 
-  afterEach(() => {
-    window.localStorage.clear();
-  });
-
-  it('1. 초기 상태가 v2 기본값으로 설정되며 이전 v1 스토리지를 정리한다', () => {
-    window.localStorage.setItem('ai-literacy-lab-role:v1', JSON.stringify({ old: true }));
-
+  it('새 스키마로 시작하고 이전 역할 저장 기록을 정리한다', () => {
+    window.localStorage.setItem('ai-literacy-lab-role:v1', '{}');
+    window.localStorage.setItem('ai-literacy-lab-role:v2', '{}');
     const { result } = renderHook(() => useRoleState());
 
-    expect(result.current.state.version).toBe('v2');
-    expect(result.current.state.mode).toBeNull();
-    expect(result.current.state.personaStep).toBe(0);
-    expect(result.current.state.taskStep).toBe(0);
+    expect(result.current.state.version).toBe('v3');
+    expect(result.current.state.currentTaskIndex).toBe(0);
+    expect(result.current.state.personaRecipeChoices).toEqual({});
     expect(window.localStorage.getItem('ai-literacy-lab-role:v1')).toBeNull();
+    expect(window.localStorage.getItem('ai-literacy-lab-role:v2')).toBeNull();
   });
 
-  it('2. 알 수 없는 주입 필드 및 유효하지 않은 시나리오/업무 ID를 엄격하게 정제한다', () => {
-    const malicious = {
-      version: 'v2',
+  it('네 상황·네 과업·상황별 부탁 조합만 허용한다', () => {
+    const sanitized = validateAndSanitizeRoleState({
+      version: 'v3',
       mode: 'persona',
       personaStep: 2,
-      currentScenarioId: 'invalid_scenario_999',
-      userPersonaChoices: { 
-        sc_01: 'friend', 
-        sc_02: 'invalid_persona',
-        hacked_sc_99: 'coach'
-      },
-      taskClassifications: {
-        task_01: 'ai_auto',
-        task_999: 'ai_auto',
-        task_02: 'invalid_zone'
-      },
-      hackedKey: 'injected_code'
-    };
-
-    const sanitized = validateAndSanitizeRoleState(malicious);
+      currentScenarioId: 'sc_99',
+      userPersonaChoices: { sc_01: 'friend', sc_05: 'coach', sc_02: 'fake' },
+      personaRecipeChoices: { sc_01: 'friend_then_coach', sc_02: 'fake_recipe' },
+      taskClassifications: { task_01: 'ai_auto', task_05: 'human_lead', task_02: 'fake_zone' },
+      selectedPrinciples: ['AI의 초안은 사실과 상황을 확인한 뒤 사용해요.', '가짜 원칙'],
+      injected: true
+    });
 
     expect(sanitized.mode).toBe('persona');
-    expect(sanitized.personaStep).toBe(2);
-    expect(sanitized.currentScenarioId).toBe('sc_01'); // fallback to default
-    expect(sanitized.userPersonaChoices.sc_01).toBe('friend');
-    expect(sanitized.userPersonaChoices.sc_02).toBeUndefined();
-    expect(sanitized.userPersonaChoices.hacked_sc_99).toBeUndefined();
-    expect(sanitized.taskClassifications.task_01).toBe('ai_auto');
-    expect(sanitized.taskClassifications.task_999).toBeUndefined();
-    expect(sanitized.taskClassifications.task_02).toBeUndefined();
-    expect(sanitized.hackedKey).toBeUndefined();
+    expect(sanitized.currentScenarioId).toBe('sc_01');
+    expect(sanitized.userPersonaChoices).toEqual({ sc_01: 'friend' });
+    expect(sanitized.personaRecipeChoices).toEqual({ sc_01: 'friend_then_coach' });
+    expect(sanitized.taskClassifications).toEqual({ task_01: 'ai_auto' });
+    expect(sanitized.selectedPrinciples).toHaveLength(1);
+    expect(sanitized.injected).toBeUndefined();
   });
 
-  it('3. 모드 전환(persona, task) 및 resetState가 올바르게 작동한다', () => {
+  it('모드 전환과 초기화가 새 상태를 유지한다', () => {
     const { result } = renderHook(() => useRoleState());
+    act(() => result.current.selectMode('persona'));
+    act(() => result.current.updateState({ personaStep: 2, currentScenarioId: 'sc_04' }));
+    expect(result.current.state.currentScenarioId).toBe('sc_04');
 
-    act(() => {
-      result.current.selectMode('persona');
-    });
-
-    expect(result.current.state.mode).toBe('persona');
-    expect(result.current.state.personaStep).toBe(0);
-
-    act(() => {
-      result.current.updateState({ personaStep: 2, currentScenarioId: 'sc_05' });
-    });
-
-    expect(result.current.state.personaStep).toBe(2);
-    expect(result.current.state.currentScenarioId).toBe('sc_05');
-
-    act(() => {
-      result.current.selectMode('task');
-    });
-
-    expect(result.current.state.mode).toBe('task');
+    act(() => result.current.selectMode('task'));
     expect(result.current.state.taskStep).toBe(0);
+    expect(result.current.state.currentTaskIndex).toBe(0);
 
-    act(() => {
-      result.current.resetState();
-    });
-
+    act(() => result.current.resetState());
     expect(result.current.state).toEqual(initialRoleState);
   });
 });

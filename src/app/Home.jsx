@@ -24,8 +24,8 @@ const modules = [
   {
     id: '03',
     path: '/role',
-    title: 'AI 역할 선택소',
-    description: '상황에 맞는 AI 역할을 비교하고 미래 업무에서 인간과 AI의 협업 방식을 설계해요.',
+    title: 'AI에게 무엇을 맡길까?',
+    description: '생활 속 부탁을 비교하고, 자동화·AI의 도움·사람의 결정을 구별해요.',
     image: thumbRole
   },
   {

@@ -33,7 +33,7 @@ export function getPersonaMatchAnalysis(scenario, chosenPersonaId) {
 }
 
 /**
- * 12개 업무의 3구역 분류 분포 계산
+ * 네 가지 학교 축제 과업의 역할 분포 계산
  */
 export function calculateTaskDistribution(taskClassifications = {}) {
   const counts = {
@@ -70,8 +70,7 @@ export function calculateTaskDistribution(taskClassifications = {}) {
 }
 
 /**
- * 12개 업무 분류 상세 교육적 분석
- * (단순 정답/점수 매기기 배제, 분류 이유와 가치 중심 해설 제공)
+ * 네 가지 과업을 정답 점수 없이 역할과 확인 기준 중심으로 분석
  */
 export function evaluateTaskClassifications(taskClassifications = {}) {
   const items = workTasks.map(task => {

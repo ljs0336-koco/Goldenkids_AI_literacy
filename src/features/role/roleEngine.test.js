@@ -1,76 +1,43 @@
-import { describe, it, expect } from 'vitest';
-import { getPersonaMatchAnalysis, calculateTaskDistribution, evaluateTaskClassifications } from './roleEngine';
+import { describe, expect, it } from 'vitest';
+import { calculateTaskDistribution, evaluateTaskClassifications, getPersonaMatchAnalysis } from './roleEngine';
 import { roleScenarios, workTasks } from './roleData';
 
-describe('RoleEngine Unit Tests', () => {
-  describe('Persona Matching Engine', () => {
-    it('1. 시나리오의 주 추천 역할, 보조 역할, 활용 가이드를 올바르게 분석한다', () => {
-      const sc01 = roleScenarios.find(s => s.id === 'sc_01'); // primary: friend, secondary: coach
-      
-      // 주 추천 선택 시
-      const primaryRes = getPersonaMatchAnalysis(sc01, 'friend');
-      expect(primaryRes.fitLevel).toBe('primary');
-      expect(primaryRes.isPrimary).toBe(true);
-      expect(primaryRes.primaryPersona.id).toBe('friend');
-      expect(primaryRes.secondaryPersona.id).toBe('coach');
-      expect(primaryRes.cautionNotice).toContain('진짜 사람 친구나 전문 상담사를 대신할 수 없어요');
+describe('모듈 3 역할 분석 엔진', () => {
+  it('주 역할과 함께 쓰는 역할을 구분한다', () => {
+    const scenario = roleScenarios[0];
+    const primary = getPersonaMatchAnalysis(scenario, 'friend');
+    const secondary = getPersonaMatchAnalysis(scenario, 'coach');
+    const other = getPersonaMatchAnalysis(scenario, 'critic');
 
-      // 보조 역할 선택 시
-      const secondaryRes = getPersonaMatchAnalysis(sc01, 'coach');
-      expect(secondaryRes.fitLevel).toBe('secondary');
-      expect(secondaryRes.isSecondary).toBe(true);
-
-      // 보완적 관점 선택 시
-      const compRes = getPersonaMatchAnalysis(sc01, 'critic');
-      expect(compRes.fitLevel).toBe('complementary');
-      expect(compRes.isPrimary).toBe(false);
-      expect(compRes.isSecondary).toBe(false);
-    });
+    expect(primary.fitLevel).toBe('primary');
+    expect(primary.primaryPersona.name).toBe('공감 친구');
+    expect(primary.secondaryPersona.name).toBe('생각 코치');
+    expect(primary.cautionNotice).toContain('실제로 감정을 느끼지는 않아요');
+    expect(secondary.fitLevel).toBe('secondary');
+    expect(other.fitLevel).toBe('complementary');
   });
 
-  describe('Task Distribution Engine', () => {
-    it('2. 12개 업무의 3구역 분류 분포를 올바르게 집계한다', () => {
-      const sampleClassifications = {
-        task_01: 'ai_auto',
-        task_02: 'human_lead',
-        task_03: 'collaboration',
-        task_04: 'ai_auto'
-      };
-
-      const dist = calculateTaskDistribution(sampleClassifications);
-
-      expect(dist.counts.ai_auto).toBe(2);
-      expect(dist.counts.collaboration).toBe(1);
-      expect(dist.counts.human_lead).toBe(1);
-      expect(dist.counts.unclassified).toBe(8);
-      expect(dist.classifiedCount).toBe(4);
-      expect(dist.total).toBe(12);
-      expect(dist.isAllClassified).toBe(false);
+  it('네 가지 과업의 역할 분포를 집계한다', () => {
+    const distribution = calculateTaskDistribution({
+      task_01: 'ai_auto',
+      task_02: 'collaboration',
+      task_03: 'collaboration'
     });
 
-    it('3. 12개 업무 전체 분류 시 isAllClassified가 true가 된다', () => {
-      const allClassified = {};
-      workTasks.forEach(t => {
-        allClassified[t.id] = t.recommendedZone;
-      });
+    expect(distribution.total).toBe(4);
+    expect(distribution.classifiedCount).toBe(3);
+    expect(distribution.counts.ai_auto).toBe(1);
+    expect(distribution.counts.collaboration).toBe(2);
+    expect(distribution.counts.unclassified).toBe(1);
+    expect(distribution.isAllClassified).toBe(false);
+  });
 
-      const dist = calculateTaskDistribution(allClassified);
-      expect(dist.isAllClassified).toBe(true);
-      expect(dist.counts.unclassified).toBe(0);
-      expect(dist.classifiedCount).toBe(12);
-    });
+  it('추천 역할은 점수 대신 과업별 근거와 함께 반환한다', () => {
+    const classifications = Object.fromEntries(workTasks.map(task => [task.id, task.recommendedZone]));
+    const result = evaluateTaskClassifications(classifications);
 
-    it('4. 추천 분류와의 부합 여부 및 개별 사유를 정확하게 평가한다', () => {
-      const allRecommended = {};
-      workTasks.forEach(t => {
-        allRecommended[t.id] = t.recommendedZone;
-      });
-
-      const evalRes = evaluateTaskClassifications(allRecommended);
-      expect(evalRes.alignedCount).toBe(12);
-      expect(evalRes.items).toHaveLength(12);
-      expect(evalRes.items[0].isAligned).toBe(true);
-      expect(evalRes.items[0].rationale).toBeDefined();
-    });
+    expect(result.items).toHaveLength(4);
+    expect(result.alignedCount).toBe(4);
+    expect(result.items.every(item => item.rationale.length > 0)).toBe(true);
   });
 });

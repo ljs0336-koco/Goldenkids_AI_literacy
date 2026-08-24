@@ -1,237 +1,83 @@
-import React, { useState } from 'react';
-import { calculateTaskDistribution, evaluateTaskClassifications } from '../../roleEngine';
-import { rolePrinciples } from '../../roleData';
-import geumjjokDoctor from '../../../../assets/geumjjok/금쪽이_캐릭터_박사_안경콧수염.png';
+import React from 'react';
+import { rolePrinciples, taskZoneOptions, workTasks } from '../../roleData';
+import RoleChoiceFork from '../../components/RoleChoiceFork';
+import RolePageCue from '../../components/RolePageCue';
+import RolePageNav from '../../components/RolePageNav';
 
-export default function TaskAnalysisScreen({ taskClassifications = {}, selectedPrinciples = [], onSelectPrinciples, onNext, onPrev }) {
-  const [expandedTaskId, setExpandedTaskId] = useState(null);
-  const dist = calculateTaskDistribution(taskClassifications);
-  const evalResult = evaluateTaskClassifications(taskClassifications);
+export default function TaskAnalysisScreen({ page, taskClassifications = {}, selectedPrinciples = [], onSelectPrinciple, onNextPage, onPrevPage, onComplete }) {
+  if (page === 0) {
+    return (
+      <section className="role-shell role-stage" aria-labelledby="role-map-title">
+        <RolePageCue action="네 가지 일의 역할 지도를 위에서 아래로 읽으세요." reason="누가 더 똑똑한지가 아니라, 도구와 사람이 어떤 순서로 일하는지 보는 활동이에요." />
+        <header className="role-page-head">
+          <span className="role-eyebrow">완성한 역할 지도</span>
+          <h1 id="role-map-title">도구가 시작하고, 사람이 끝내요</h1>
+          <p>일마다 알맞은 방법은 다르지만 확인과 책임은 빠지지 않아요.</p>
+        </header>
 
-  const handleTogglePrinciple = (principleText) => {
-    const current = selectedPrinciples || [];
-    const updated = current.includes(principleText)
-      ? current.filter(p => p !== principleText)
-      : [...current, principleText];
+        <div className="role-map-list">
+          {workTasks.map(task => {
+            const chosen = taskZoneOptions.find(option => option.id === taskClassifications[task.id]);
+            return (
+              <article key={task.id}>
+                <span>{task.title}</span>
+                <strong>{chosen?.shortLabel || '선택 없음'}</strong>
+                <p>{task.aiPart} <b>→</b> {task.humanPart}</p>
+              </article>
+            );
+          })}
+        </div>
 
-    if (onSelectPrinciples) {
-      onSelectPrinciples(updated);
-    }
-  };
+        <div className="role-keyword-formula is-wide">
+          <span>AI·자동화</span><b>→</b><span>사람 확인</span><b>→</b><span>수정</span><b>→</b><span>사람 최종 결정</span>
+        </div>
+        <RolePageNav onPrev={onPrevPage} onNext={onNextPage} prevLabel="마지막 일 다시 보기" nextLabel="맡기기 전 질문 보기" />
+      </section>
+    );
+  }
 
-  const isReady = (selectedPrinciples || []).length >= 2;
+  if (page === 1) {
+    return (
+      <section className="role-shell role-stage" aria-labelledby="role-check-title">
+        <RolePageCue action="세 단어를 소리 내어 읽고, 각 질문을 한 번 생각해 보세요." reason="AI가 할 수 있는지만 묻지 않고 상황과 영향을 함께 보면 더 안전하게 맡길 수 있어요." />
+        <header className="role-page-head">
+          <span className="role-eyebrow">맡기기 전 확인</span>
+          <h1 id="role-check-title">세 가지만 먼저 물어요</h1>
+          <p>정답을 외우기보다 어떤 일을 맡길 때마다 다시 써 보는 질문이에요.</p>
+        </header>
+        <div className="role-check-grid">
+          <article><span>사람</span><h2>누가 영향을 받을까?</h2><p>학생, 방문객처럼 결과를 직접 보거나 사용하는 사람을 떠올려요.</p></article>
+          <article><span>상황</span><h2>AI가 모르는 맥락은?</h2><p>우리 학교의 분위기, 실제 일정, 말의 느낌처럼 빠진 정보를 찾아요.</p></article>
+          <article><span>책임</span><h2>누가 마지막으로 확인할까?</h2><p>오류가 생겼을 때 설명하고 고칠 사람을 정해요.</p></article>
+        </div>
+        <RolePageNav onPrev={onPrevPage} onNext={onNextPage} prevLabel="역할 지도" nextLabel="내 원칙 고르기" />
+      </section>
+    );
+  }
+
+  const options = rolePrinciples.slice(0, 2).map((principle, index) => ({
+    id: principle,
+    label: `${index === 0 ? 'A' : 'B'}. ${principle}`
+  }));
+  const alternative = { id: rolePrinciples[2], label: `C. ${rolePrinciples[2]}` };
+  const selected = selectedPrinciples[0];
 
   return (
-    <div style={{ maxWidth: '880px', margin: '0 auto' }}>
-      {/* 타이틀 */}
-      <div className="text-center mb-5">
-        <img 
-          src={geumjjokDoctor} 
-          alt="박사 금쪽이" 
-          style={{ width: '56px', height: 'auto', marginBottom: '6px' }} 
-        />
-        <h2 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'bold', marginBottom: '6px' }}>
-          미래 업무 분류 결과와 인간의 고유 가치
-        </h2>
-        <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)', margin: 0 }}>
-          우리가 분류한 12개 업무의 분포를 살펴보고, AI와 공존하기 위한 약속을 정해요.
-        </p>
-      </div>
-
-      {/* 3구역 분포 요약 카드 (컴팩트 & 직관적) */}
-      <div 
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '14px',
-          marginBottom: '22px'
-        }}
-      >
-        <div style={{ backgroundColor: '#eff6ff', padding: '16px 14px', borderRadius: '14px', border: '2px solid #bfdbfe', textAlign: 'center' }}>
-          <div style={{ fontSize: '28px', marginBottom: '4px' }}>🤖</div>
-          <div style={{ fontSize: '15px', fontWeight: '800', color: '#1d4ed8' }}>AI 주로 수행</div>
-          <div style={{ fontSize: '24px', fontWeight: '800', color: '#1e3a8a', margin: '4px 0' }}>
-            {dist.counts.ai_auto}개 <span style={{ fontSize: '14px', fontWeight: 'normal', color: '#64748b' }}>({dist.percentages.ai_auto}%)</span>
-          </div>
-        </div>
-
-        <div style={{ backgroundColor: '#f0fdfa', padding: '16px 14px', borderRadius: '14px', border: '2px solid #99f6e4', textAlign: 'center' }}>
-          <div style={{ fontSize: '28px', marginBottom: '4px' }}>🤝</div>
-          <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--color-primary-hover)' }}>인간-AI 협업</div>
-          <div style={{ fontSize: '24px', fontWeight: '800', color: 'var(--color-primary-hover)', margin: '4px 0' }}>
-            {dist.counts.collaboration}개 <span style={{ fontSize: '14px', fontWeight: 'normal', color: '#64748b' }}>({dist.percentages.collaboration}%)</span>
-          </div>
-        </div>
-
-        <div style={{ backgroundColor: '#faf5ff', padding: '16px 14px', borderRadius: '14px', border: '2px solid #e9d5ff', textAlign: 'center' }}>
-          <div style={{ fontSize: '28px', marginBottom: '4px' }}>👤</div>
-          <div style={{ fontSize: '15px', fontWeight: '800', color: '#7c3aed' }}>인간 최종 결정</div>
-          <div style={{ fontSize: '24px', fontWeight: '800', color: '#6d28d9', margin: '4px 0' }}>
-            {dist.counts.human_lead}개 <span style={{ fontSize: '14px', fontWeight: 'normal', color: '#64748b' }}>({dist.percentages.human_lead}%)</span>
-          </div>
-        </div>
-      </div>
-
-      {/* 12개 업무 컴팩트 리스트 (클릭 시 말풍선 해설 토글) */}
-      <div style={{ backgroundColor: 'white', borderRadius: '14px', border: '1.5px solid var(--color-border)', padding: '18px 20px', marginBottom: '22px' }}>
-        <div className="flex justify-between items-center mb-3">
-          <h3 style={{ fontSize: '17px', fontWeight: '800', color: 'var(--color-secondary)', margin: 0 }}>
-            📋 12개 업무별 분류 및 이유
-          </h3>
-          <span style={{ fontSize: '13px', color: 'var(--color-text-muted)', fontWeight: '500' }}>
-            💡 항목을 클릭하면 추천 이유가 말풍선으로 나타나요
-          </span>
-        </div>
-
-        <div className="flex flex-col gap-2.5" style={{ maxHeight: '340px', overflowY: 'auto', paddingRight: '4px' }}>
-          {evalResult.items.map(item => {
-            const isExpanded = expandedTaskId === item.taskId;
-            const zoneText = item.userZone === 'ai_auto' ? '🤖 AI 주로' : item.userZone === 'collaboration' ? '🤝 협업' : '👤 사람 결정';
-            const recText = item.recommendedZone === 'ai_auto' ? '🤖 AI 주로' : item.recommendedZone === 'collaboration' ? '🤝 협업' : '👤 사람 결정';
-
-            return (
-              <div 
-                key={item.taskId}
-                onClick={() => setExpandedTaskId(isExpanded ? null : item.taskId)}
-                style={{
-                  border: isExpanded ? '2px solid var(--color-primary)' : '1px solid #e2e8f0',
-                  borderRadius: '10px',
-                  backgroundColor: isExpanded ? '#f0fdfa' : '#fafafa',
-                  padding: '12px 16px',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease'
-                }}
-              >
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2.5">
-                    <span style={{ fontSize: '20px' }}>{item.icon}</span>
-                    <strong style={{ fontSize: '15px', color: 'var(--color-text-main)' }}>{item.title}</strong>
-                    <span style={{ fontSize: '13px', color: '#94a3b8' }}>({item.category})</span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span style={{ fontSize: '12.5px', padding: '3px 10px', borderRadius: '10px', backgroundColor: '#f1f5f9', fontWeight: 'bold', color: '#475569' }}>
-                      내 선택: {zoneText}
-                    </span>
-                    <span style={{ fontSize: '12.5px', padding: '3px 10px', borderRadius: '10px', backgroundColor: '#e0f2fe', fontWeight: 'bold', color: '#0369a1' }}>
-                      권장: {recText}
-                    </span>
-                    <span style={{ fontSize: '13px', color: 'var(--color-primary)', fontWeight: 'bold' }}>
-                      {isExpanded ? '▲' : '💬 이유'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* 팝오버 말풍선 해설 */}
-                {isExpanded && (
-                  <div 
-                    style={{
-                      marginTop: '10px',
-                      paddingTop: '10px',
-                      borderTop: '1px solid #ccfbf1',
-                      fontSize: '14px',
-                      color: '#0f766e',
-                      lineHeight: '1.6',
-                      animation: 'fadeIn 0.2s ease-out'
-                    }}
-                  >
-                    💡 <strong>권장 이유:</strong> {item.rationale}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* AI에게 넘길 수 없는 인간만의 3대 고유 가치 성찰 박스 */}
-      <div 
-        style={{
-          backgroundColor: '#fffbeb',
-          border: '2px solid #fde047',
-          borderRadius: '14px',
-          padding: '18px 20px',
-          marginBottom: '22px'
-        }}
-      >
-        <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#b45309', marginBottom: '12px' }}>
-          🌟 AI에게 넘길 수 없는 인간만의 3가지 고유 가치
-        </h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', fontSize: '14px', color: '#92400e' }}>
-          <div style={{ backgroundColor: 'white', padding: '14px', borderRadius: '10px', border: '1px solid #fef08a' }}>
-            <strong style={{ fontSize: '15px' }}>1. 진정한 공감</strong>
-            <p style={{ margin: '6px 0 0 0', lineHeight: '1.5', color: '#78350f', fontSize: '13.5px' }}>사람 대 사람으로 마음을 나누는 따뜻한 소통과 위로</p>
-          </div>
-          <div style={{ backgroundColor: 'white', padding: '14px', borderRadius: '10px', border: '1px solid #fef08a' }}>
-            <strong style={{ fontSize: '15px' }}>2. 가치 판단과 책임</strong>
-            <p style={{ margin: '6px 0 0 0', lineHeight: '1.5', color: '#78350f', fontSize: '13.5px' }}>생명, 법률, 도덕 등 삶에 영향을 주는 결정에 대한 윤리적 책임</p>
-          </div>
-          <div style={{ backgroundColor: 'white', padding: '14px', borderRadius: '10px', border: '1px solid #fef08a' }}>
-            <strong style={{ fontSize: '15px' }}>3. 고유한 창의성</strong>
-            <p style={{ margin: '6px 0 0 0', lineHeight: '1.5', color: '#78350f', fontSize: '13.5px' }}>통계를 넘어선 개인의 삶의 경험과 예술적 감수성</p>
-          </div>
-        </div>
-      </div>
-
-      {/* 우리가 지킬 AI 공존 원칙 선택 (체크리스트) */}
-      <div style={{ backgroundColor: '#f8fafc', padding: '18px 20px', borderRadius: '14px', border: '1.5px solid var(--color-border)', marginBottom: '22px' }}>
-        <h3 style={{ fontSize: '17px', fontWeight: '800', marginBottom: '12px', color: 'var(--color-secondary)' }}>
-          📜 우리가 지켜야 할 AI 공존 원칙을 골라주세요 (최소 2개)
-        </h3>
-
-        <div className="flex flex-col gap-2.5">
-          {rolePrinciples.map((p, idx) => {
-            const isChecked = (selectedPrinciples || []).includes(p);
-            return (
-              <div
-                key={idx}
-                onClick={() => handleTogglePrinciple(p)}
-                style={{
-                  backgroundColor: isChecked ? '#f0fdfa' : 'white',
-                  border: isChecked ? '2px solid var(--color-primary)' : '1px solid var(--color-border)',
-                  padding: '12px 16px',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  cursor: 'pointer',
-                  fontSize: '15px',
-                  transition: 'all 0.15s ease'
-                }}
-                role="checkbox"
-                aria-checked={isChecked}
-                tabIndex={0}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleTogglePrinciple(p); }}
-              >
-                <input 
-                  type="checkbox" 
-                  checked={isChecked} 
-                  onChange={() => {}} 
-                  style={{ width: '18px', height: '18px', accentColor: 'var(--color-primary)', cursor: 'pointer' }} 
-                />
-                <span style={{ fontWeight: isChecked ? '700' : '500', color: isChecked ? 'var(--color-primary-hover)' : 'inherit' }}>
-                  {p}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* 하단 내비게이션 바 */}
-      <div className="bottom-nav-bar">
-        <button className="btn-outline" onClick={onPrev}>
-          ← 다시 분류하기
-        </button>
-        <button 
-          className="btn-primary" 
-          onClick={onNext}
-          disabled={!isReady}
-          style={{ minHeight: '48px', fontSize: 'var(--font-size-base)', fontWeight: 'bold' }}
-        >
-          {isReady ? "🎉 공존 설계도 완성하기 →" : "공존 원칙을 2개 이상 선택해 주세요"}
-        </button>
-      </div>
-    </div>
+    <section className="role-shell role-stage" aria-labelledby="role-principle-title">
+      <RolePageCue action="가장 먼저 지키고 싶은 원칙 하나를 고르세요." reason="모든 문장을 고르는 것보다, 다음 AI 활용에서 바로 실천할 한 가지를 정하는 것이 중요해요." />
+      <header className="role-page-head">
+        <span className="role-eyebrow">내 활용 원칙</span>
+        <h1 id="role-principle-title">다음에는 이것부터 확인할래요</h1>
+        <p>내가 실제로 지킬 수 있는 약속 하나면 충분해요.</p>
+      </header>
+      <RoleChoiceFork
+        options={options}
+        alternative={alternative}
+        value={selected}
+        onChange={principle => onSelectPrinciple(principle)}
+        prompt="가장 먼저 지킬 약속은 무엇인가요?"
+      />
+      <RolePageNav onPrev={onPrevPage} onNext={onComplete} prevLabel="확인 질문" nextLabel="활동 마치기" disabled={!selected} />
+    </section>
   );
 }

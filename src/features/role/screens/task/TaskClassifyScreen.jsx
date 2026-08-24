@@ -1,292 +1,106 @@
-import React, { useState } from 'react';
-import { workTasks } from '../../roleData';
-import { calculateTaskDistribution } from '../../roleEngine';
-import geumjjokDoctor from '../../../../assets/geumjjok/금쪽이_캐릭터_박사_안경콧수염.png';
+import React from 'react';
+import { taskZoneOptions, workTasks } from '../../roleData';
+import RoleChoiceFork from '../../components/RoleChoiceFork';
+import RolePageCue from '../../components/RolePageCue';
+import RolePageNav from '../../components/RolePageNav';
 
-export default function TaskClassifyScreen({ taskClassifications = {}, onClassifyTask, onNext, onPrev }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [showHint, setShowHint] = useState(false);
-  const currentTask = workTasks[currentIndex];
+export default function TaskClassifyScreen({
+  introSeen,
+  currentTaskIndex,
+  taskClassifications = {},
+  onStart,
+  onClassifyTask,
+  onNextTask,
+  onPrevTask,
+  onFinish,
+  onPrev
+}) {
+  if (!introSeen) {
+    return (
+      <section className="role-shell role-stage" aria-labelledby="task-intro-title">
+        <RolePageCue
+          action="생활 속 예시를 읽고 ‘학교 축제 일 나누기’를 누르세요."
+          reason="AI를 많이 써 보지 않았어도, 어떤 일을 맡길 수 있는지 먼저 떠올릴 수 있어요."
+        />
+        <header className="role-page-head">
+          <span className="role-eyebrow">맡기는 범위 · 먼저 알아보기</span>
+          <h1 id="task-intro-title">우리도 이미 ‘도구와 일 나누기’를 해요</h1>
+          <p>계산기는 계산을 하고, 번역 앱은 첫 번역을 만들어요. 하지만 무엇을 믿고 쓸지는 사람이 확인해요.</p>
+        </header>
 
-  const distribution = calculateTaskDistribution(taskClassifications);
-  const userZone = taskClassifications[currentTask?.id] || null;
+        <div className="role-everyday-cards">
+          <article><span>규칙</span><strong>이름 순서로 정리</strong><p>정해진 방법대로 반복하는 일은 간단한 프로그램도 할 수 있어요.</p></article>
+          <article><span>AI 도움</span><strong>문구나 번역 초안</strong><p>AI는 여러 표현을 빠르게 만들지만 틀리거나 상황에 안 맞을 수 있어요.</p></article>
+          <article><span>사람 결정</span><strong>무엇을 선택할지 판단</strong><p>사람에게 미치는 영향과 책임을 생각해 마지막 선택을 해요.</p></article>
+        </div>
 
-  const handleZoneClick = (zone) => {
-    if (onClassifyTask && currentTask) {
-      onClassifyTask(currentTask.id, zone);
-    }
-    setShowHint(false);
-    if (currentIndex < workTasks.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-    }
-  };
+        <aside className="role-fact-note">
+          <strong>잠깐, 자동화가 모두 AI는 아니에요.</strong>
+          <p>가나다순 정리처럼 정해진 규칙만 따르는 기능은 ‘자동화’일 수 있어요. AI는 글이나 분류 결과처럼 새 답을 만들거나 예측하는 데 쓰일 수 있어요.</p>
+        </aside>
+
+        <RolePageNav onPrev={onPrev} onNext={onStart} prevLabel="활동 고르기" nextLabel="학교 축제 일 나누기" />
+      </section>
+    );
+  }
+
+  const task = workTasks[currentTaskIndex] || workTasks[0];
+  const selectedZone = taskClassifications[task.id];
+  const selectedOption = taskZoneOptions.find(option => option.id === selectedZone);
+  const recommendedOption = taskZoneOptions.find(option => option.id === task.recommendedZone);
+  const isLast = currentTaskIndex === workTasks.length - 1;
 
   return (
-    <div style={{ maxWidth: '840px', margin: '0 auto' }}>
-      {/* 헤더 타이틀 */}
-      <div className="text-center mb-5">
-        <h2 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'bold', marginBottom: '6px', color: 'var(--color-text-main)' }}>
-          미래 업무 3구역 분류소 🔀
-        </h2>
-        <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)', margin: 0 }}>
-          12가지 일들을 살펴보고, 가장 잘 맞는 역할을 골라주세요!
-        </p>
-      </div>
+    <section className="role-shell role-stage" aria-labelledby="task-title">
+      <RolePageCue
+        action="A와 B 중 하나를 고르고, 나타난 역할 구분을 확인하세요."
+        reason="일 전체를 AI에게 넘기지 않고, 작은 일로 나누면 무엇을 맡길지 판단하기 쉬워요."
+      />
 
-      {/* 진행 상황 컴팩트 바 */}
-      <div 
-        style={{ 
-          backgroundColor: '#f8fafc', 
-          borderRadius: 'var(--radius-md)', 
-          border: '1px solid var(--color-border)',
-          padding: '12px 18px',
-          marginBottom: '20px'
-        }}
-      >
-        <div className="flex justify-between items-center mb-1.5" style={{ fontSize: '13px' }}>
-          <span style={{ fontWeight: 'bold', color: 'var(--color-primary-hover)' }}>
-            📋 분류 진행: {distribution.classifiedCount} / {distribution.total}개
-          </span>
-          <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '500' }}>
-            업무 {currentIndex + 1} / {workTasks.length}
-          </span>
+      <header className="role-page-head role-task-head">
+        <div>
+          <span className="role-eyebrow">학교 축제 준비 · {currentTaskIndex + 1} / {workTasks.length}</span>
+          <h1 id="task-title">{task.title}</h1>
+          <p>{task.description}</p>
         </div>
-        <div style={{ width: '100%', height: '8px', backgroundColor: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
-          <div 
-            style={{ 
-              width: `${(distribution.classifiedCount / distribution.total) * 100}%`, 
-              height: '100%', 
-              backgroundColor: 'var(--color-primary)',
-              transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-            }} 
-          />
-        </div>
-      </div>
+        <span className="role-task-keyword">{task.category}</span>
+      </header>
 
-      {/* 메인 인터랙티브 업무 카드 */}
-      <div 
-        className="card"
-        style={{
-          padding: '24px 28px',
-          borderRadius: 'var(--radius-lg)',
-          border: '2px solid var(--color-border)',
-          backgroundColor: 'white',
-          marginBottom: '20px',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
-          position: 'relative',
-          transition: 'transform 0.2s ease'
-        }}
-      >
-        {/* 상단 태그 및 말풍선 힌트 버튼 */}
-        <div className="flex justify-between items-center mb-2">
-          <span 
-            style={{ 
-              fontSize: '12px', 
-              fontWeight: 'bold', 
-              padding: '3px 10px', 
-              borderRadius: '20px', 
-              backgroundColor: '#f1f5f9', 
-              color: '#475569' 
-            }}
-          >
-            {currentTask.category}
-          </span>
+      <RoleChoiceFork
+        key={task.id}
+        options={taskZoneOptions.slice(0, 2)}
+        alternative={taskZoneOptions[2]}
+        value={selectedZone}
+        onChange={zone => onClassifyTask(task.id, zone)}
+        prompt="이 일은 누가 맡는 것이 좋을까요?"
+      />
 
-          <button
-            type="button"
-            onClick={() => setShowHint(!showHint)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '5px',
-              padding: '4px 12px',
-              borderRadius: '16px',
-              border: showHint ? '1.5px solid var(--color-primary)' : '1px solid #cbd5e1',
-              backgroundColor: showHint ? '#f0fdfa' : '#f8fafc',
-              color: showHint ? 'var(--color-primary-hover)' : '#475569',
-              fontSize: '12px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
-            }}
-          >
-            <span>💬</span> {showHint ? '힌트 닫기' : '금쪽이 힌트'}
-          </button>
-        </div>
-
-        {/* 팝오버 말풍선 힌트 */}
-        {showHint && (
-          <div 
-            style={{
-              backgroundColor: '#eff6ff',
-              border: '1.5px solid #bfdbfe',
-              borderRadius: 'var(--radius-md)',
-              padding: '12px 16px',
-              marginBottom: '16px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              animation: 'fadeIn 0.2s ease-out'
-            }}
-          >
-            <img 
-              src={geumjjokDoctor} 
-              alt="금쪽이 힌트" 
-              style={{ width: '40px', height: 'auto', flexShrink: 0 }} 
-            />
-            <div style={{ fontSize: '13px', color: '#1e3a8a', lineHeight: '1.5', textAlign: 'left' }}>
-              <strong>💡 금쪽이의 힌트:</strong> {currentTask.rationale}
-            </div>
+      <section className={`role-task-result ${selectedZone ? '' : 'is-empty'}`} aria-live="polite" aria-hidden={!selectedZone}>
+        {selectedZone ? (
+          <>
+          <div className="role-task-result-head">
+            <span>내 선택</span>
+            <strong>{selectedOption.shortLabel}</strong>
           </div>
-        )}
-
-        {/* 업무 아이콘 & 제목 */}
-        <div style={{ textAlign: 'center', margin: '12px 0 22px 0' }}>
-          <div style={{ fontSize: '56px', marginBottom: '10px', lineHeight: 1 }}>
-            {currentTask.icon}
+          <p className="role-task-guidance"><strong>살펴볼 기준 · {recommendedOption.shortLabel}</strong><br />{task.rationale}</p>
+          <div className="role-task-role-map">
+            <article><small>도구가 할 일</small><p>{task.aiPart}</p></article>
+            <span aria-hidden="true">→</span>
+            <article><small>사람이 확인할 일</small><p>{task.humanPart}</p></article>
+            <span aria-hidden="true">→</span>
+            <article><small>책임</small><p>{task.responsibility}</p></article>
           </div>
-          <h3 style={{ fontSize: '26px', fontWeight: '800', color: '#0f172a', margin: '0 0 10px 0', letterSpacing: '-0.02em' }}>
-            {currentTask.title}
-          </h3>
-          <p style={{ fontSize: '17px', color: '#334155', margin: '0 auto', maxWidth: '580px', lineHeight: '1.6', fontWeight: '500' }}>
-            {currentTask.description}
-          </p>
-        </div>
+          </>
+        ) : <span>역할 결과 자리</span>}
+      </section>
 
-        {/* 3대 구역 선택 버튼 (크고 터치감 좋은 시원한 버튼) */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px', marginTop: '20px' }}>
-          <button
-            type="button"
-            onClick={() => handleZoneClick('ai_auto')}
-            style={{
-              minHeight: '125px',
-              padding: '18px 12px',
-              border: userZone === 'ai_auto' ? '3px solid #2563eb' : '2px solid #bfdbfe',
-              backgroundColor: userZone === 'ai_auto' ? '#eff6ff' : '#f8fafc',
-              borderRadius: '16px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-              transform: userZone === 'ai_auto' ? 'scale(1.03)' : 'scale(1)',
-              boxShadow: userZone === 'ai_auto' ? '0 8px 16px rgba(37, 99, 235, 0.18)' : '0 2px 6px rgba(0,0,0,0.04)'
-            }}
-          >
-            <span style={{ fontSize: '34px', lineHeight: 1 }}>🤖</span>
-            <strong style={{ fontSize: '19px', fontWeight: '800', color: userZone === 'ai_auto' ? '#1d4ed8' : '#1e3a8a' }}>AI가 주로</strong>
-            <span style={{ fontSize: '14px', fontWeight: '600', color: '#475569', backgroundColor: userZone === 'ai_auto' ? '#dbeafe' : '#e2e8f0', padding: '3px 10px', borderRadius: '8px' }}>
-              단순 반복·규칙
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleZoneClick('collaboration')}
-            style={{
-              minHeight: '125px',
-              padding: '18px 12px',
-              border: userZone === 'collaboration' ? '3px solid var(--color-primary)' : '2px solid #99f6e4',
-              backgroundColor: userZone === 'collaboration' ? '#f0fdfa' : '#f8fafc',
-              borderRadius: '16px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-              transform: userZone === 'collaboration' ? 'scale(1.03)' : 'scale(1)',
-              boxShadow: userZone === 'collaboration' ? '0 8px 16px rgba(13, 148, 136, 0.18)' : '0 2px 6px rgba(0,0,0,0.04)'
-            }}
-          >
-            <span style={{ fontSize: '34px', lineHeight: 1 }}>🤝</span>
-            <strong style={{ fontSize: '19px', fontWeight: '800', color: userZone === 'collaboration' ? 'var(--color-primary-hover)' : '#0f766e' }}>둘이서 협업</strong>
-            <span style={{ fontSize: '14px', fontWeight: '600', color: '#475569', backgroundColor: userZone === 'collaboration' ? '#ccfbf1' : '#e2e8f0', padding: '3px 10px', borderRadius: '8px' }}>
-              초안·아이디어
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleZoneClick('human_lead')}
-            style={{
-              minHeight: '125px',
-              padding: '18px 12px',
-              border: userZone === 'human_lead' ? '3px solid #7c3aed' : '2px solid #e9d5ff',
-              backgroundColor: userZone === 'human_lead' ? '#faf5ff' : '#f8fafc',
-              borderRadius: '16px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-              transform: userZone === 'human_lead' ? 'scale(1.03)' : 'scale(1)',
-              boxShadow: userZone === 'human_lead' ? '0 8px 16px rgba(124, 58, 237, 0.18)' : '0 2px 6px rgba(0,0,0,0.04)'
-            }}
-          >
-            <span style={{ fontSize: '34px', lineHeight: 1 }}>👤</span>
-            <strong style={{ fontSize: '19px', fontWeight: '800', color: userZone === 'human_lead' ? '#6d28d9' : '#7e22ce' }}>사람이 결정</strong>
-            <span style={{ fontSize: '14px', fontWeight: '600', color: '#475569', backgroundColor: userZone === 'human_lead' ? '#ede9fe' : '#e2e8f0', padding: '3px 10px', borderRadius: '8px' }}>
-              공감·책임·도덕
-            </span>
-          </button>
-        </div>
-      </div>
-
-      {/* 12개 미니 번호 네비게이터 */}
-      <div className="flex justify-center items-center gap-2 mb-6" style={{ flexWrap: 'wrap' }}>
-        {workTasks.map((t, idx) => {
-          const z = taskClassifications[t.id];
-          const isCurr = idx === currentIndex;
-          const bg = z === 'ai_auto' ? '#dbeafe' : z === 'collaboration' ? '#ccfbf1' : z === 'human_lead' ? '#ede9fe' : 'white';
-          const borderColor = isCurr ? 'var(--color-primary)' : z ? '#94a3b8' : '#cbd5e1';
-
-          return (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => { setCurrentIndex(idx); setShowHint(false); }}
-              style={{
-                width: '38px',
-                height: '38px',
-                borderRadius: '10px',
-                border: isCurr ? `3px solid ${borderColor}` : `1.5px solid ${borderColor}`,
-                backgroundColor: bg,
-                fontWeight: 'bold',
-                fontSize: '14px',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-                transform: isCurr ? 'scale(1.12)' : 'scale(1)'
-              }}
-              title={t.title}
-            >
-              {idx + 1}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* 하단 내비게이션 바 */}
-      <div className="bottom-nav-bar">
-        <button className="btn-outline" onClick={onPrev} style={{ minHeight: '50px', fontSize: '15px' }}>
-          ← 처음으로
-        </button>
-        <button 
-          className="btn-primary" 
-          onClick={onNext}
-          disabled={!distribution.isAllClassified}
-          style={{ minHeight: '52px', fontSize: '16px', fontWeight: 'bold', padding: '0 24px' }}
-        >
-          {distribution.isAllClassified 
-            ? "📊 분류 결과 & 가치 분석 보기 →" 
-            : `12개 업무를 모두 분류해 주세요 (${distribution.classifiedCount}/12)`}
-        </button>
-      </div>
-    </div>
+      <RolePageNav
+        onPrev={currentTaskIndex === 0 ? onPrev : onPrevTask}
+        onNext={isLast ? onFinish : onNextTask}
+        prevLabel={currentTaskIndex === 0 ? '활동 고르기' : '이전 일'}
+        nextLabel={isLast ? '완성한 역할 지도 보기' : '다음 일'}
+        disabled={!selectedZone}
+      />
+    </section>
   );
 }

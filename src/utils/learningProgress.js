@@ -8,6 +8,7 @@ export const LEARNING_STORAGE_KEYS = [
   'ai-literacy-lab-verification:v1',
   'ai-literacy-lab-role:v1',
   'ai-literacy-lab-role:v2',
+  'ai-literacy-lab-role:v3',
   'ai-literacy-lab-agent:v1',
   'ai-literacy-lab-agent:v2'
 ];

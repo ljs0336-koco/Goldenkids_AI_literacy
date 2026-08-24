@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { claimDecisionOptions } from '../../verificationData';
 import { evaluateClaimDecision } from '../../verificationEngine';
 import VerificationChoiceFork from '../../components/VerificationChoiceFork';
-import VerificationExperienceStage from '../../components/VerificationExperienceStage';
-import VerificationWorkLabels from '../../components/VerificationWorkLabels';
 
 export default function ClaimDecisionScreen({ claim, decisionId, reasonId, onChangeDecision, onChangeReason, onContinue, onPrev }) {
   const [showFeedback, setShowFeedback] = useState(false);
@@ -28,16 +26,7 @@ export default function ClaimDecisionScreen({ claim, decisionId, reasonId, onCha
 
   if (showFeedback) {
     return (
-      <section className="card verification-screen verification-story-page verification-experience-screen" aria-labelledby="claim-feedback-title">
-        <VerificationWorkLabels
-          actor="함께 완성"
-          actorDetail="AI 초안을 내가 근거에 맞게 확인하고 고쳤어요."
-          actorTone="together"
-          status="사람 확인 완료"
-          statusDetail="출처와 날짜를 확인한 문장으로 기사에 반영할 수 있어요."
-          statusTone="complete"
-          emphasize
-        />
+      <section className="card verification-screen verification-story-page" aria-labelledby="claim-feedback-title">
         <span className="verification-kicker">문장 판정 결과</span>
         <h2 id="claim-feedback-title">근거를 확인하니 문장을 이렇게 고칠 수 있어요</h2>
         <div className={`verification-feedback ${evaluation.isEvidenceAligned ? 'is-aligned' : 'needs-review'}`} role="status">
@@ -60,18 +49,10 @@ export default function ClaimDecisionScreen({ claim, decisionId, reasonId, onCha
   }
 
   return (
-    <section className="card verification-screen verification-story-page verification-experience-screen" aria-labelledby="claim-decision-title">
+    <section className="card verification-screen verification-story-page" aria-labelledby="claim-decision-title">
       <span className="verification-kicker">판정 도장과 이유</span>
       <h2 id="claim-decision-title">자료를 보고 이 문장을 어떻게 처리할까요?</h2>
       <div className="verification-focus-claim"><span>문장 {claim.number}</span><strong>{claim.text}</strong></div>
-
-      <VerificationWorkLabels
-        actor="AI 초안"
-        actorDetail={`AI 금쪽이 · 확인할 문장 ${claim.number}`}
-        status="사람 확인 중"
-        statusDetail={decisionId ? '첫 판정을 골랐어요. 이제 근거와 연결해요.' : '자료를 바탕으로 사람이 직접 판정해요.'}
-        statusTone="working"
-      />
 
       <VerificationChoiceFork
         options={decisionChoices}
@@ -82,29 +63,27 @@ export default function ClaimDecisionScreen({ claim, decisionId, reasonId, onCha
         resultLabel="내 판정"
       />
 
-      <VerificationExperienceStage sceneKey={decisionId || 'waiting'} className="verification-followup-stage-shell">
-        <div className={`verification-followup-stage ${decisionId ? '' : 'is-empty'}`}>
-          {decisionId ? (
-            <div className="verification-followup-choice">
-              <h3>그렇게 판단한 이유는 무엇인가요?</h3>
-              <p>이유를 누르면 자료와 대조한 결과가 바로 나와요.</p>
-              <VerificationChoiceFork
-                options={reasonChoices}
-                selectedId={reasonId}
-                onSelect={handleReasonSelect}
-                prompt="A와 B 중 내 판정을 가장 잘 뒷받침하는 이유를 고르세요."
-                moreLabel="다른 이유를 고르고 싶다면?"
-                resultLabel="내가 연결한 이유"
-              />
-            </div>
-          ) : (
-            <div>
-              <strong>다음: 판단한 이유 고르기</strong>
-              <p>위에서 A 또는 B를 누르면 근거를 고르는 화면이 이 자리에 나타나요.</p>
-            </div>
-          )}
-        </div>
-      </VerificationExperienceStage>
+      <div className={`verification-followup-stage ${decisionId ? '' : 'is-empty'}`}>
+        {decisionId ? (
+          <div className="verification-followup-choice">
+            <h3>그렇게 판단한 이유는 무엇인가요?</h3>
+            <p>이유를 누르면 자료와 대조한 결과가 바로 나와요.</p>
+            <VerificationChoiceFork
+              options={reasonChoices}
+              selectedId={reasonId}
+              onSelect={handleReasonSelect}
+              prompt="A와 B 중 내 판정을 가장 잘 뒷받침하는 이유를 고르세요."
+              moreLabel="다른 이유를 고르고 싶다면?"
+              resultLabel="내가 연결한 이유"
+            />
+          </div>
+        ) : (
+          <div>
+            <strong>다음: 판단한 이유 고르기</strong>
+            <p>위에서 A 또는 B를 누르면 근거를 고르는 화면이 이 자리에 나타나요.</p>
+          </div>
+        )}
+      </div>
 
       <div className="bottom-nav-bar">
         <button type="button" className="btn-outline" onClick={onPrev}>← 자료 비교</button>

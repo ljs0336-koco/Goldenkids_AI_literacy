@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { claimDecisionOptions, verificationClaims } from '../../verificationData';
 import { getClaimProgress } from '../../verificationEngine';
 import VerificationPageNav from '../../components/VerificationPageNav';
-import VerificationExperienceStage from '../../components/VerificationExperienceStage';
-import VerificationWorkLabels from '../../components/VerificationWorkLabels';
 
 export default function ClaimIdentifyScreen({ claimDecisions, onSelectClaim, onPrev }) {
   const progress = getClaimProgress(claimDecisions);
@@ -13,7 +11,7 @@ export default function ClaimIdentifyScreen({ claimDecisions, onSelectClaim, onP
   const decision = claimDecisionOptions.find(option => option.id === claimDecisions[claim.id]);
 
   return (
-    <section className="card verification-screen verification-story-page verification-experience-screen" aria-labelledby="claim-identify-title">
+    <section className="card verification-screen verification-story-page" aria-labelledby="claim-identify-title">
       <div className="verification-title-row">
         <div>
           <span className="verification-kicker">확인할 문장 고르기</span>
@@ -25,22 +23,12 @@ export default function ClaimIdentifyScreen({ claimDecisions, onSelectClaim, onP
         </span>
       </div>
 
-      <VerificationWorkLabels
-        actor="AI 초안"
-        actorDetail="AI 금쪽이 · 기사 초안 작성 도움"
-        status={decision ? '사람 확인 완료' : '확인 전'}
-        statusDetail={decision ? '이 문장은 근거 확인을 마쳤어요.' : '이 문장은 아직 근거를 확인하지 않았어요.'}
-        statusTone={decision ? 'complete' : 'pending'}
-      />
-
-      <VerificationExperienceStage sceneKey={claim.id}>
-        <button type="button" className={`verification-claim-page ${decision ? 'is-complete' : ''}`} onClick={() => onSelectClaim(claim.id)}>
-          <span>AI 초안의 문장 {claim.number}</span>
-          <strong>{claim.text}</strong>
-          <small>{claim.question}</small>
-          <em>{decision ? `${decision.icon} ${decision.shortLabel} · 다시 확인하기` : '이 문장의 근거 찾기'}</em>
-        </button>
-      </VerificationExperienceStage>
+      <button type="button" className={`verification-claim-page ${decision ? 'is-complete' : ''}`} onClick={() => onSelectClaim(claim.id)}>
+        <span>AI 초안의 문장 {claim.number}</span>
+        <strong>{claim.text}</strong>
+        <small>{claim.question}</small>
+        <em>{decision ? `${decision.icon} ${decision.shortLabel} · 다시 확인하기` : '이 문장의 근거 찾기'}</em>
+      </button>
 
       <VerificationPageNav
         current={pageIndex}

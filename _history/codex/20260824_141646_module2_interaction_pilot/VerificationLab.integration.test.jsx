@@ -102,21 +102,9 @@ describe('Verification module story-led student flow', () => {
     render(<ClaimIntroScreen onNext={() => {}} onPrev={() => {}} />);
     expect(screen.getByText('15분')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '이 글을 그대로 실어도 될까요?' })).toBeInTheDocument();
-    const workState = screen.getByLabelText('작업 주체와 확인 상태');
-    expect(workState).toHaveTextContent('AI 초안');
-    expect(workState).toHaveTextContent('AI 금쪽이 · 기사 초안 작성 도움');
-    expect(workState).toHaveTextContent('확인 전');
-    expect(workState).toHaveTextContent('가상 체험');
-    expect(workState).toHaveTextContent('실제 챗봇 연결 전');
+    expect(screen.getByText(/사실 확인: 아직 하지 않음/)).toBeInTheDocument();
     expect(screen.getByText('금쪽이 스피커가 곁에 있다면')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /검증 시작하기/ })).toBeEnabled();
-  });
-
-  it('3-1. 활동 화면은 상단 안내 하나만 남기고 하단 지시 팝업을 반복하지 않는다', () => {
-    render(<VerificationLabPage />);
-    fireEvent.click(screen.getByRole('button', { name: /마감 전, AI가 쓴 기사를 확인하라/ }));
-    expect(screen.getAllByText('지금 할 일')).toHaveLength(1);
-    expect(screen.queryByText('지금 해볼 일')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /이대로 싣기 전에 확인하기/ })).toBeEnabled();
   });
 
   it('4. AI 초안의 세 문장을 한 장씩 넘겨 고른다', () => {
@@ -167,8 +155,6 @@ describe('Verification module story-led student flow', () => {
     fireEvent.click(screen.getByRole('button', { name: /서로 다른 학교 공식 문서/ }));
     expect(screen.getByText('검증해 고친 문장')).toBeInTheDocument();
     expect(screen.getByText(/학교 공식 기록에 따르면/)).toBeInTheDocument();
-    expect(screen.getByLabelText('작업 주체와 확인 상태')).toHaveTextContent('함께 완성');
-    expect(screen.getByLabelText('작업 주체와 확인 상태')).toHaveTextContent('사람 확인 완료');
   });
 
   it('8. 학교신문 완료 화면은 AI 초안과 발행할 기사를 전후 비교한다', () => {

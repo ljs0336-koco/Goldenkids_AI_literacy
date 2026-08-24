@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { evidenceSources } from '../../verificationData';
 import VerificationPageNav from '../../components/VerificationPageNav';
 import VerificationChoiceFork from '../../components/VerificationChoiceFork';
-import VerificationExperienceStage from '../../components/VerificationExperienceStage';
-import VerificationWorkLabels from '../../components/VerificationWorkLabels';
 
 function getSourceSet(claim) {
   return claim.sourceOptionIds
@@ -31,51 +29,41 @@ export default function SourceCheckScreen({ claim, selectedSourceIds, onToggleSo
   };
 
   return (
-    <section className="card verification-screen verification-story-page verification-experience-screen" aria-labelledby="source-check-title">
+    <section className="card verification-screen verification-story-page" aria-labelledby="source-check-title">
       <span className="verification-kicker">자료 봉투 열기</span>
       <h2 id="source-check-title">어떤 자료가 이 문장을 확인하는 데 도움이 될까요?</h2>
       <div className="verification-focus-claim"><span>지금 확인하는 문장</span><strong>{claim.text}</strong></div>
       <p>자료를 한 장씩 열어 작성자, 날짜, 실제 내용을 확인한 뒤 비교할 자료로 남길지 정하세요.</p>
 
-      <VerificationWorkLabels
-        actor="AI 초안"
-        actorDetail={`AI 금쪽이 · 확인할 문장 ${claim.number}`}
-        status="사람 확인 중"
-        statusDetail={`자료 ${Object.keys(sourceChoices).length}/${sources.length}개를 판단했어요.`}
-        statusTone="working"
-      />
-
-      <VerificationExperienceStage sceneKey={`${source.id}:${opened ? 'open' : 'closed'}`}>
-        <article className={`verification-source-envelope ${opened ? 'is-open' : ''}`}>
-          {!opened ? (
-            <button type="button" onClick={openSource} className="verification-envelope-closed verification-primary-action">
-              <span aria-hidden="true">✉️</span>
-              <small>자료 {pageIndex + 1}</small>
-              <strong>{source.title}</strong>
-              <em>봉투 열어 보기</em>
-            </button>
-          ) : (
-            <>
-              <header>
-                <span aria-hidden="true">{source.icon}</span>
-                <div><strong>{source.title}</strong><small>{source.publisher}</small></div>
-              </header>
-              <p className="verification-source-meta">{source.type} · {source.dateLabel}</p>
-              <blockquote>{source.excerpt}</blockquote>
-              <VerificationChoiceFork
-                options={[
-                  { id: 'keep', title: '비교할 자료로 남긴다', note: '이 문장을 확인하는 데 직접 도움이 되는 자료예요.', result: '다른 자료와 나란히 놓고 내용과 날짜를 비교해요.' },
-                  { id: 'skip', title: '이번 비교에서는 뺀다', note: '관련성이 낮거나 지금 주장에 맞지 않는 자료예요.', result: '자료를 읽은 기록은 남지만 최종 비교에는 넣지 않아요.' }
-                ]}
-                selectedId={answered ? sourceChoices[source.id] ? 'keep' : 'skip' : ''}
-                onSelect={chooseSource}
-                prompt="이 자료를 최종 비교에 남길지 A 또는 B로 정하세요."
-                resultLabel="이 자료에 대한 내 결정"
-              />
-            </>
-          )}
-        </article>
-      </VerificationExperienceStage>
+      <article className={`verification-source-envelope ${opened ? 'is-open' : ''}`}>
+        {!opened ? (
+          <button type="button" onClick={openSource} className="verification-envelope-closed">
+            <span aria-hidden="true">✉️</span>
+            <small>자료 {pageIndex + 1}</small>
+            <strong>{source.title}</strong>
+            <em>봉투 열어 보기</em>
+          </button>
+        ) : (
+          <>
+            <header>
+              <span aria-hidden="true">{source.icon}</span>
+              <div><strong>{source.title}</strong><small>{source.publisher}</small></div>
+            </header>
+            <p className="verification-source-meta">{source.type} · {source.dateLabel}</p>
+            <blockquote>{source.excerpt}</blockquote>
+            <VerificationChoiceFork
+              options={[
+                { id: 'keep', title: '비교할 자료로 남긴다', note: '이 문장을 확인하는 데 직접 도움이 되는 자료예요.', result: '다른 자료와 나란히 놓고 내용과 날짜를 비교해요.' },
+                { id: 'skip', title: '이번 비교에서는 뺀다', note: '관련성이 낮거나 지금 주장에 맞지 않는 자료예요.', result: '자료를 읽은 기록은 남지만 최종 비교에는 넣지 않아요.' }
+              ]}
+              selectedId={answered ? sourceChoices[source.id] ? 'keep' : 'skip' : ''}
+              onSelect={chooseSource}
+              prompt="이 자료를 최종 비교에 남길지 A 또는 B로 정하세요."
+              resultLabel="이 자료에 대한 내 결정"
+            />
+          </>
+        )}
+      </article>
 
       <VerificationPageNav
         current={pageIndex}

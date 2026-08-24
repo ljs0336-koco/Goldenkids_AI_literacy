@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { announceLearningGuide } from '../../../utils/learningGuide';
 
 function VerificationChoiceButton({ option, index, alternativeChoice, selectedId, onSelect }) {
   return (
@@ -30,10 +31,16 @@ export default function VerificationChoiceFork({
   const primary = options.slice(0, 2);
   const alternative = options[2];
   const selected = options.find(option => option.id === selectedId);
-  const handleSelect = optionId => onSelect(optionId);
+  const handleSelect = optionId => {
+    onSelect(optionId);
+    announceLearningGuide('판단 결과가 아래에 표시됐어요. 이유를 읽고 화면 아래의 다음 버튼을 눌러 이어가세요.');
+  };
 
   const handleAlternative = () => {
-    setShowAlternative(current => !current);
+    setShowAlternative(current => {
+      announceLearningGuide(current ? '제3안을 접었어요. A 또는 B 중 근거에 더 가까운 쪽을 눌러 보세요.' : '제3안 C가 열렸어요. A·B와 비교한 뒤 원하는 카드를 눌러 보세요.');
+      return !current;
+    });
   };
 
   return (
@@ -66,7 +73,7 @@ export default function VerificationChoiceFork({
         </>
       )}
 
-      <div key={selected?.id || 'empty'} className={`verification-fork-result ${selected ? 'is-revealed' : 'is-empty'}`} role="status" aria-live="polite">
+      <div className={`verification-fork-result ${selected ? '' : 'is-empty'}`} role="status">
         <small>{selected ? resultLabel : '판단 결과'}</small>
         <strong>{selected ? selected.title : 'A 또는 B를 누르면 결과가 여기에 나타나요.'}</strong>
         {selected?.result && <p>{selected.result}</p>}

@@ -3,7 +3,6 @@ import { evidenceSources } from '../../verificationData';
 import VerificationPageNav from '../../components/VerificationPageNav';
 import VerificationChoiceFork from '../../components/VerificationChoiceFork';
 import VerificationExperienceStage from '../../components/VerificationExperienceStage';
-import VerificationSourceDocument from '../../components/VerificationSourceDocument';
 import VerificationWorkLabels from '../../components/VerificationWorkLabels';
 
 function getSourceSet(claim) {
@@ -57,7 +56,12 @@ export default function SourceCheckScreen({ claim, selectedSourceIds, onToggleSo
             </button>
           ) : (
             <>
-              <VerificationSourceDocument source={source} />
+              <header>
+                <span aria-hidden="true">{source.icon}</span>
+                <div><strong>{source.title}</strong><small>{source.publisher}</small></div>
+              </header>
+              <p className="verification-source-meta">{source.type} · {source.dateLabel}</p>
+              <blockquote>{source.excerpt}</blockquote>
               <VerificationChoiceFork
                 options={[
                   { id: 'keep', title: '비교할 자료로 남긴다', note: '이 문장을 확인하는 데 직접 도움이 되는 자료예요.', result: '다른 자료와 나란히 놓고 내용과 날짜를 비교해요.' },

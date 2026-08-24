@@ -100,14 +100,6 @@ export const evidenceSources = [
     publishedAt: '2026-03-02',
     dateLabel: '2026년 3월 2일 · 최신',
     excerpt: '학교숲 개장일: 2024년 4월 22일 / 2026학년도 이용 시간: 평일 08:00~18:00',
-    document: {
-      kind: 'notice',
-      formatLabel: '학교 공식 안내문',
-      fields: [
-        { label: '학교숲 개장일', value: '2024년 4월 22일' },
-        { label: '2026학년도 이용 시간', value: '평일 08:00~18:00' }
-      ]
-    },
     trustLevel: 'high',
     trustLabel: '현재 정보를 확인하기 좋은 자료',
     checkPoints: ['작성 기관이 분명함', '게시 날짜가 최신임', '시설 운영을 담당하는 곳의 문서임']
@@ -121,14 +113,6 @@ export const evidenceSources = [
     publishedAt: '2024-05-03',
     dateLabel: '2024년 5월 3일 · 과거 자료',
     excerpt: '4월 22일 학교숲 개장식을 열었습니다. 첫해 이용 시간은 평일 08:00~17:00입니다.',
-    document: {
-      kind: 'newsletter',
-      formatLabel: '학교소식지 기사',
-      paragraphs: [
-        '4월 22일 학교숲 개장식을 열었습니다.',
-        '첫해 이용 시간은 평일 08:00~17:00입니다.'
-      ]
-    },
     trustLevel: 'medium',
     trustLabel: '당시 상황에는 유용하지만 최신성 확인 필요',
     checkPoints: ['개장 당시 기록임', '공식 소식지임', '현재 운영 시간과 다를 수 있음']
@@ -142,15 +126,6 @@ export const evidenceSources = [
     publishedAt: '2026-06-14',
     dateLabel: '2026년 6월 14일 · 최신',
     excerpt: '체험 학생 18명 중 13명이 “수업 전 마음이 편안해졌다”고 응답. 집중력 수치와 체험 전후 비교는 조사하지 않음.',
-    document: {
-      kind: 'survey',
-      formatLabel: '학생 의견 조사 결과',
-      fields: [
-        { label: '참여 학생', value: '18명' },
-        { label: '주요 응답', value: '13명이 “수업 전 마음이 편안해졌다”고 응답' }
-      ],
-      limitation: '집중력 수치와 체험 전후 비교는 조사하지 않았습니다.'
-    },
     trustLevel: 'medium',
     trustLabel: '학생 경험은 알 수 있지만 35% 집중력 향상의 근거는 아님',
     checkPoints: ['응답 인원이 적음', '집중력을 직접 측정하지 않음', '조사 방법이 제한적임']
@@ -164,13 +139,6 @@ export const evidenceSources = [
     publishedAt: '2026-04-01',
     dateLabel: '2026년 4월 1일',
     excerpt: '어디선가 봤는데 학교숲 덕분에 집중력이 35%나 올랐다고 합니다. 연구 이름이나 조사 링크는 없습니다.',
-    document: {
-      kind: 'post',
-      formatLabel: '지역 게시판 글',
-      authorLabel: '작성자 확인 안 됨',
-      body: '어디선가 봤는데 학교숲 덕분에 집중력이 35%나 올랐다고 합니다.',
-      sourceStatus: '연구 이름이나 조사 링크가 없습니다.'
-    },
     trustLevel: 'low',
     trustLabel: '주장의 출처와 조사 방법을 확인할 수 없음',
     checkPoints: ['작성자를 알 수 없음', '원자료 링크가 없음', '수치의 조사 방법이 없음']

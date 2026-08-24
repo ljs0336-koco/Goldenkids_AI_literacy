@@ -5,11 +5,10 @@ export default function VerificationPageCue({ purpose }) {
 
   return (
     <aside className="verification-page-cue" aria-label="현재 활동 안내">
-      <span className="verification-page-cue__mark" aria-hidden="true">단계</span>
+      <span aria-hidden="true">☝</span>
       <div>
-        <small>이번 단계</small>
-        <strong>{purpose.label}</strong>
-        <p>{purpose.action}</p>
+        <small>지금 할 일</small>
+        <strong>{purpose.action}</strong>
       </div>
       <details>
         <summary aria-label="이 활동이 중요한 이유 보기">?</summary>

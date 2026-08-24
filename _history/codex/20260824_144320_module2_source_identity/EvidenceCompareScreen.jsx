@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { getSourceQualitySummary } from '../../verificationEngine';
 import VerificationPageNav from '../../components/VerificationPageNav';
 import VerificationExperienceStage from '../../components/VerificationExperienceStage';
-import VerificationSourceDocument from '../../components/VerificationSourceDocument';
 import VerificationWorkLabels from '../../components/VerificationWorkLabels';
 
 const trustTone = {
@@ -38,7 +37,9 @@ export default function EvidenceCompareScreen({ claim, selectedSourceIds, onNext
               <span className="verification-evidence-order">비교 자료 {pageIndex + 1}</span>
               <span className={`verification-trust-chip ${trustTone[source.trustLevel].className}`}>{trustTone[source.trustLevel].label}</span>
             </div>
-            <VerificationSourceDocument source={source} compact />
+            <h3>{source.icon} {source.title}</h3>
+            <p className="verification-source-meta">{source.publisher} · {source.dateLabel}</p>
+            <blockquote>{source.excerpt}</blockquote>
             <ul>{source.checkPoints.map(point => <li key={point}>{point}</li>)}</ul>
           </article>
         ) : (

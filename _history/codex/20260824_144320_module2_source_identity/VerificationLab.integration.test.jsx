@@ -112,12 +112,10 @@ describe('Verification module story-led student flow', () => {
     expect(screen.getByRole('button', { name: /검증 시작하기/ })).toBeEnabled();
   });
 
-  it('3-1. 상단 안내는 범용 문구 대신 이번 단계의 이름과 행동을 알려 준다', () => {
+  it('3-1. 활동 화면은 상단 안내 하나만 남기고 하단 지시 팝업을 반복하지 않는다', () => {
     render(<VerificationLabPage />);
     fireEvent.click(screen.getByRole('button', { name: /마감 전, AI가 쓴 기사를 확인하라/ }));
-    expect(screen.getByText('이번 단계')).toBeInTheDocument();
-    expect(screen.getByText('검증 시작')).toBeInTheDocument();
-    expect(screen.queryByText('지금 할 일')).not.toBeInTheDocument();
+    expect(screen.getAllByText('지금 할 일')).toHaveLength(1);
     expect(screen.queryByText('지금 해볼 일')).not.toBeInTheDocument();
   });
 
@@ -134,20 +132,12 @@ describe('Verification module story-led student flow', () => {
     render(<SourceHarness />);
     expect(screen.getByRole('button', { name: /세 자료를 판단하고 비교 자료 두 개/ })).toBeDisabled();
     fireEvent.click(screen.getByRole('button', { name: /봉투 열어 보기/ }));
-    expect(screen.getByLabelText('별빛초 시설 이용 안내 자료 원문')).toBeInTheDocument();
-    expect(screen.getByText('학교 공식 안내문')).toBeInTheDocument();
-    expect(screen.getByText('학교숲 개장일')).toBeInTheDocument();
-    expect(screen.getByText('2026학년도 이용 시간')).toBeInTheDocument();
-    expect(screen.queryByText(/학교숲 개장일:.*이용 시간:/)).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /비교할 자료로 남긴다/ }));
     fireEvent.click(screen.getByRole('button', { name: /다음 자료/ }));
     fireEvent.click(screen.getByRole('button', { name: /봉투 열어 보기/ }));
-    expect(screen.getByText('학교소식지 기사')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /비교할 자료로 남긴다/ }));
     fireEvent.click(screen.getByRole('button', { name: /다음 자료/ }));
     fireEvent.click(screen.getByRole('button', { name: /봉투 열어 보기/ }));
-    expect(screen.getByText('학생 의견 조사 결과')).toBeInTheDocument();
-    expect(screen.getByText('이 조사로 알 수 없는 것')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /이번 비교에서는 뺀다/ }));
     expect(screen.getByText(/자료 3\/3개 판단 · 비교할 자료 2개 남김/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /남긴 자료를 바로 비교하기/ })).toBeEnabled();

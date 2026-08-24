@@ -144,6 +144,6 @@ describe('모듈 3 초보자용 페이지 흐름', () => {
     render(<RoleLabPage />);
     fireEvent.click(screen.getByRole('button', { name: /AI에게 어떻게 부탁할까/ }));
     expect(screen.getByText('AI에게 이런 부탁도 할 수 있어요')).toBeInTheDocument();
-    expect(screen.getByLabelText(/① 상황 고르기 · 현재 단계/)).toBeInTheDocument();
+    expect(screen.getByText('① 상황 고르기')).toBeInTheDocument();
   });
 });

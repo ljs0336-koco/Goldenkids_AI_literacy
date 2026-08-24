@@ -8,21 +8,13 @@ export default function ProgressStepper({ steps, currentStep, subStepIndex = 0, 
           const isActive = index === currentStep;
           const isCompleted = index < currentStep;
           const stateClass = isActive ? 'is-active' : isCompleted ? 'is-completed' : '';
-          const stepMatch = String(step).match(/^([①-⑳])\s*(.+)$/);
-          const milestone = stepMatch?.[1] || String(index + 1);
-          const label = stepMatch?.[2] || step;
-          const stateLabel = isActive ? '현재 단계' : isCompleted ? '완료' : '예정';
 
           return (
             <React.Fragment key={step}>
-              <div
-                className={`step-item ${stateClass}`}
-                aria-current={isActive ? 'step' : undefined}
-                aria-label={`${step} · ${stateLabel}`}
-              >
-                <div className="step-item__main" aria-hidden="true">
-                  <span className="step-milestone-mark">{isCompleted ? '✓' : milestone}</span>
-                  <span className="step-label">{label}</span>
+              <div className={`step-item ${stateClass}`} aria-current={isActive ? 'step' : undefined}>
+                <div>
+                  {isCompleted && <span className="step-state-mark" aria-hidden="true">✓</span>}
+                  <span>{step}</span>
                 </div>
 
                 {isActive && subStepTotal > 1 && (
@@ -37,7 +29,7 @@ export default function ProgressStepper({ steps, currentStep, subStepIndex = 0, 
                 )}
               </div>
 
-              {index < steps.length - 1 && <div className="step-arrow" aria-hidden="true" />}
+              {index < steps.length - 1 && <div className="step-arrow" aria-hidden="true">›</div>}
             </React.Fragment>
           );
         })}

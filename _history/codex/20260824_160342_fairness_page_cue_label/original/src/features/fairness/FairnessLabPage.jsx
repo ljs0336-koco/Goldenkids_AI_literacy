@@ -5,8 +5,10 @@ import WorksheetModal from '../../components/WorksheetModal';
 import { useFairnessState } from './useFairnessState';
 import FairnessWorksheet from './print/FairnessWorksheet';
 import ModeSelectScreen from './screens/ModeSelectScreen';
+import StepPurposeBar from './components/StepPurposeBar';
 import FairnessHelpDrawer from './components/FairnessHelpDrawer';
 import LearningGuideToast from '../../components/LearningGuideToast';
+import { fairnessStepPurposes } from './fairnessLearningData';
 import './fairness.css';
 
 import GrowthInitialScreen from './screens/GrowthInitialScreen';
@@ -260,6 +262,7 @@ export default function FairnessLabPage() {
 
   const stepperInfo = getStepperInfo();
   const stepIndex = state.mode === 'growth' ? state.growthStep : state.teamStep;
+  const currentPurpose = state.mode ? fairnessStepPurposes[state.mode]?.[stepIndex] : null;
   const currentClickGuide = state.mode ? fairnessClickGuides[state.mode]?.[stepIndex] : null;
 
   return (
@@ -273,12 +276,15 @@ export default function FairnessLabPage() {
       />
       <main className="container mt-4 no-print">
         {state.mode && (
-          <ProgressStepper
-            steps={getSteps()}
-            currentStep={stepperInfo.currentStep}
-            subStepIndex={stepperInfo.subStepIndex}
-            subStepTotal={stepperInfo.subStepTotal}
-          />
+          <>
+            <ProgressStepper
+              steps={getSteps()}
+              currentStep={stepperInfo.currentStep}
+              subStepIndex={stepperInfo.subStepIndex}
+              subStepTotal={stepperInfo.subStepTotal}
+            />
+            <StepPurposeBar purpose={currentPurpose} />
+          </>
         )}
         {renderContent()}
       </main>

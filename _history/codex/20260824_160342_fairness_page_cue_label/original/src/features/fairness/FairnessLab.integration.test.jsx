@@ -210,16 +210,17 @@ describe('Fairness module story-led student flow', () => {
   it('14. 활동 진입 뒤 진행 단계도 이야기 순서로 표시된다', () => {
     render(<FairnessLabPage />);
     fireEvent.click(screen.getByText('하늘이 만나기'));
-    expect(screen.getByLabelText(/① 하늘이의 고민 · 현재 단계/)).toBeInTheDocument();
+    expect(screen.getByText('① 하늘이의 고민')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '하늘이를 소개해요' })).toBeInTheDocument();
   });
 
-  it('15. 중복 상단 안내 없이 지금 해볼 일만 제공한다', () => {
+  it('15. 손가락 행동 지시와 접이식 이유 도움말을 제공한다', () => {
     render(<FairnessLabPage />);
     fireEvent.click(screen.getByText('하늘이 만나기'));
-    expect(screen.queryByText('이 화면에서는')).not.toBeInTheDocument();
-    expect(screen.getAllByText('지금 해볼 일')).toHaveLength(1);
-    expect(screen.getByText(/가운데 하늘이 소개를 읽고/)).toBeInTheDocument();
+    expect(screen.getByText('이 화면에서는')).toBeInTheDocument();
+    expect(screen.getByText(/하늘이의 고민을 읽고/)).toBeInTheDocument();
+    fireEvent.click(screen.getByLabelText('이 활동을 하는 이유 보기'));
+    expect(screen.getByText(/실제 사람의 고민과 선택에 영향/)).toBeInTheDocument();
   });
 
   it('16. 학생 헤더에는 도움말이 있고 교사 도구와 발표 화면은 없다', () => {

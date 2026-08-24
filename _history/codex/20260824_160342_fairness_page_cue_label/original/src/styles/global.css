@@ -799,109 +799,56 @@ button.mode-card {
 
 /* Progress */
 .progress-panel {
-  margin-bottom: 12px;
-  padding: 7px 10px;
+  margin-bottom: var(--spacing-4);
+  padding: 13px 16px;
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: rgba(255, 253, 248, 0.72);
 }
 
 .stepper-container {
   display: flex;
   align-items: center;
-  gap: 0;
+  justify-content: space-between;
+  gap: 7px;
   width: 100%;
 }
 
 .step-item {
   display: flex;
-  min-width: 0;
-  min-height: 38px;
+  min-height: 42px;
   flex: 1;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4px 8px;
+  padding: 7px 10px;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   color: var(--color-text-muted);
-  font-size: 14px;
+  font-size: 12.5px;
   font-weight: var(--font-weight-medium);
   text-align: center;
 }
 
-.step-item__main {
-  display: flex;
-  width: 100%;
-  min-width: 0;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-}
-
-.step-milestone-mark {
-  display: grid;
-  width: 24px;
-  height: 24px;
-  flex: 0 0 24px;
-  place-items: center;
-  border: 1px solid #c9c1b3;
-  border-radius: 50%;
-  background: #fffdf8;
-  color: #716a60;
-  font-size: 12px;
-  font-weight: 850;
-  line-height: 1;
-}
-
-.step-label {
-  min-width: 0;
-  line-height: 1.3;
-}
-
 .step-item.is-active {
   border-color: #9eb5af;
-  background: #eaf0ed;
+  background: #e5ece8;
   color: var(--color-primary-hover);
   font-weight: var(--font-weight-bold);
-  box-shadow: inset 0 -2px 0 #6f9288;
 }
 
 .step-item.is-completed {
-  color: #4c625a;
-  font-weight: var(--font-weight-bold);
+  color: #59645e;
 }
 
-.step-item.is-active .step-milestone-mark {
-  border-color: var(--color-primary);
-  background: var(--color-primary);
-  color: #fff;
-}
-
-.step-item.is-completed .step-milestone-mark {
-  border-color: #9fb4ac;
-  background: #dfe9e4;
-  color: #365f52;
+.step-state-mark {
+  margin-right: 4px;
+  color: var(--color-primary);
 }
 
 .step-arrow {
-  position: relative;
-  width: 28px;
-  height: 1px;
-  flex: 0 0 28px;
-  background: #cfc7b9;
-}
-
-.step-arrow::after {
-  position: absolute;
-  top: -3px;
-  right: 0;
-  width: 7px;
-  height: 7px;
-  border-top: 1px solid #a9a092;
-  border-right: 1px solid #a9a092;
-  content: '';
-  transform: rotate(45deg);
+  color: var(--color-border-strong);
+  font-size: 15px;
 }
 
 .step-dots {
@@ -1079,26 +1026,14 @@ button.mode-card {
 }
 
 @media (max-width: 680px) {
-  .progress-panel {
-    padding: 7px;
-  }
-
   .stepper-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 6px;
+    gap: 7px;
   }
 
   .step-arrow {
     display: none;
-  }
-
-  .step-item {
-    min-height: 42px;
-  }
-
-  .step-item__main {
-    justify-content: flex-start;
   }
 }
 

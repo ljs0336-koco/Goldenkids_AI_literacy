@@ -1,64 +1,87 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { safetyGuardrails } from '../../agentData';
-import { evaluateGuardrailReadiness } from '../../agentEngine';
-import geumjjokDoctor from '../../../../assets/geumjjok/금쪽이_캐릭터_박사_안경콧수염.png';
+import { evaluateSafetySetup } from '../../agentEngine';
+import AgentChoiceFork from '../../components/AgentChoiceFork';
+import AgentPageCue from '../../components/AgentPageCue';
+import AgentPageNav from '../../components/AgentPageNav';
 
 export default function GuardrailSetupScreen({ guardrailChoices = {}, onSelectGuardrail, onNext, onPrev }) {
-  const evaluation = evaluateGuardrailReadiness(guardrailChoices);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const guard = safetyGuardrails[currentIndex];
+  const selectedId = guardrailChoices[guard.id] || null;
+  const selected = guard.options.find(option => option.id === selectedId);
+  const evaluation = evaluateSafetySetup(guardrailChoices);
+  const isLast = currentIndex === safetyGuardrails.length - 1;
+
+  const handleNext = () => {
+    if (!selected?.recommended) return;
+    if (isLast) onNext?.();
+    else setCurrentIndex(index => index + 1);
+  };
 
   return (
-    <div className="agent-content-width">
-      <div className="text-center mb-5">
-        <img src={geumjjokDoctor} alt="통제 설정을 점검하는 금쪽이" className="agent-screen-character" />
-        <h2 className="agent-page-title">네 가지 안전 통제 층 설정하기 🛡️</h2>
-        <p className="agent-page-lead">한 장치가 모든 위험을 막지는 못합니다. 권한, 한도, 사람 확인, 중단·복구를 겹쳐 설계해 보세요.</p>
+    <section className="agent-shell agent-stage" aria-labelledby="guardrail-title">
+      <AgentPageCue
+        action="A와 B 중 원본과 사람의 결정권을 더 잘 지키는 설정을 고르세요."
+        reason="AI에게 일을 다시 맡길 때는 좋은 의도보다 접근 권한과 실행 조건을 구체적으로 정해야 해요."
+      />
+
+      <header className="agent-page-head">
+        <span className="agent-eyebrow">안전 설정 {currentIndex + 1} / {safetyGuardrails.length}</span>
+        <h1 id="guardrail-title">이번에는 어디까지 맡길까?</h1>
+        <p>한 번에 하나씩 정해서 박물관 견학 자료를 다시 정리해 봐요.</p>
+      </header>
+
+      <div className="agent-guard-progress" aria-label={`안전 설정 ${currentIndex + 1} / ${safetyGuardrails.length}`}>
+        {safetyGuardrails.map((item, index) => (
+          <button
+            key={item.id}
+            type="button"
+            className={`${guardrailChoices[item.id] ? 'is-chosen' : ''} ${index === currentIndex ? 'is-current' : ''}`}
+            onClick={() => setCurrentIndex(index)}
+            aria-label={`${index + 1}. ${item.title}`}
+          >
+            {index + 1}
+          </button>
+        ))}
       </div>
 
-      <section className={`agent-readiness-banner ${evaluation.hasRecommendedBaseline ? 'is-ready' : ''}`} aria-live="polite">
-        <div>
-          <span>권장 설정 점검도 · 안전 확률이 아닙니다</span>
-          <strong>{evaluation.readinessScore}% · {evaluation.readinessLevel}</strong>
-        </div>
-        <p>{evaluation.configuredCount}/4개 설정 완료
-          {evaluation.hasRecommendedBaseline && ' · 기본 통제 뒤에도 모니터링과 사후 확인은 계속 필요합니다.'}
-        </p>
-      </section>
+      <article className="agent-guard-card">
+        <span className="agent-guard-icon">{guard.icon}</span>
+        <h2>{guard.title}</h2>
+        <p>{guard.desc}</p>
+      </article>
 
-      <div className="agent-guardrail-grid">
-        {safetyGuardrails.map(guard => {
-          const currentOptionId = guardrailChoices[guard.id] || null;
-          return (
-            <fieldset key={guard.id} className="agent-guardrail-card">
-              <legend><span aria-hidden="true">{guard.icon}</span> {guard.title}</legend>
-              <p>{guard.desc}</p>
-              <div className="agent-guardrail-options">
-                {guard.options.map(option => {
-                  const isSelected = currentOptionId === option.id;
-                  return (
-                    <button
-                      key={option.id}
-                      type="button"
-                      onClick={() => onSelectGuardrail?.(guard.id, option.id)}
-                      aria-pressed={isSelected}
-                      className={`agent-option-button ${isSelected ? 'is-selected' : ''} ${option.recommended ? 'is-recommended' : 'is-risky'}`}
-                    >
-                      <span>{option.label}</span>
-                      <small>{option.recommended ? '위험을 줄이는 설정' : '위험 범위가 커지는 설정'}</small>
-                    </button>
-                  );
-                })}
-              </div>
-            </fieldset>
-          );
-        })}
-      </div>
+      <AgentChoiceFork
+        options={guard.options}
+        value={selectedId}
+        onChange={optionId => onSelectGuardrail(guard.id, optionId)}
+        prompt="어떤 설정으로 다시 맡길까요?"
+      />
 
-      <div className="bottom-nav-bar">
-        <button type="button" className="btn-outline" onClick={onPrev}>← 활동 고르기</button>
-        <button type="button" className="btn-primary" onClick={onNext} disabled={!evaluation.isConfigured}>
-          {evaluation.isConfigured ? '이상 행동 대응 실험으로 가기 →' : `4개 항목을 모두 설정하세요 (${evaluation.configuredCount}/4)`}
-        </button>
-      </div>
-    </div>
+      <aside className={`agent-choice-result ${selected ? '' : 'is-empty'} ${selected && !selected.recommended ? 'needs-review' : ''}`} aria-live="polite">
+        {selected ? (
+          <>
+            <strong>{selected.recommended ? '이 설정으로 위험을 줄일 수 있어요' : '행동 범위가 너무 넓어요'}</strong>
+            <span>{evaluation.analysisItems[currentIndex].feedback}</span>
+          </>
+        ) : <span>설정을 고르면 바로 영향을 알려 드려요.</span>}
+      </aside>
+
+      {guard.id === 'guard_preview' && selected?.recommended && (
+        <aside className="agent-hitl-inline">
+          <strong>여기에 HITL이 들어갔어요</strong>
+          <span>AI가 목록을 준비하고, 사람이 승인하거나 보류한 다음에만 파일을 바꿉니다.</span>
+        </aside>
+      )}
+
+      <AgentPageNav
+        onPrev={currentIndex === 0 ? onPrev : () => setCurrentIndex(index => index - 1)}
+        onNext={handleNext}
+        prevLabel={currentIndex === 0 ? '복구 결과 보기' : '이전 설정'}
+        nextLabel={isLast ? '안전하게 다시 실행하기' : '다음 설정'}
+        disabled={!selected?.recommended}
+      />
+    </section>
   );
 }

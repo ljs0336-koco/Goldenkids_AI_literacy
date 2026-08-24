@@ -1,33 +1,54 @@
 import React from 'react';
+import { safeRerunResult } from '../../agentData';
+import AgentPageCue from '../../components/AgentPageCue';
 import geumjjokCelebration from '../../../../assets/geumjjok/금쪽이_표정_꽃화관.png';
 
-export default function CharterSummaryScreen({ onReset, onBackToActivities }) {
+export default function CharterSummaryScreen({ onReset, onBackToActivities, onOpenRecord }) {
   return (
-    <div className="card text-center agent-summary-card">
-      <img src={geumjjokCelebration} alt="AI 감독관 배지를 받은 금쪽이" className="agent-summary-character" />
-      <div className="agent-badge-label">AI 감독관 배지</div>
-      <h2 className="agent-page-title">실행 전 확인하고, 실행 뒤에도 책임 있게 살펴보기</h2>
-      <p className="agent-page-lead">에이전트의 편리함을 활용하면서도 도구 권한과 실제 영향을 사람이 점검하는 네 가지 원칙을 정리했습니다.</p>
+    <section className="agent-shell agent-stage agent-summary" aria-labelledby="control-summary-title">
+      <AgentPageCue
+        action="처음 실행과 다시 실행한 결과를 비교하고, 내가 지킬 네 문장을 읽어 보세요."
+        reason="안전장치는 AI를 쓰지 않게 만드는 것이 아니라, 사람이 통제하며 더 안전하게 활용하도록 돕는 장치예요."
+      />
 
-      <section className="agent-principles-card">
-        <h3>AI 에이전트 안전 운영 4원칙</h3>
+      <header className="agent-summary-head">
+        <img src={geumjjokCelebration} alt="" aria-hidden="true" />
+        <div>
+          <span className="agent-eyebrow">활동 B 완료</span>
+          <h1 id="control-summary-title">{safeRerunResult.title}</h1>
+          <p>원본을 지키고, 애매한 판단과 영향이 큰 행동은 사람에게 다시 물었어요.</p>
+        </div>
+      </header>
+
+      <section className="agent-rerun-result" aria-label="안전하게 다시 실행한 결과">
+        {safeRerunResult.items.map((item, index) => (
+          <article key={item}>
+            <span>{index + 1}</span>
+            <strong>{item}</strong>
+          </article>
+        ))}
+      </section>
+
+      <section className="agent-principles-card" aria-labelledby="agent-principles-title">
+        <h2 id="agent-principles-title">AI가 행동할 때 지킬 네 문장</h2>
         <ol>
-          <li><span>1</span><p><strong>필요한 만큼만 허용하기</strong>도구·대상·시간 권한을 미션 범위로 제한합니다.</p></li>
-          <li><span>2</span><p><strong>횟수·시간·금액에 한도 두기</strong>반복 오류가 커지기 전에 새 실행을 막습니다.</p></li>
-          <li><span>3</span><p><strong>영향이 큰 실행은 근거로 확인하기</strong>외부 발송·결제·물리 제어는 내용과 조건을 보고 사람이 결정합니다.</p></li>
-          <li><span>4</span><p><strong>중단 뒤 권한 회수와 복구까지 하기</strong>이미 일어난 결과를 확인하고 알림·기록·복구 절차를 이어갑니다.</p></li>
+          <li><strong>목표와 권한을 나눠요.</strong><span>정리를 부탁했다고 삭제까지 허락한 것은 아니에요.</span></li>
+          <li><strong>원본과 돌아올 길을 남겨요.</strong><span>복사본에서 먼저 작업하고 기록을 남겨요.</span></li>
+          <li><strong>영향이 큰 행동에는 HITL을 넣어요.</strong><span>사람이 정보를 보고 승인·보류한 뒤 실행해요.</span></li>
+          <li><strong>멈춘 뒤 결과까지 확인해요.</strong><span>비상 정지 뒤에는 권한 회수와 복구가 이어져요.</span></li>
         </ol>
       </section>
 
-      <div className="agent-reflection-note">
-        <strong>마지막 질문</strong>
-        <span>내가 사용하는 AI가 어떤 도구와 정보에 접근하며, 실행 결과를 누가 확인하고 책임지는지 설명할 수 있나요?</span>
-      </div>
+      <aside className="agent-final-question">
+        <strong>마지막으로 생각해 보기</strong>
+        <span>내가 쓰는 AI가 실제로 무엇을 보고, 바꾸고, 다른 사람에게 보낼 수 있는지 설명할 수 있나요?</span>
+      </aside>
 
-      <div className="flex justify-center gap-4 agent-summary-actions">
-        <button type="button" className="btn-outline" onClick={onReset}>안전 운영 다시 설계하기</button>
-        <button type="button" className="btn-primary" onClick={onBackToActivities}>모듈 활동 고르기</button>
+      <div className="agent-summary-actions">
+        <button type="button" className="btn-outline" onClick={onOpenRecord}>내 활동 기록 보기</button>
+        <button type="button" className="btn-outline" onClick={onReset}>다시 해보기</button>
+        <button type="button" className="btn-primary" onClick={onBackToActivities}>다른 활동 고르기</button>
       </div>
-    </div>
+    </section>
   );
 }

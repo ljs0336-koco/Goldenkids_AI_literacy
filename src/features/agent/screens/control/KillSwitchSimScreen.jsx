@@ -1,93 +1,130 @@
-import React, { useEffect, useState } from 'react';
-import { killSwitchAnomaly } from '../../agentData';
+import React, { useState } from 'react';
+import { museumIncident } from '../../agentData';
+import AgentChoiceFork from '../../components/AgentChoiceFork';
+import AgentPageCue from '../../components/AgentPageCue';
+import AgentPageNav from '../../components/AgentPageNav';
 import geumjjokEmbarrassed from '../../../../assets/geumjjok/금쪽이_표정_당황.png';
-import geumjjokDoctor from '../../../../assets/geumjjok/금쪽이_캐릭터_박사_안경콧수염.png';
 
 export default function KillSwitchSimScreen({
   killSwitchTriggered,
-  incidentResponseChecks = [],
   onTriggerKillSwitch,
-  onToggleIncidentCheck,
   onNext,
   onPrev
 }) {
-  const [visibleLogCount, setVisibleLogCount] = useState(killSwitchTriggered ? killSwitchAnomaly.anomalyLog.length : 1);
-  const allResponseChecksDone = killSwitchAnomaly.responseChecks.every(check => incidentResponseChecks.includes(check.id));
+  const [recordIndex, setRecordIndex] = useState(0);
+  const [phase, setPhase] = useState(killSwitchTriggered ? 'decision' : 'records');
+  const [selectedClue, setSelectedClue] = useState(null);
+  const selected = museumIncident.clueOptions.find(option => option.id === selectedClue);
+  const canStop = Boolean(selected?.suspicious);
+  const log = museumIncident.anomalyLog[recordIndex];
+  const isLastRecord = recordIndex === museumIncident.anomalyLog.length - 1;
 
-  useEffect(() => {
-    if (killSwitchTriggered || visibleLogCount >= killSwitchAnomaly.anomalyLog.length) return undefined;
-    const timer = window.setTimeout(() => setVisibleLogCount(count => count + 1), 650);
-    return () => window.clearTimeout(timer);
-  }, [killSwitchTriggered, visibleLogCount]);
+  if (phase === 'records') {
+    return (
+      <section className="agent-shell agent-stage" aria-labelledby="kill-switch-record-title">
+        <AgentPageCue
+          action="‘다음 기록’을 눌러 AI가 부탁한 범위를 벗어나는 순간을 찾아보세요."
+          reason="넓은 권한을 주면 AI가 목표를 넓게 해석해 부탁하지 않은 행동까지 할 수 있어요. 사람은 작업 기록을 보고 개입할 수 있어야 해요."
+        />
 
-  const shownLogs = killSwitchTriggered
-    ? [...killSwitchAnomaly.anomalyLog, ...killSwitchAnomaly.containmentLog]
-    : killSwitchAnomaly.anomalyLog.slice(0, visibleLogCount);
+        <header className="agent-page-head agent-incident-head">
+          <img src={geumjjokEmbarrassed} alt="" aria-hidden="true" />
+          <div>
+            <span className="agent-eyebrow">박물관 견학 보고서 준비</span>
+            <h1 id="kill-switch-record-title">{museumIncident.title}</h1>
+            <p>{museumIncident.hook}</p>
+          </div>
+        </header>
 
-  let heading = '이상 징후 발견: 새 실행을 중단할까요?';
-  if (killSwitchTriggered) heading = allResponseChecksDone ? '사고 대응 절차 점검 완료' : '새 실행 중단됨 · 후속 확인 필요';
+        <div className="agent-request-card is-compact">
+          <span>내가 부탁한 말</span>
+          <blockquote>“{museumIncident.request}”</blockquote>
+        </div>
+
+        <div className="agent-record-progress" aria-label={`작업 기록 ${recordIndex + 1} / ${museumIncident.anomalyLog.length}`}>
+          {museumIncident.anomalyLog.map((item, index) => (
+            <span key={item.label} className={index <= recordIndex ? 'is-seen' : ''} />
+          ))}
+        </div>
+
+        <article className={`agent-incident-record is-${log.tone}`} aria-live="polite">
+          <small>작업 기록 {recordIndex + 1} / {museumIncident.anomalyLog.length}</small>
+          <h2>{log.label}</h2>
+          <p>{log.text}</p>
+        </article>
+
+        <div className="agent-record-history">
+          <small>지금까지 본 기록</small>
+          <strong>{museumIncident.anomalyLog.slice(0, recordIndex + 1).map(item => item.label).join(' → ')}</strong>
+        </div>
+
+        <AgentPageNav
+          onPrev={recordIndex === 0 ? onPrev : () => setRecordIndex(index => index - 1)}
+          onNext={isLastRecord ? () => setPhase('decision') : () => setRecordIndex(index => index + 1)}
+          prevLabel={recordIndex === 0 ? '활동 고르기' : '이전 기록'}
+          nextLabel={isLastRecord ? '이상 행동 고르기' : '다음 기록'}
+        />
+      </section>
+    );
+  }
 
   return (
-    <div className="agent-screen-width">
-      <div className="text-center mb-5">
-        <h2 className={`agent-page-title ${killSwitchTriggered ? '' : 'agent-danger-title'}`}>{heading}</h2>
-        <p className="agent-page-lead">
-          {killSwitchTriggered
-            ? '중단 버튼은 추가 실행을 막는 시작점입니다. 권한 회수와 이미 일어난 결과 확인까지 이어가세요.'
-            : '로그에서 중복 요청의 단서를 찾고, 더 큰 영향이 생기기 전에 사람이 개입하세요.'}
-        </p>
-      </div>
+    <section className="agent-shell agent-stage" aria-labelledby="kill-switch-decision-title">
+      <AgentPageCue
+        action={killSwitchTriggered
+          ? '멈춘 일과 자동으로 되돌아가지 않은 일을 구별한 뒤 다음 장으로 넘기세요.'
+          : '부탁하지 않은 행동을 고른 뒤, 필요하면 ‘지금 멈추기’를 누르세요.'}
+        reason="비상 정지는 앞으로의 행동을 막는 장치예요. 이미 바뀐 결과는 다음 단계에서 따로 복구해야 해요."
+      />
 
-      <section className={`agent-incident-card ${killSwitchTriggered ? 'is-contained' : ''}`}>
-        <img src={killSwitchTriggered ? geumjjokDoctor : geumjjokEmbarrassed} alt="" aria-hidden="true" />
-        <div>
-          <strong>⚠️ {killSwitchAnomaly.title}</strong>
-          <p>{killSwitchTriggered ? killSwitchAnomaly.containedMessage : killSwitchAnomaly.scenario}</p>
+      <header className="agent-page-head">
+        <span className="agent-eyebrow">부탁과 작업 기록 비교하기</span>
+        <h1 id="kill-switch-decision-title">{killSwitchTriggered ? '새 행동은 멈췄어요' : '어느 행동에서 멈춰야 할까?'}</h1>
+        <p>AI는 자료 분류를 시작한 뒤, 사진 이동과 영상 삭제까지 행동 범위를 넓혔습니다.</p>
+      </header>
+
+      {!killSwitchTriggered ? (
+        <div className="agent-decision-stage">
+          <AgentChoiceFork
+            options={museumIncident.clueOptions.slice(0, 2)}
+            alternative={museumIncident.clueOptions[2]}
+            value={selectedClue}
+            onChange={setSelectedClue}
+            prompt="가장 먼저 멈춰야 할 행동은 무엇일까요?"
+          />
+          <aside className={`agent-choice-result ${selected ? '' : 'is-empty'}`} aria-live="polite">
+            {selected ? (
+              <>
+                <strong>{selected.suspicious ? '멈춰야 할 단서를 찾았어요' : '부탁한 범위 안의 행동이에요'}</strong>
+                <span>{selected.feedback}</span>
+              </>
+            ) : <span>행동 하나를 고르면 판단 결과가 보여요.</span>}
+          </aside>
+          <button type="button" className="agent-stop-button" onClick={onTriggerKillSwitch} disabled={!canStop}>
+            지금 멈추기
+          </button>
         </div>
-      </section>
-
-      <section className="agent-console" aria-label="가상 에이전트 실행 로그" aria-live="polite">
-        <div className="agent-console-heading">수업용 가상 실행 로그 · 실제 결제는 발생하지 않습니다</div>
-        {shownLogs.map((log, index) => (
-          <div key={`${log.time}-${index}`} className={log.text.includes('확인 필요') ? 'needs-attention' : ''}>
-            <span>[{log.time}]</span> {log.text}
+      ) : (
+        <section className="agent-stop-result" aria-live="polite">
+          <div className="is-stopped">
+            <small>멈춘 일</small>
+            <strong>{museumIncident.stopResult.stopped}</strong>
           </div>
-        ))}
-        {killSwitchTriggered && <div className="is-stopped">[상태] 새 실행 중단 요청 적용 · 과거 실행 결과 확인 대기</div>}
-      </section>
-
-      <div className="agent-stop-action">
-        <button
-          type="button"
-          onClick={() => onTriggerKillSwitch?.()}
-          disabled={killSwitchTriggered}
-          className="agent-stop-button"
-        >
-          {killSwitchTriggered ? '중단 요청 완료' : '새 실행 중단 + 임시 권한 회수'}
-        </button>
-      </div>
-
-      {killSwitchTriggered && (
-        <fieldset className="agent-response-panel">
-          <legend>중단 뒤에 이어질 대응을 확인하세요</legend>
-          {killSwitchAnomaly.responseChecks.map(check => {
-            const checked = incidentResponseChecks.includes(check.id);
-            return (
-              <label key={check.id} className={checked ? 'is-checked' : ''}>
-                <input type="checkbox" checked={checked} onChange={() => onToggleIncidentCheck?.(check.id)} />
-                <span>{check.label}</span>
-              </label>
-            );
-          })}
-        </fieldset>
+          <div className="needs-recovery">
+            <small>자동으로 되돌아가지 않은 일</small>
+            <strong>{museumIncident.stopResult.notReversed}</strong>
+          </div>
+          <p>{museumIncident.stopResult.meaning}</p>
+        </section>
       )}
 
-      <div className="bottom-nav-bar">
-        <button type="button" className="btn-outline" onClick={onPrev}>← 통제 설정 다시 보기</button>
-        <button type="button" className="btn-primary" onClick={onNext} disabled={!killSwitchTriggered || !allResponseChecksDone}>
-          {allResponseChecksDone ? 'AI 감독관 원칙 정리하기 →' : '중단 후 세 가지 대응을 모두 확인하세요'}
-        </button>
-      </div>
-    </div>
+      <AgentPageNav
+        onPrev={() => setPhase('records')}
+        onNext={onNext}
+        prevLabel="작업 기록 다시 보기"
+        nextLabel="멈춘 뒤 복구하기"
+        disabled={!killSwitchTriggered}
+      />
+    </section>
   );
 }

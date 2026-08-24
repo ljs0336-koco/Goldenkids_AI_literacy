@@ -10,8 +10,7 @@ export const LEARNING_STORAGE_KEYS = [
   'ai-literacy-lab-role:v2',
   'ai-literacy-lab-role:v3',
   'ai-literacy-lab-agent:v1',
-  'ai-literacy-lab-agent:v2',
-  'ai-literacy-lab-agent:v3'
+  'ai-literacy-lab-agent:v2'
 ];
 
 export function resetAllLearningProgress(storage = window.localStorage) {

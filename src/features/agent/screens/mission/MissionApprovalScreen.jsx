@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { getMissionById } from '../../agentEngine';
-import geumjjokDoctor from '../../../../assets/geumjjok/금쪽이_캐릭터_박사_안경콧수염.png';
+import { clubInviteMission } from '../../agentData';
+import AgentChoiceFork from '../../components/AgentChoiceFork';
+import AgentPageCue from '../../components/AgentPageCue';
+import AgentPageNav from '../../components/AgentPageNav';
 
 export default function MissionApprovalScreen({
-  missionId,
   decision,
   reviewedCheckIds = [],
   onToggleReviewCheck,
@@ -11,97 +12,94 @@ export default function MissionApprovalScreen({
   onNext,
   onPrev
 }) {
-  const mission = getMissionById(missionId);
-  const checkpoint = mission.humanCheckpoint;
-  const [selectedDecision, setSelectedDecision] = useState(decision || null);
+  const checkpoint = clubInviteMission.humanCheckpoint;
+  const [reviewIndex, setReviewIndex] = useState(0);
+  const check = checkpoint.reviewChecks[reviewIndex];
+  const allReviewed = checkpoint.reviewChecks.every(item => reviewedCheckIds.includes(item.id));
+  const selectedOption = checkpoint.options.find(option => option.id === decision);
+  const isChecked = reviewedCheckIds.includes(check.id);
 
-  const allReviewed = checkpoint.reviewChecks.every(check => reviewedCheckIds.includes(check.id));
-  const currentOption = checkpoint.options.find(option => option.id === selectedDecision);
-  const matchesEvidence = selectedDecision === checkpoint.expectedDecision;
-
-  const handleChoose = optionId => {
-    if (!allReviewed) return;
-    setSelectedDecision(optionId);
-    onDecide?.(mission.id, optionId);
+  const markAndContinue = () => {
+    if (!isChecked) onToggleReviewCheck?.(check.id);
+    if (reviewIndex < checkpoint.reviewChecks.length - 1) setReviewIndex(index => index + 1);
   };
 
   return (
-    <div className="agent-screen-width">
-      <div className="text-center mb-5">
-        <img src={geumjjokDoctor} alt="실행 조건을 확인하는 금쪽이" className="agent-screen-character" />
-        <h2 className="agent-page-title agent-danger-title">사람의 근거 확인 지점</h2>
-        <p className="agent-page-lead">승인은 ‘괜찮아 보인다’는 느낌이 아니라, 실행 대상과 근거를 확인한 뒤 남기는 결정입니다.</p>
-      </div>
+    <section className="agent-shell agent-stage" aria-labelledby="mission-approval-title">
+      <AgentPageCue
+        action="네 가지 자료를 한 장씩 확인한 뒤, A와 B 중 지금 할 행동을 고르세요."
+        reason="사람이 확인한다는 것은 버튼만 누르는 일이 아니라, 판단에 필요한 정보와 보류 방법을 갖는 일이에요."
+      />
 
-      <section className="agent-draft-card" aria-labelledby="agent-draft-title">
-        <div id="agent-draft-title" className="agent-section-kicker">📄 에이전트가 요청한 실행 · {checkpoint.actionLabel}</div>
-        <pre>{checkpoint.draftText}</pre>
-      </section>
+      <header className="agent-page-head">
+        <span className="agent-eyebrow">보내기 전 마지막 확인</span>
+        <h1 id="mission-approval-title">진짜 이대로 보내도 될까?</h1>
+        <p>AI가 준비한 초대 내용을 최종 자료와 비교해 보세요.</p>
+      </header>
 
-      <fieldset className="agent-review-panel">
-        <legend>먼저 세 가지 근거를 직접 확인하세요</legend>
-        <div className="agent-review-list">
-          {checkpoint.reviewChecks.map(check => {
-            const checked = reviewedCheckIds.includes(check.id);
-            return (
-              <label key={check.id} className={`agent-review-item ${checked ? 'is-checked' : ''}`}>
-                <input
-                  type="checkbox"
-                  checked={checked}
-                  onChange={() => onToggleReviewCheck?.(mission.id, check.id)}
-                />
-                <span>
-                  <strong>{check.label}</strong>
-                  <small className={check.status === 'issue' ? 'is-issue' : 'is-confirmed'}>
-                    {check.status === 'issue' ? '확인할 문제 · ' : '확인된 근거 · '}{check.evidence}
-                  </small>
-                </span>
-              </label>
-            );
-          })}
-        </div>
-      </fieldset>
+      {!allReviewed ? (
+        <div className="agent-review-stage">
+          <aside className="agent-draft-card">
+            <small>AI가 보내려는 내용</small>
+            <pre>{checkpoint.draftText}</pre>
+          </aside>
 
-      <section className="agent-decision-panel" aria-labelledby="agent-decision-title">
-        <h3 id="agent-decision-title">{checkpoint.question}</h3>
-        {!allReviewed && <p className="agent-decision-guide">위 근거 세 가지를 모두 확인하면 결정 버튼이 열립니다.</p>}
-        <div className="agent-decision-grid">
-          {checkpoint.options.map(option => {
-            const isSelected = selectedDecision === option.id;
-            const isApprove = option.id === 'approve';
-            return (
+          <article className="agent-review-card" aria-live="polite">
+            <div className="agent-review-count">확인 {reviewIndex + 1} / {checkpoint.reviewChecks.length}</div>
+            <h2>{check.label}</h2>
+            <p>{check.evidence}</p>
+            <button type="button" className="btn-primary" onClick={markAndContinue}>
+              {reviewIndex === checkpoint.reviewChecks.length - 1 ? '마지막 자료 확인했어요' : '확인했어요 · 다음 자료'}
+            </button>
+          </article>
+
+          <div className="agent-review-tabs" aria-label="확인할 자료">
+            {checkpoint.reviewChecks.map((item, index) => (
               <button
-                key={option.id}
+                key={item.id}
                 type="button"
-                onClick={() => handleChoose(option.id)}
-                disabled={!allReviewed}
-                aria-pressed={isSelected}
-                className={`agent-decision-button ${isSelected ? 'is-selected' : ''} ${isApprove ? 'is-approve' : 'is-reject'}`}
+                className={`${reviewedCheckIds.includes(item.id) ? 'is-checked' : ''} ${index === reviewIndex ? 'is-current' : ''}`}
+                onClick={() => setReviewIndex(index)}
+                aria-label={`${item.label} ${reviewedCheckIds.includes(item.id) ? '확인함' : '확인 전'}`}
               >
-                {isApprove ? '✅' : '⏸️'} {option.label}
+                {reviewedCheckIds.includes(item.id) ? '✓' : index + 1}
               </button>
-            );
-          })}
-        </div>
-
-        {currentOption && (
-          <div className={`agent-feedback ${matchesEvidence ? 'is-aligned' : 'needs-review'}`} role="status">
-            <strong>{matchesEvidence ? '근거와 일치하는 판단' : '한 번 더 살펴볼 판단'}</strong>
-            <span>{currentOption.feedback}</span>
+            ))}
           </div>
-        )}
-      </section>
+        </div>
+      ) : (
+        <>
+          <div className="agent-all-reviewed">
+            <strong>네 가지 문제를 모두 찾았어요</strong>
+            <span>작년 연락처 · 이전 일정 · 수정 전 포스터 · 연락처 공개 설정</span>
+          </div>
 
-      <div className="bottom-nav-bar">
-        <button type="button" className="btn-outline" onClick={onPrev}>← 실행 기록 다시보기</button>
-        <button type="button" className="btn-primary" onClick={onNext} disabled={!selectedDecision || !allReviewed}>
-          {!allReviewed
-            ? '근거 세 가지를 모두 확인하세요'
-            : selectedDecision
-              ? '판단 기록 정리하기 →'
-              : '승인 또는 보류를 선택하세요'}
-        </button>
-      </div>
-    </div>
+          <AgentChoiceFork
+            options={checkpoint.options.slice(0, 2)}
+            alternative={checkpoint.options[2]}
+            value={decision}
+            onChange={onDecide}
+            prompt={checkpoint.question}
+          />
+
+          <aside className={`agent-choice-result ${selectedOption ? '' : 'is-empty'}`} aria-live="polite">
+            {selectedOption ? (
+              <>
+                <strong>내 선택 · {selectedOption.label.replace(/^[ABC]\.\s*/, '')}</strong>
+                <span>{selectedOption.feedback}</span>
+              </>
+            ) : <span>선택하면 바로 결과를 알려 드려요.</span>}
+          </aside>
+        </>
+      )}
+
+      <AgentPageNav
+        onPrev={onPrev}
+        onNext={onNext}
+        prevLabel="행동 기록 다시 보기"
+        nextLabel="사람 확인 방법 정리하기"
+        disabled={!allReviewed || !decision}
+      />
+    </section>
   );
 }

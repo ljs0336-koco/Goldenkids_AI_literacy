@@ -1,62 +1,77 @@
 import React, { useState } from 'react';
-import { getMissionById, getToolById } from '../../agentEngine';
-import geumjjokIdea from '../../../../assets/geumjjok/금쪽이_캐릭터_아이디어_전구안경.png';
+import { clubInviteMission } from '../../agentData';
+import { getToolById } from '../../agentEngine';
+import AgentPageCue from '../../components/AgentPageCue';
+import AgentPageNav from '../../components/AgentPageNav';
 
 const stepMeta = {
-  plan_summary: { label: '계획 요약', icon: '🧭', color: '#4338ca', background: '#eef2ff' },
-  tool_request: { label: '도구 요청', icon: '🧰', color: '#0369a1', background: '#f0f9ff' },
-  observation: { label: '관찰 결과', icon: '🔎', color: '#0f766e', background: '#f0fdfa' },
-  approval_needed: { label: '사람 확인 필요', icon: '✋', color: '#b91c1c', background: '#fef2f2' }
+  plan_summary: { label: '준비 순서', tone: 'plan' },
+  tool_request: { label: '도구 사용', tone: 'tool' },
+  observation: { label: '확인된 결과', tone: 'result' },
+  approval_needed: { label: '사람 확인', tone: 'stop' }
 };
 
-export default function MissionPlanScreen({ missionId, onNext, onPrev }) {
-  const mission = getMissionById(missionId);
-  const [currentStepIndex, setCurrentStepIndex] = useState(1);
+export default function MissionPlanScreen({ onNext, onPrev }) {
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const step = clubInviteMission.steps[currentStepIndex];
+  const meta = stepMeta[step.type];
+  const tool = step.toolId ? getToolById(step.toolId) : null;
+  const isLast = currentStepIndex === clubInviteMission.steps.length - 1;
 
-  const handleNextStep = () => {
-    if (currentStepIndex < mission.steps.length) setCurrentStepIndex(previous => previous + 1);
-    else onNext?.();
+  const handleNext = () => {
+    if (isLast) onNext?.();
+    else setCurrentStepIndex(index => index + 1);
   };
 
   return (
-    <div className="agent-screen-width">
-      <div className="text-center mb-5">
-        <div className="agent-screen-icon" aria-hidden="true">{mission.icon}</div>
-        <h2 className="agent-page-title">{mission.title}</h2>
-        <p className="agent-page-lead">숨겨진 생각을 보여 주는 화면이 아니라, 실행 전에 공유할 수 있는 계획·도구 요청·관찰 기록을 단계별로 살펴보는 화면입니다.</p>
+    <section className="agent-shell agent-stage" aria-labelledby="mission-plan-title">
+      <AgentPageCue
+        action="카드의 ‘다음 행동’을 눌러 AI가 무엇을 준비하고 어떤 도구를 쓰는지 확인하세요."
+        reason="AI의 숨겨진 생각을 보는 것이 아니라, 사람이 확인할 수 있는 계획·도구 요청·결과 기록을 살펴보는 거예요."
+      />
+
+      <header className="agent-page-head">
+        <span className="agent-eyebrow">공유된 행동 기록</span>
+        <h1 id="mission-plan-title">AI는 이렇게 보내려고 해요</h1>
+        <p>한 장씩 넘기며 전송 직전까지 따라가 보세요.</p>
+      </header>
+
+      <div className="agent-record-progress" aria-label={`행동 기록 ${currentStepIndex + 1} / ${clubInviteMission.steps.length}`}>
+        {clubInviteMission.steps.map((item, index) => (
+          <span key={item.stepIndex} className={index <= currentStepIndex ? 'is-seen' : ''} />
+        ))}
       </div>
 
-      <section className="agent-timeline" aria-label="에이전트 실행 기록">
-        <div className="agent-timeline-heading">
-          <img src={geumjjokIdea} alt="" aria-hidden="true" />
-          <strong>실행 기록 {currentStepIndex} / {mission.steps.length}</strong>
+      <article className={`agent-record-card is-${meta.tone}`} aria-live="polite">
+        <div className="agent-record-meta">
+          <span>{currentStepIndex + 1} / {clubInviteMission.steps.length}</span>
+          <strong>{meta.label}</strong>
         </div>
-        <div className="agent-timeline-list">
-          {mission.steps.slice(0, currentStepIndex).map(step => {
-            const meta = stepMeta[step.type];
-            const tool = step.toolId ? getToolById(step.toolId) : null;
-            return (
-              <article key={step.stepIndex} className="agent-timeline-item" style={{ borderColor: meta.color, backgroundColor: meta.background }}>
-                <div className="agent-timeline-label" style={{ color: meta.color }}>
-                  <span aria-hidden="true">{meta.icon}</span> {step.stepIndex}. {meta.label}
-                  {tool && <span className="agent-tool-chip">{tool.icon} {tool.name} · {tool.riskLabel}</span>}
-                </div>
-                <p>{step.text}</p>
-                {step.warningMessage && <div className="agent-warning-note">{step.warningMessage}</div>}
-              </article>
-            );
-          })}
-        </div>
-      </section>
+        <h2>{step.title}</h2>
+        <p>{step.text}</p>
+        {tool && (
+          <div className="agent-tool-note">
+            <span>{tool.icon}</span>
+            <div>
+              <strong>{tool.name} · {tool.riskLabel}</strong>
+              <small>{tool.desc}</small>
+            </div>
+          </div>
+        )}
+        {step.warningMessage && <aside className="agent-warning-note">{step.warningMessage}</aside>}
+      </article>
 
-      <div className="bottom-nav-bar">
-        <button type="button" className="btn-outline" onClick={onPrev}>← 미션 다시 고르기</button>
-        <button type="button" className="btn-primary" onClick={handleNextStep}>
-          {currentStepIndex < mission.steps.length
-            ? `다음 기록 보기 (${currentStepIndex}/${mission.steps.length}) →`
-            : '근거 확인 지점으로 이동하기 →'}
-        </button>
+      <div className="agent-record-history" aria-label="지금까지 본 행동">
+        <small>지금까지 본 행동</small>
+        <strong>{clubInviteMission.steps.slice(0, currentStepIndex + 1).map(item => item.title).join(' → ')}</strong>
       </div>
-    </div>
+
+      <AgentPageNav
+        onPrev={currentStepIndex === 0 ? onPrev : () => setCurrentStepIndex(index => index - 1)}
+        onNext={handleNext}
+        prevLabel={currentStepIndex === 0 ? '상황 다시 보기' : '이전 행동'}
+        nextLabel={isLast ? '보내기 전 확인하기' : '다음 행동'}
+      />
+    </section>
   );
 }

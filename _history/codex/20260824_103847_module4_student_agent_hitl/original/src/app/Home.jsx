@@ -31,8 +31,8 @@ const modules = [
   {
     id: '04',
     path: '/agent',
-    title: 'AI가 대신 움직인다면?',
-    description: 'AI가 메시지를 보내거나 파일을 바꾸기 전 사람이 확인하고, 이상 행동을 멈춘 뒤 복구하는 방법을 체험해요.',
+    title: '에이전트 통제실',
+    description: '실행 전 근거를 확인하고 권한·한도·중단·복구 절차를 설계하며 AI 감독관의 역할을 익혀요.',
     image: thumbAgent
   }
 ];

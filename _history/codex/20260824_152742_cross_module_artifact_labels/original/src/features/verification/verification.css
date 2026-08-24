@@ -1454,12 +1454,6 @@
   .verification-document-fields dd { padding: 11px 13px; }
   .verification-document-fields dd { font-size: 17px; }
   .verification-source-document > footer { padding: 10px 16px; }
-  .verification-draft-paper { padding: 22px 18px; }
-  .verification-draft-paper__masthead,
-  .verification-draft-paper__footer,
-  .verification-draft-paper footer { align-items: flex-start; flex-direction: column; }
-  .verification-draft-paper__tag,
-  .verification-draft-paper__stamp { font-size: 14px; line-height: 1.35; }
 }
 
 @media (max-width: 440px) {

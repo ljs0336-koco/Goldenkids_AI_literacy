@@ -108,8 +108,6 @@ describe('Verification module story-led student flow', () => {
     expect(workState).toHaveTextContent('확인 전');
     expect(workState).toHaveTextContent('가상 체험');
     expect(workState).toHaveTextContent('실제 챗봇 연결 전');
-    expect(screen.getByText('AI 기사 초안')).toBeInTheDocument();
-    expect(screen.getByText('사람 확인 전')).toBeInTheDocument();
     expect(screen.getByText('금쪽이 스피커가 곁에 있다면')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /검증 시작하기/ })).toBeEnabled();
   });

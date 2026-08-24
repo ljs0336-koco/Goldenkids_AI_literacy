@@ -47,7 +47,6 @@ describe('모듈 3 초보자용 페이지 흐름', () => {
     render(<PersonaCompareScreen scenarioId="sc_01" onChoosePersona={() => {}} onNext={() => {}} onPrev={() => {}} />);
 
     expect(screen.getByText('같은 부탁, 다른 답')).toBeInTheDocument();
-    expect(screen.getByLabelText('AI 응답 후보 · 내가 고를 차례')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /A공감 친구/ })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /B생각 코치/ })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /C설명 박사/ })).not.toBeInTheDocument();
@@ -68,7 +67,6 @@ describe('모듈 3 초보자용 페이지 흐름', () => {
     );
 
     expect(screen.getByText('한 역할보다, 필요한 순서대로')).toBeInTheDocument();
-    expect(screen.getByLabelText('내가 다듬은 부탁 · 사용 전 확인')).toBeInTheDocument();
     expect(container.textContent).toContain('역할+할 일+조건과 순서');
     expect(screen.getByText(/‘프롬프트’라고 해요/)).toBeInTheDocument();
     expect(screen.getByText(/금쪽이 스피커가 있다면/)).toBeInTheDocument();
@@ -109,7 +107,6 @@ describe('모듈 3 초보자용 페이지 흐름', () => {
     render(<Harness />);
     expect(screen.getByRole('button', { name: /다음 일/ })).toBeDisabled();
     fireEvent.click(screen.getByRole('button', { name: /A규칙으로 자동 정리/ }));
-    expect(screen.getByLabelText('역할 분담 결과 · 사람 최종 결정')).toBeInTheDocument();
     expect(screen.getByText(/도구가 할 일/)).toBeInTheDocument();
     expect(screen.getByText(/사람이 확인할 일/)).toBeInTheDocument();
     expect(next).not.toHaveBeenCalled();

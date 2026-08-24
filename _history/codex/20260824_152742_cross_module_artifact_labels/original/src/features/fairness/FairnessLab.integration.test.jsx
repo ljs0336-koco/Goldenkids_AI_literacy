@@ -66,13 +66,11 @@ describe('Fairness module story-led student flow', () => {
   it('4. AI가 받은 자료, 첫 직업, 되묻기를 장면 순서대로 보여 준다', () => {
     render(<GrowthTempRecScreen questionId={null} onQuestion={() => {}} onNext={() => {}} onPrev={() => {}} />);
     expect(screen.getByRole('heading', { name: /AI는 하늘이의 모든 모습을 알고 있을까요/ })).toBeInTheDocument();
-    expect(screen.getByLabelText('성적표·학습 기록 · AI가 받은 자료')).toBeInTheDocument();
     expect(screen.getByText('정보 92점 · 수학 86점 · 과학 78점 · 국어 74점')).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: /소프트웨어 개발자/ })).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /다음 장면/ }));
     expect(screen.getByRole('heading', { name: /소프트웨어 개발자/ })).toBeInTheDocument();
-    expect(screen.getByLabelText('AI 추천 초안 · 사람 확인 전')).toBeInTheDocument();
     expect(screen.queryByText(/단서 점수|적합도/)).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /다음 장면/ }));
@@ -134,7 +132,6 @@ describe('Fairness module story-led student flow', () => {
     expect(screen.queryByText(/지원자 1/)).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'AI의 첫 팀 →' }));
     expect(screen.getByRole('heading', { name: 'AI는 네 명을 아주 빠르게 골랐어요' })).toBeInTheDocument();
-    expect(screen.getByLabelText('AI 팀 추천 · 기준 확인 전')).toBeInTheDocument();
     expect(screen.getByText('현재 기록이 높은 학생을 먼저 본 결과')).toBeInTheDocument();
   });
 

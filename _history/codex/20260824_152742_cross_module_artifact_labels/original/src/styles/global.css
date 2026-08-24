@@ -895,83 +895,6 @@ button.mode-card {
   border-width: 0;
 }
 
-/* AI가 만든 자료, 사람의 확인 단계, 확인 완료 결과를 전 모듈에서 같은 문법으로 표시 */
-.artifact-status-label {
-  display: flex;
-  min-height: 44px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding: 8px 10px;
-  border: 1px solid #d7c9b5;
-  border-radius: var(--radius-sm);
-  background: #f3eadb;
-  color: #4d402e;
-  font-size: 14px;
-  text-align: left;
-}
-
-.artifact-status-label__source {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  gap: 9px;
-}
-
-.artifact-status-label__source b {
-  display: grid;
-  min-width: 38px;
-  min-height: 28px;
-  place-items: center;
-  padding: 3px 7px;
-  border-radius: 4px;
-  background: #5f5547;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 900;
-  line-height: 1;
-}
-
-.artifact-status-label__source strong {
-  font-size: 15px;
-  line-height: 1.4;
-}
-
-.artifact-status-label__state {
-  flex: 0 0 auto;
-  padding: 5px 9px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.66);
-  font-size: 14px;
-  font-weight: 850;
-  line-height: 1.35;
-}
-
-.artifact-status-label--record {
-  border-color: #bdcbc5;
-  background: #eaf0ed;
-  color: #36564d;
-}
-
-.artifact-status-label--record .artifact-status-label__source b { background: #426b5f; }
-
-.artifact-status-label--review {
-  border-color: #d7b7aa;
-  background: #f6e9e3;
-  color: #743f35;
-}
-
-.artifact-status-label--review .artifact-status-label__source b { background: #8f4638; }
-
-.artifact-status-label--complete {
-  border-color: #a9c6b8;
-  background: #e8f2ed;
-  color: #2d5b49;
-}
-
-.artifact-status-label--complete .artifact-status-label__source b { background: #34705a; }
-
 @media (max-width: 768px) {
   .container {
     padding-inline: 16px;
@@ -1128,15 +1051,5 @@ button.mode-card {
   .bottom-nav-bar button {
     width: 100%;
     min-height: 48px;
-  }
-
-  .artifact-status-label {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .artifact-status-label__state {
-    align-self: flex-start;
   }
 }

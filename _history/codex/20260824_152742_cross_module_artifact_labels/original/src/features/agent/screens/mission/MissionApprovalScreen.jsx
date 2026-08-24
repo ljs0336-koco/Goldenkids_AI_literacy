@@ -3,7 +3,6 @@ import { clubInviteMission } from '../../agentData';
 import AgentChoiceFork from '../../components/AgentChoiceFork';
 import AgentPageCue from '../../components/AgentPageCue';
 import AgentPageNav from '../../components/AgentPageNav';
-import ArtifactStatusLabel from '../../../../components/ArtifactStatusLabel';
 
 export default function MissionApprovalScreen({
   decision,
@@ -41,7 +40,6 @@ export default function MissionApprovalScreen({
       {!allReviewed ? (
         <div className="agent-review-stage">
           <aside className="agent-draft-card">
-            <ArtifactStatusLabel mark="AI" source="AI 전송 초안" status="사람 확인 전" tone="review" />
             <small>AI가 보내려는 내용</small>
             <pre>{checkpoint.draftText}</pre>
           </aside>

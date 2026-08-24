@@ -3,7 +3,6 @@ import { clubInviteMission } from '../../agentData';
 import { getToolById } from '../../agentEngine';
 import AgentPageCue from '../../components/AgentPageCue';
 import AgentPageNav from '../../components/AgentPageNav';
-import ArtifactStatusLabel from '../../../../components/ArtifactStatusLabel';
 
 const stepMeta = {
   plan_summary: { label: '준비 순서', tone: 'plan' },
@@ -44,12 +43,6 @@ export default function MissionPlanScreen({ onNext, onPrev }) {
       </div>
 
       <article className={`agent-record-card is-${meta.tone}`} aria-live="polite">
-        <ArtifactStatusLabel
-          mark="기록"
-          source="AI 행동 기록"
-          status={step.type === 'approval_needed' ? '사람 승인 필요' : meta.label}
-          tone={step.type === 'approval_needed' ? 'review' : 'record'}
-        />
         <div className="agent-record-meta">
           <span>{currentStepIndex + 1} / {clubInviteMission.steps.length}</span>
           <strong>{meta.label}</strong>

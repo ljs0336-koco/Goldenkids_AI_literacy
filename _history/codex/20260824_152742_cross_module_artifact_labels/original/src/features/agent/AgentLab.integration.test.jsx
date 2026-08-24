@@ -90,7 +90,6 @@ describe('AgentLab module 4 student action experience', () => {
   it('AI의 숨겨진 생각이 아니라 사람이 볼 수 있는 행동 기록을 한 장씩 보여 준다', () => {
     render(<MissionPlanScreen onNext={() => {}} onPrev={() => {}} />);
     expect(screen.getByText(/숨겨진 생각을 보는 것이 아니라/)).toBeInTheDocument();
-    expect(screen.getByLabelText('AI 행동 기록 · 준비 순서')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '먼저 할 일을 나눴어요' })).toBeInTheDocument();
     expect(document.body.textContent).not.toContain('[생각]');
     fireEvent.click(screen.getByRole('button', { name: /다음 행동/ }));
@@ -99,7 +98,6 @@ describe('AgentLab module 4 student action experience', () => {
 
   it('네 자료를 확인한 뒤 A·B와 작은 C 선택지를 제공하고 결과를 바로 보여 준다', () => {
     render(<ApprovalHarness />);
-    expect(screen.getByLabelText('AI 전송 초안 · 사람 확인 전')).toBeInTheDocument();
     clubInviteMission.humanCheckpoint.reviewChecks.forEach(() => {
       fireEvent.click(screen.getByRole('button', { name: /확인했어요/ }));
     });
@@ -121,7 +119,6 @@ describe('AgentLab module 4 student action experience', () => {
         onOpenRecord={() => {}}
       />
     );
-    expect(screen.getByLabelText('사람 확인 반영 · 전송 전 최종안')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /HITL · Human-in-the-Loop/ })).toBeInTheDocument();
     expect(screen.getByText('사람이 확인·결정')).toBeInTheDocument();
     expect(screen.getByText('사람이 결과 확인')).toBeInTheDocument();
@@ -130,7 +127,6 @@ describe('AgentLab module 4 student action experience', () => {
 
   it('부탁하지 않은 파일 행동을 찾아야 비상 정지를 누를 수 있다', () => {
     render(<StopHarness />);
-    expect(screen.getByLabelText('AI 작업 기록 · 부탁 범위 안')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /다음 기록/ }));
     fireEvent.click(screen.getByRole('button', { name: /다음 기록/ }));
     fireEvent.click(screen.getByRole('button', { name: /다음 기록/ }));

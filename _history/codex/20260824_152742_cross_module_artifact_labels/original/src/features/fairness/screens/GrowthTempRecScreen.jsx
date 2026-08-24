@@ -9,7 +9,6 @@ import { growthQuestions, growthSpeakerPrompt } from '../fairnessLearningData';
 import AiExchangePanel from '../components/AiExchangePanel';
 import MiniSpeakerNote from '../components/MiniSpeakerNote';
 import PageTurnNav from '../components/PageTurnNav';
-import ArtifactStatusLabel from '../../../components/ArtifactStatusLabel';
 import geumjjokDoctor from '../../../assets/geumjjok/금쪽이_캐릭터_박사_안경콧수염.png';
 
 const headings = [
@@ -33,7 +32,6 @@ export default function GrowthTempRecScreen({ questionId, onQuestion, onNext, on
 
       {pageIndex === 0 && (
         <section className="fair-record-page" aria-labelledby="ai-records-title">
-          <ArtifactStatusLabel mark="자료" source="성적표·학습 기록" status="AI가 받은 자료" tone="record" />
           <span className="fair-eyebrow">AI가 실제로 받은 자료</span>
           <h3 id="ai-records-title">성적표와 온라인 학습 기록 세 가지</h3>
           <ul className="fair-plain-record-list">
@@ -53,7 +51,6 @@ export default function GrowthTempRecScreen({ questionId, onQuestion, onNext, on
 
       {pageIndex === 1 && (
         <section className="fair-first-answer" aria-labelledby="first-career-title">
-          <ArtifactStatusLabel mark="AI" source="AI 추천 초안" status="사람 확인 전" tone="review" />
           <span>AI의 첫 번째 생각</span>
           <h3 id="first-career-title">{firstRecommendation.name}</h3>
           <p>{firstRecommendation.why}</p>

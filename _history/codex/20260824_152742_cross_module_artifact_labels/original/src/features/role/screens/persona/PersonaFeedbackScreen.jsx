@@ -4,7 +4,6 @@ import RoleChoiceFork from '../../components/RoleChoiceFork';
 import RolePageCue from '../../components/RolePageCue';
 import RolePageNav from '../../components/RolePageNav';
 import RoleSpeakerNote from '../../components/RoleSpeakerNote';
-import ArtifactStatusLabel from '../../../../components/ArtifactStatusLabel';
 
 export default function PersonaFeedbackScreen({ scenarioId, userChoice, recipeChoice, onChooseRecipe, onComplete, onPrev }) {
   const scenario = roleScenarios.find(item => item.id === scenarioId) || roleScenarios[0];
@@ -49,7 +48,6 @@ export default function PersonaFeedbackScreen({ scenarioId, userChoice, recipeCh
       <section className={`role-prompt-result ${selectedRecipe ? '' : 'is-empty'}`} aria-live="polite" aria-hidden={!selectedRecipe}>
         {selectedRecipe ? (
           <>
-          <ArtifactStatusLabel mark="사람" source="내가 다듬은 부탁" status="사용 전 확인" tone="complete" />
           <span>내가 완성한 부탁</span>
           <blockquote>{selectedRecipe.prompt}</blockquote>
           <p><strong>달라지는 점</strong> · {selectedRecipe.result}</p>

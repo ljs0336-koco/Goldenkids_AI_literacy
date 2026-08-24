@@ -9,7 +9,6 @@ import { evaluateTeamCandidates } from '../fairnessEngine';
 import { teamSpeakerPrompt } from '../fairnessLearningData';
 import MiniSpeakerNote from '../components/MiniSpeakerNote';
 import PageTurnNav from '../components/PageTurnNav';
-import ArtifactStatusLabel from '../../../components/ArtifactStatusLabel';
 
 export default function CandidateScreen({ onViewAll, onNext, onPrev }) {
   const [pageIndex, setPageIndex] = useState(0);
@@ -44,7 +43,6 @@ export default function CandidateScreen({ onViewAll, onNext, onPrev }) {
       ) : (
         <>
           <section className="fair-first-team" aria-labelledby="first-team-title">
-            <ArtifactStatusLabel mark="AI" source="AI 팀 추천" status="기준 확인 전" tone="review" />
             <div className="fair-first-team-heading">
               <span>AI의 첫 명단</span>
               <h3 id="first-team-title">현재 기록이 높은 학생을 먼저 본 결과</h3>

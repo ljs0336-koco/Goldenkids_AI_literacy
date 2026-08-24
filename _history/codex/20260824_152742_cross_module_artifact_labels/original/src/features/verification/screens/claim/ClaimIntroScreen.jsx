@@ -35,7 +35,7 @@ export default function ClaimIntroScreen({ onNext, onPrev }) {
         <header className="verification-draft-paper__header">
           <div className="verification-draft-paper__masthead">
             <span className="verification-draft-paper__pub">{claimCase.publication}</span>
-            <span className="verification-draft-paper__tag">AI 기사 초안</span>
+            <span className="verification-draft-paper__tag">📰 기사 초안 원문</span>
           </div>
           <strong className="verification-draft-paper__title">우리 학교숲을 소개합니다</strong>
         </header>
@@ -43,7 +43,7 @@ export default function ClaimIntroScreen({ onNext, onPrev }) {
           {claimCase.aiAnswer.map(sentence => <p key={sentence}>{sentence}</p>)}
         </div>
         <footer className="verification-draft-paper__footer">
-          <span className="verification-draft-paper__stamp">사람 확인 전</span>
+          <span className="verification-draft-paper__stamp">⚠️ 사람 확인 필요</span>
           <span>가상 기사 초안 · 공개하기 전에 사람의 확인이 필요해요.</span>
         </footer>
       </article>

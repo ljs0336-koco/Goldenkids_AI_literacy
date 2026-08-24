@@ -3,7 +3,6 @@ import { museumIncident } from '../../agentData';
 import AgentChoiceFork from '../../components/AgentChoiceFork';
 import AgentPageCue from '../../components/AgentPageCue';
 import AgentPageNav from '../../components/AgentPageNav';
-import ArtifactStatusLabel from '../../../../components/ArtifactStatusLabel';
 import geumjjokEmbarrassed from '../../../../assets/geumjjok/금쪽이_표정_당황.png';
 
 export default function KillSwitchSimScreen({
@@ -19,7 +18,6 @@ export default function KillSwitchSimScreen({
   const canStop = Boolean(selected?.suspicious);
   const log = museumIncident.anomalyLog[recordIndex];
   const isLastRecord = recordIndex === museumIncident.anomalyLog.length - 1;
-  const recordStatus = log.tone === 'danger' ? '범위 이탈' : log.tone === 'warning' ? '주의 필요' : '부탁 범위 안';
 
   if (phase === 'records') {
     return (
@@ -50,7 +48,6 @@ export default function KillSwitchSimScreen({
         </div>
 
         <article className={`agent-incident-record is-${log.tone}`} aria-live="polite">
-          <ArtifactStatusLabel mark="기록" source="AI 작업 기록" status={recordStatus} tone={log.tone === 'normal' ? 'record' : 'review'} />
           <small>작업 기록 {recordIndex + 1} / {museumIncident.anomalyLog.length}</small>
           <h2>{log.label}</h2>
           <p>{log.text}</p>

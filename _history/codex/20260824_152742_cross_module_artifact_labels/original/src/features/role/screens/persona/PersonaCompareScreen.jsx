@@ -3,7 +3,6 @@ import { aiPersonas, roleScenarios } from '../../roleData';
 import RoleChoiceFork from '../../components/RoleChoiceFork';
 import RolePageCue from '../../components/RolePageCue';
 import RolePageNav from '../../components/RolePageNav';
-import ArtifactStatusLabel from '../../../../components/ArtifactStatusLabel';
 
 export default function PersonaCompareScreen({ scenarioId, userChoice, onChoosePersona, onNext, onPrev }) {
   const scenario = roleScenarios.find(item => item.id === scenarioId) || roleScenarios[0];
@@ -41,8 +40,6 @@ export default function PersonaCompareScreen({ scenarioId, userChoice, onChooseP
           <p>{scenario.genericResponse}</p>
         </div>
       </div>
-
-      <ArtifactStatusLabel mark="AI" source="AI 응답 후보" status="내가 고를 차례" tone="record" />
 
       <RoleChoiceFork
         key={scenario.id}

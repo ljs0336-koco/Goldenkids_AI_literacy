@@ -1,7 +1,6 @@
 import React from 'react';
 import { clubInviteMission } from '../../agentData';
 import AgentPageCue from '../../components/AgentPageCue';
-import ArtifactStatusLabel from '../../../../components/ArtifactStatusLabel';
 import geumjjokCelebration from '../../../../assets/geumjjok/금쪽이_표정_꽃화관.png';
 import speakerThumb from '../../../../assets/geumjjok/스피커 썸네일.png';
 
@@ -26,7 +25,6 @@ export default function MissionSummaryScreen({ decision, onReset, onBackToActivi
       </header>
 
       <section className="agent-corrected-card" aria-labelledby="agent-corrected-title">
-        <ArtifactStatusLabel mark="사람" source="사람 확인 반영" status="전송 전 최종안" tone="complete" />
         <h2 id="agent-corrected-title">AI가 고쳐서 다시 보여 준 내용</h2>
         <dl>
           <div><dt>받는 사람</dt><dd>{corrected.recipients}</dd></div>

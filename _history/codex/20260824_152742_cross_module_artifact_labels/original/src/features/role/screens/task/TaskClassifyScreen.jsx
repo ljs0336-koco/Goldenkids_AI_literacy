@@ -3,7 +3,6 @@ import { taskZoneOptions, workTasks } from '../../roleData';
 import RoleChoiceFork from '../../components/RoleChoiceFork';
 import RolePageCue from '../../components/RolePageCue';
 import RolePageNav from '../../components/RolePageNav';
-import ArtifactStatusLabel from '../../../../components/ArtifactStatusLabel';
 
 export default function TaskClassifyScreen({
   introSeen,
@@ -79,7 +78,6 @@ export default function TaskClassifyScreen({
       <section className={`role-task-result ${selectedZone ? '' : 'is-empty'}`} aria-live="polite" aria-hidden={!selectedZone}>
         {selectedZone ? (
           <>
-          <ArtifactStatusLabel mark="역할" source="역할 분담 결과" status="사람 최종 결정" tone="complete" />
           <div className="role-task-result-head">
             <span>내 선택</span>
             <strong>{selectedOption.shortLabel}</strong>

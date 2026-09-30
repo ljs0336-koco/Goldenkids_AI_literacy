@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './AccessGate.css';
 
-// SHA-256 hash of "SNU1002"
+// SHA-256 target hash
 const TARGET_HASH = "056e80685d351592864b35ce2e7af49cddc202409d907046173565445b780387";
-const PLAIN_FALLBACK = "SNU1002";
+const FALLBACK_B64 = "U05VMTAwMg==";
 const AUTH_KEY = "goldenkids_auth";
 
 async function computeSHA256(text) {
@@ -47,7 +47,7 @@ export default function AccessGate({ children }) {
     setErrorMsg('');
 
     const hashed = await computeSHA256(cleanCode);
-    const isValid = hashed ? hashed === TARGET_HASH : cleanCode === PLAIN_FALLBACK;
+    const isValid = hashed ? hashed === TARGET_HASH : btoa(cleanCode) === FALLBACK_B64;
 
     setIsChecking(false);
 
@@ -105,7 +105,7 @@ export default function AccessGate({ children }) {
                   setInputCode(e.target.value);
                   if (errorMsg) setErrorMsg('');
                 }}
-                placeholder="인증 코드 입력"
+                placeholder="인증 코드를 입력하세요"
                 autoFocus
                 className="gate-input"
                 autoComplete="off"

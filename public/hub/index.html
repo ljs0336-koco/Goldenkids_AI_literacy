@@ -144,10 +144,10 @@
     </h2>
     <p style="font-size:0.9rem;line-height:1.6;color:#556360;margin:0 0 24px;">
       본 서비스는 참여자 전용 비공개 포털입니다.<br/>
-      지정된 <strong>인증 코드</strong>를 입력해 주세요.
+      전달받으신 <strong>인증 코드</strong>를 입력해 주세요.
     </p>
     <div style="display:flex;flex-direction:column;gap:12px;">
-      <input id="gate-passcode-input" type="password" placeholder="인증 코드 입력 (예: SNU1002)" style="width:100%;padding:14px 16px;font-size:1.1rem;font-weight:700;border:2px solid #ccd7d4;border-radius:12px;text-align:center;outline:none;box-sizing:border-box;" autocomplete="off" />
+      <input id="gate-passcode-input" type="password" placeholder="인증 코드를 입력하세요" style="width:100%;padding:14px 16px;font-size:1.1rem;font-weight:700;border:2px solid #ccd7d4;border-radius:12px;text-align:center;outline:none;box-sizing:border-box;" autocomplete="off" />
       <div id="gate-err-msg" style="display:none;color:#dc2626;font-size:0.85rem;font-weight:600;background:#fee2e2;padding:8px;border-radius:8px;"></div>
       <button id="gate-submit-btn" style="width:100%;padding:14px;background:#2f6b63;color:#ffffff;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;transition:background 0.2s;">
         포털 입장하기 →
@@ -161,7 +161,8 @@
 <script>
 (function() {
   var AUTH_KEY = 'snu_portal_auth_v2';
-  var VALID_CODES = ['SNU1002'];
+  var TARGET_HASH = '056e80685d351592864b35ce2e7af49cddc202409d907046173565445b780387';
+  var FALLBACK_B64 = 'U05VMTAwMg==';
 
   function isAuthed() {
     return sessionStorage.getItem(AUTH_KEY) === 'granted' || localStorage.getItem(AUTH_KEY) === 'granted';
@@ -176,6 +177,15 @@
     hideGate();
   }
 
+  async function checkCode(val) {
+    if (window.crypto && window.crypto.subtle) {
+      var buf = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(val));
+      var hex = Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+      return hex === TARGET_HASH;
+    }
+    return btoa(val) === FALLBACK_B64;
+  }
+
   function initGate() {
     if (isAuthed()) {
       hideGate();
@@ -187,14 +197,15 @@
 
     if (!input || !btn) return;
 
-    function verify() {
+    async function verify() {
       var val = (input.value || '').trim().toUpperCase();
       if (!val) {
         err.style.display = 'block';
         err.textContent = '인증 코드를 입력해 주세요.';
         return;
       }
-      if (VALID_CODES.indexOf(val) !== -1) {
+      var ok = await checkCode(val);
+      if (ok) {
         sessionStorage.setItem(AUTH_KEY, 'granted');
         localStorage.setItem(AUTH_KEY, 'granted');
         hideGate();

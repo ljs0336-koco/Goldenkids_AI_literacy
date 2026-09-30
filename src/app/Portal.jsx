@@ -6,26 +6,28 @@ import geumjjokMain from '../assets/geumjjok/금쪽이_캐릭터_기본_무지�
 export default function Portal() {
   return (
     <div className="portal-container">
-      {/* Background Decorative Elements */}
+      {/* Background Decorative Blobs */}
       <div className="portal-bg-blob portal-blob-1" aria-hidden="true" />
       <div className="portal-bg-blob portal-blob-2" aria-hidden="true" />
+      <div className="portal-bg-blob portal-blob-3" aria-hidden="true" />
 
       {/* Header Section */}
       <header className="portal-header">
         <div className="portal-badge-pill">
           <span className="portal-pulse-dot" />
-          <span>GOLDENKIDS AI &amp; EDUTECH INTEGRATED PLATFORM</span>
+          <span>SEUNG AI LABS · INTEGRATED INNOVATION PLATFORM</span>
         </div>
         <h1 className="portal-title">
-          인공지능 교육 <span className="portal-highlight">통합 포털</span>
+          Seung AI Labs <span className="portal-highlight">통합 포털</span>
         </h1>
         <p className="portal-subtitle">
-          초·중등 <strong>AI 리터러시 실험실</strong>부터 <strong>피지컬 AI 융합교육 허브</strong>까지,<br />
-          목적에 맞는 실습 환경을 선택하여 바로 시작해보세요.
+          초·중등 <strong>AI 리터러시 실험실</strong>부터 <strong>피지컬 AI 융합교육 허브</strong>,
+          그리고 <strong>에이전틱 AI 인사이트 덱</strong>까지<br />
+          목적에 맞는 실습 및 연구 환경을 선택하여 바로 시작해보세요.
         </p>
       </header>
 
-      {/* Main Choice Cards Grid */}
+      {/* Main 3 Cards Grid */}
       <div className="portal-grid">
         {/* Card 1: AI Literacy Lab */}
         <section className="portal-card portal-card-literacy">
@@ -76,7 +78,7 @@ export default function Portal() {
               <span className="portal-feature-icon">🛡️</span>
               <div className="portal-feature-text">
                 <strong>모듈 04. AI가 대신 움직인다면?</strong>
-                <span>자율 에이전트의 권한 통제 및 이상 행동 복구 체험</span>
+                <span>자율 에이전트 권한 통제 및 이상 행동 복구 체험</span>
               </div>
             </li>
           </ul>
@@ -98,18 +100,18 @@ export default function Portal() {
           </div>
 
           <div className="portal-card-header">
-            <div className="portal-card-icon-box">
+            <div className="portal-card-icon-box box-secondary">
               <span className="portal-large-emoji">🐕</span>
             </div>
             <div>
-              <span className="portal-kicker">Edutech Project Hub</span>
+              <span className="portal-kicker kicker-secondary">Edutech Project Hub</span>
               <h2 className="portal-card-title">에듀테크 융합교육 허브</h2>
             </div>
           </div>
 
           <p className="portal-card-desc">
             서울대학교 에듀테크 연계 융합교육 프로젝트 수업용 허브입니다. 로보독 강화학습 시뮬레이터,
-            질문 비교기, 통학 데이터 탐구 등 수업용 웹앱과 8개 팀별 과제 지도를 한곳에서 제공합니다.
+            질문 비교기, 통학 데이터 탐구 등 수업용 웹앱과 8개 팀별 과제 지도를 제공합니다.
           </p>
 
           <ul className="portal-feature-list">
@@ -124,7 +126,7 @@ export default function Portal() {
               <span className="portal-feature-icon">💬</span>
               <div className="portal-feature-text">
                 <strong>질문 전후 비교 웹앱</strong>
-                <span>초기 모호한 질문과 5단계 고도화 프롬프트의 생성물 대조</span>
+                <span>모호한 질문과 5단계 고도화 프롬프트 생성물 대조</span>
               </div>
             </li>
             <li>
@@ -150,12 +152,74 @@ export default function Portal() {
             </a>
           </div>
         </section>
+
+        {/* Card 3: Agentic AI Editorial Deck */}
+        <section className="portal-card portal-card-deck">
+          <div className="portal-card-glow" />
+          <div className="portal-card-badge-row">
+            <span className="portal-tag tag-terracotta">코코아팹 사업부</span>
+            <span className="portal-version-tag">8개 슬라이드</span>
+          </div>
+
+          <div className="portal-card-header">
+            <div className="portal-card-icon-box box-terracotta">
+              <span className="portal-large-emoji">📑</span>
+            </div>
+            <div>
+              <span className="portal-kicker kicker-terracotta">Editorial Insight Deck</span>
+              <h2 className="portal-card-title">에이전틱 AI 인사이트 덱</h2>
+            </div>
+          </div>
+
+          <p className="portal-card-desc">
+            생각하는 도구에서 행동하는 동료로의 대전환. 에이전틱 AI의 3대 핵심 구조(뇌·도구·기억),
+            프롬프트에서 워크플로우로의 전환, 오케스트레이션 및 가드레일 전략을 집약한 프레젠테이션 덱입니다.
+          </p>
+
+          <ul className="portal-feature-list">
+            <li>
+              <span className="portal-feature-icon">⚡</span>
+              <div className="portal-feature-text">
+                <strong>Part 1. 자율성의 스펙트럼</strong>
+                <span>Chatbot ➡️ Copilot ➡️ Agent 진화 단계 분석</span>
+              </div>
+            </li>
+            <li>
+              <span className="portal-feature-icon">🔄</span>
+              <div className="portal-feature-text">
+                <strong>Part 2. 워크플로우 디자인</strong>
+                <span>단일 LLM 호출에서 루프 및 도구 실행 구조로 확장</span>
+              </div>
+            </li>
+            <li>
+              <span className="portal-feature-icon">🛡️</span>
+              <div className="portal-feature-text">
+                <strong>인간 참여형(HITL) 제어</strong>
+                <span>비가역적 액션 승인 체계 및 비상 정지(Kill Switch)</span>
+              </div>
+            </li>
+            <li>
+              <span className="portal-feature-icon">🎯</span>
+              <div className="portal-feature-text">
+                <strong>16:9 프레젠테이션 &amp; 인쇄 대응</strong>
+                <span>키보드 방향키 이동 및 아카이벌 에디토리얼 레이아웃</span>
+              </div>
+            </li>
+          </ul>
+
+          <div className="portal-card-footer">
+            <a href="./deck/index.html" className="portal-btn portal-btn-terracotta">
+              <span>인사이트 덱 열람</span>
+              <span className="portal-btn-arrow">→</span>
+            </a>
+          </div>
+        </section>
       </div>
 
       {/* Footer Info */}
       <footer className="portal-footer">
-        <p>© 2026 GoldenKids AI Lab · 서울대학교 에듀테크 연계 융합교육 프로젝트</p>
-        <p className="portal-footer-sub">모든 인터랙티브 시뮬레이션은 브라우저에서 별도 설치 없이 즉시 구동됩니다.</p>
+        <p>© 2026 Seung AI Labs · 서울대학교 에듀테크 연계 융합교육 프로젝트 × 코코아팹 사업부</p>
+        <p className="portal-footer-sub">모든 인터랙티브 시뮬레이션 및 에디토리얼 리포트는 브라우저에서 안전하게 구동됩니다.</p>
       </footer>
     </div>
   );

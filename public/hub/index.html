@@ -129,6 +129,99 @@
     }
   </style>
 </head>
+
+<!-- [SECURITY ACCESS GATE START] -->
+<div id="security-gate" style="position:fixed;inset:0;width:100vw;height:100vh;z-index:2147483647;background:linear-gradient(135deg,#131c19 0%,#1a2a26 50%,#0f1715 100%);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;">
+  <div style="position:relative;width:100%;max-width:440px;background:rgba(255,255,255,0.96);border-radius:24px;padding:40px 32px 32px;box-shadow:0 25px 60px -15px rgba(0,0,0,0.6);text-align:center;box-sizing:border-box;border:1px solid rgba(47,107,99,0.3);">
+    <div style="width:64px;height:64px;margin:0 auto 16px;border-radius:20px;background:#e8f4f1;border:1px solid rgba(47,107,99,0.3);display:flex;align-items:center;justify-content:center;font-size:28px;">
+      🔐
+    </div>
+    <div style="display:inline-block;background:rgba(47,107,99,0.1);color:#2f6b63;font-size:11px;font-weight:700;padding:4px 12px;border-radius:999px;letter-spacing:0.08em;margin-bottom:12px;">
+      SECURITY ACCESS CONTROL
+    </div>
+    <h2 style="font-size:1.45rem;font-weight:800;color:#182623;margin:0 0 10px;letter-spacing:-0.02em;">
+      접근 인증 코드가 필요합니다
+    </h2>
+    <p style="font-size:0.9rem;line-height:1.6;color:#556360;margin:0 0 24px;">
+      본 서비스는 참여자 전용 비공개 포털입니다.<br/>
+      지정된 <strong>인증 코드</strong>를 입력해 주세요.
+    </p>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <input id="gate-passcode-input" type="password" placeholder="인증 코드 입력 (예: SNU1002)" style="width:100%;padding:14px 16px;font-size:1.1rem;font-weight:700;border:2px solid #ccd7d4;border-radius:12px;text-align:center;outline:none;box-sizing:border-box;" autocomplete="off" />
+      <div id="gate-err-msg" style="display:none;color:#dc2626;font-size:0.85rem;font-weight:600;background:#fee2e2;padding:8px;border-radius:8px;"></div>
+      <button id="gate-submit-btn" style="width:100%;padding:14px;background:#2f6b63;color:#ffffff;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;transition:background 0.2s;">
+        포털 입장하기 →
+      </button>
+    </div>
+    <div style="margin-top:16px;font-size:0.8rem;color:#889693;">
+      ※ 영문 대소문자 구분 없이 입력 가능합니다.
+    </div>
+  </div>
+</div>
+<script>
+(function() {
+  var AUTH_KEY = 'snu_portal_auth_v2';
+  var VALID_CODES = ['SNU1002'];
+
+  function isAuthed() {
+    return sessionStorage.getItem(AUTH_KEY) === 'granted' || localStorage.getItem(AUTH_KEY) === 'granted';
+  }
+
+  function hideGate() {
+    var g = document.getElementById('security-gate');
+    if (g) g.style.setProperty('display', 'none', 'important');
+  }
+
+  if (isAuthed()) {
+    hideGate();
+  }
+
+  function initGate() {
+    if (isAuthed()) {
+      hideGate();
+      return;
+    }
+    var input = document.getElementById('gate-passcode-input');
+    var btn = document.getElementById('gate-submit-btn');
+    var err = document.getElementById('gate-err-msg');
+
+    if (!input || !btn) return;
+
+    function verify() {
+      var val = (input.value || '').trim().toUpperCase();
+      if (!val) {
+        err.style.display = 'block';
+        err.textContent = '인증 코드를 입력해 주세요.';
+        return;
+      }
+      if (VALID_CODES.indexOf(val) !== -1) {
+        sessionStorage.setItem(AUTH_KEY, 'granted');
+        localStorage.setItem(AUTH_KEY, 'granted');
+        hideGate();
+      } else {
+        err.style.display = 'block';
+        err.textContent = '인증 코드가 올바르지 않습니다. 다시 입력해 주세요.';
+        input.value = '';
+        input.focus();
+      }
+    }
+
+    btn.onclick = verify;
+    input.onkeydown = function(e) {
+      if (e.key === 'Enter') verify();
+    };
+    setTimeout(function() { input.focus(); }, 100);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGate);
+  } else {
+    initGate();
+  }
+})();
+</script>
+<!-- [SECURITY ACCESS GATE END] -->
+
 <body class="bg-surface-dim/40 text-on-surface antialiased flex justify-center selection:bg-primary-fixed selection:text-on-primary-fixed min-h-screen">
 
   <!-- Desktop Wrapper: Center shell on larger screens -->

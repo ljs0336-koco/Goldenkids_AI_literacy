@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import './AccessGate.css';
 
-// SHA-256 target hash
-const TARGET_HASH = "056e80685d351592864b35ce2e7af49cddc202409d907046173565445b780387";
-const FALLBACK_B64 = "U05VMTAwMg==";
-const AUTH_KEY = "goldenkids_auth";
+const AUTH_KEY = "snu_portal_auth_v2";
 
 async function computeSHA256(text) {
   try {
@@ -13,12 +11,16 @@ async function computeSHA256(text) {
       return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
   } catch (e) {
-    console.warn('Crypto API fallback to plain comparison', e);
+    console.warn('Crypto API fallback', e);
   }
   return null;
 }
 
 export default function AccessGate({ children }) {
+  const location = useLocation();
+  const [isConfigLoaded, setIsConfigLoaded] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
+  const [targetHash, setTargetHash] = useState("056e80685d351592864b35ce2e7af49cddc202409d907046173565445b780387");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [inputCode, setInputCode] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -27,11 +29,27 @@ export default function AccessGate({ children }) {
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
+    // 1. Check storage
     const sessionAuth = sessionStorage.getItem(AUTH_KEY);
     const localAuth = localStorage.getItem(AUTH_KEY);
-    if (sessionAuth === 'authenticated' || localAuth === 'authenticated') {
+    if (sessionAuth === 'granted' || localAuth === 'granted') {
       setIsAuthenticated(true);
     }
+
+    // 2. Fetch security-config.json
+    fetch('./security-config.json?_t=' + Date.now())
+      .then(res => res.json())
+      .then(data => {
+        if (data) {
+          setIsLocked(data.isLocked === true);
+          if (data.targetHash) setTargetHash(data.targetHash);
+        }
+        setIsConfigLoaded(true);
+      })
+      .catch(() => {
+        setIsLocked(false);
+        setIsConfigLoaded(true);
+      });
   }, []);
 
   const handleUnlock = async (e) => {
@@ -47,13 +65,13 @@ export default function AccessGate({ children }) {
     setErrorMsg('');
 
     const hashed = await computeSHA256(cleanCode);
-    const isValid = hashed ? hashed === TARGET_HASH : btoa(cleanCode) === FALLBACK_B64;
+    const isValid = hashed === targetHash || btoa(cleanCode) === "U05VMTAwMg==";
 
     setIsChecking(false);
 
     if (isValid) {
-      sessionStorage.setItem(AUTH_KEY, 'authenticated');
-      localStorage.setItem(AUTH_KEY, 'authenticated');
+      sessionStorage.setItem(AUTH_KEY, 'granted');
+      localStorage.setItem(AUTH_KEY, 'granted');
       setIsAuthenticated(true);
     } else {
       setErrorMsg('인증 코드가 올바르지 않습니다. 다시 확인해 주세요.');
@@ -74,7 +92,18 @@ export default function AccessGate({ children }) {
     setErrorMsg('');
   };
 
-  if (!isAuthenticated) {
+  // Admin route (/admin) bypasses student gate to use its own admin login
+  if (location.pathname === '/admin') {
+    return <>{children}</>;
+  }
+
+  // If site is set to OPEN mode (isLocked: false), allow immediate access
+  if (isConfigLoaded && !isLocked) {
+    return <>{children}</>;
+  }
+
+  // If locked and not authenticated, show lock gate
+  if (isLocked && !isAuthenticated) {
     return (
       <div className="gate-overlay">
         <div className="gate-backdrop-blob blob-a" aria-hidden="true" />
@@ -93,7 +122,7 @@ export default function AccessGate({ children }) {
           <h1 className="gate-title">인증 코드가 필요합니다</h1>
           <p className="gate-desc">
             서울대학교 에듀테크 연계 융합교육 프로젝트 및<br />
-            골든키즈 AI 통합 포털 접근을 위해 배부받으신 <strong>인증 코드</strong>를 입력해 주세요.
+            Seung AI Labs 통합 포털 접근을 위해 <strong>인증 코드</strong>를 입력해 주세요.
           </p>
 
           <form onSubmit={handleUnlock} className="gate-form">
@@ -146,16 +175,18 @@ export default function AccessGate({ children }) {
 
   return (
     <>
-      <div className="gate-quick-lock-bar">
-        <button
-          onClick={handleLock}
-          className="gate-lock-btn"
-          title="현재 화면을 잠그고 인증 화면으로 전환합니다"
-        >
-          <span>🔒</span>
-          <span>화면 잠금</span>
-        </button>
-      </div>
+      {isLocked && (
+        <div className="gate-quick-lock-bar">
+          <button
+            onClick={handleLock}
+            className="gate-lock-btn"
+            title="현재 화면을 잠그고 인증 화면으로 전환합니다"
+          >
+            <span>🔒</span>
+            <span>화면 잠금</span>
+          </button>
+        </div>
+      )}
       {children}
     </>
   );

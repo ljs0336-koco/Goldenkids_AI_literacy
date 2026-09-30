@@ -219,7 +219,7 @@ export default function Portal() {
       {/* Footer Info */}
       <footer className="portal-footer">
         <p>© 2026 Seung AI Labs · 서울대학교 에듀테크 연계 융합교육 프로젝트 × 코코아팹 사업부</p>
-        <p className="portal-footer-sub">모든 인터랙티브 시뮬레이션 및 에디토리얼 리포트는 브라우저에서 안전하게 구동됩니다.</p>
+        <p className="portal-footer-sub">모든 인터랙티브 시뮬레이션 및 에디토리얼 리포트는 브라우저에서 안전하게 구동됩니다. <Link to="/admin" style={{ marginLeft: "14px", color: "#6a7975", textDecoration: "none", fontWeight: 600 }}>⚙️ 관리자 설정</Link></p>
       </footer>
     </div>
   );

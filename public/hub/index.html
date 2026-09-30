@@ -143,7 +143,7 @@
       접근 인증 코드가 필요합니다
     </h2>
     <p style="font-size:0.9rem;line-height:1.6;color:#556360;margin:0 0 24px;">
-      본 서비스는 참여자 전용 비공개 포털입니다.<br/>
+      본 서비스는 코코아팹 사업부 및 연구 참여자 전용 비공개 포털입니다.<br/>
       전달받으신 <strong>인증 코드</strong>를 입력해 주세요.
     </p>
     <div style="display:flex;flex-direction:column;gap:12px;">
@@ -161,41 +161,57 @@
 <script>
 (function() {
   var AUTH_KEY = 'snu_portal_auth_v2';
-  var TARGET_HASH = '056e80685d351592864b35ce2e7af49cddc202409d907046173565445b780387';
-  var FALLBACK_B64 = 'U05VMTAwMg==';
+  var gate = document.getElementById('security-gate');
 
   function isAuthed() {
     return sessionStorage.getItem(AUTH_KEY) === 'granted' || localStorage.getItem(AUTH_KEY) === 'granted';
   }
 
   function hideGate() {
-    var g = document.getElementById('security-gate');
-    if (g) g.style.setProperty('display', 'none', 'important');
+    if (gate) gate.style.setProperty('display', 'none', 'important');
   }
 
   if (isAuthed()) {
     hideGate();
+    return;
   }
 
-  async function checkCode(val) {
-    if (window.crypto && window.crypto.subtle) {
-      var buf = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(val));
-      var hex = Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
-      return hex === TARGET_HASH;
-    }
-    return btoa(val) === FALLBACK_B64;
-  }
+  // Fetch security-config.json to check if site is currently OPEN
+  var cfgPath = './security-config.json?_t=' + Date.now();
+  fetch(cfgPath)
+    .then(function(res) { return res.json(); })
+    .then(function(cfg) {
+      if (cfg && cfg.isLocked === false) {
+        hideGate();
+        return;
+      }
+      initGate(cfg);
+    })
+    .catch(function() {
+      // Default to open if config unreachable
+      hideGate();
+    });
 
-  function initGate() {
+  function initGate(cfg) {
     if (isAuthed()) {
       hideGate();
       return;
-    }
+    }}
+    var targetHash = (cfg && cfg.targetHash) || "056e80685d351592864b35ce2e7af49cddc202409d907046173565445b780387";
     var input = document.getElementById('gate-passcode-input');
     var btn = document.getElementById('gate-submit-btn');
     var err = document.getElementById('gate-err-msg');
 
     if (!input || !btn) return;
+
+    async function checkCode(val) {
+      if (window.crypto && window.crypto.subtle) {
+        var buf = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(val));
+        var hex = Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+        return hex === targetHash;
+      }
+      return btoa(val) === "U05VMTAwMg==";
+    }
 
     async function verify() {
       var val = (input.value || '').trim().toUpperCase();
@@ -222,12 +238,6 @@
       if (e.key === 'Enter') verify();
     };
     setTimeout(function() { input.focus(); }, 100);
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initGate);
-  } else {
-    initGate();
   }
 })();
 </script>

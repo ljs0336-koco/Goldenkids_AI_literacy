@@ -6,6 +6,7 @@ import FairnessLabPage from '../features/fairness/FairnessLabPage';
 import VerificationLabPage from '../features/verification/VerificationLabPage';
 import RoleLabPage from '../features/role/RoleLabPage';
 import AgentLabPage from '../features/agent/AgentLabPage';
+import AdminPage from './AdminPage';
 
 export default function AppRoutes() {
   return (
@@ -16,6 +17,7 @@ export default function AppRoutes() {
       <Route path="/verification" element={<VerificationLabPage />} />
       <Route path="/role" element={<RoleLabPage />} />
       <Route path="/agent" element={<AgentLabPage />} />
+      <Route path="/admin" element={<AdminPage />} />
     </Routes>
   );
 }

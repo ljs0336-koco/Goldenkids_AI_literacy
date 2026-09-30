@@ -40,6 +40,28 @@ const modules = [
 export default function Home() {
   return (
     <main className="container home-page">
+      <nav style={{ marginBottom: "20px" }}>
+        <Link
+          to="/"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "8px",
+            fontSize: "14px",
+            fontWeight: 700,
+            color: "var(--color-primary, #2f6b63)",
+            textDecoration: "none",
+            background: "rgba(255, 255, 255, 0.85)",
+            padding: "8px 16px",
+            borderRadius: "10px",
+            border: "1px solid var(--color-border, #d8d4ca)",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.04)"
+          }}
+        >
+          <span>←</span>
+          <span>통합 포털(런처)로 이동</span>
+        </Link>
+      </nav>
       <header className="home-hero">
         <img src={geumjjokMain} alt="금쪽이 마스코트" />
         <div>

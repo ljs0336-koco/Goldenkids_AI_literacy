@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>질문 전후 비교와 근거 기록 도구 v3 (완성본)</title>
+  <style>
+    :root {
+      --bg: #fbf9f5;
+      --card-bg: #ffffff;
+      --text-primary: #2c2c2a;
+      --text-secondary: #6b6a65;
+      --text-tertiary: #9b9890;
+      --border-subtle: #e8e3db;
+      --primary: #52634c;
+      --primary-active: #3b4b36;
+      --primary-container: #8b9d83;
+      --surface-subtle: #f3efea;
+      --accent-clay: #d97757;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Pretendard", sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    header {
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .badge-group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+
+    .badge-tag {
+      font-size: 11px;
+      font-family: monospace;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--surface-subtle);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    .badge-lesson {
+      font-size: 11px;
+      font-family: monospace;
+      font-weight: 600;
+      color: var(--accent-clay);
+      background: #fdf2ed;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid #fedbd0;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-num {
+      width: 22px;
+      height: 22px;
+      background: var(--primary);
+      color: #ffffff;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .criterion-badge {
+      font-size: 12px;
+      font-family: monospace;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: var(--surface-subtle);
+      color: var(--primary);
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--text-primary);
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    textarea:focus, input[type="text"]:focus {
+      border-color: var(--primary);
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      padding: 6px 8px;
+      border-radius: var(--radius-sm);
+      transition: background 0.15s;
+      cursor: pointer;
+    }
+
+    .check-item:hover {
+      background: var(--surface-subtle);
+    }
+
+    .check-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .check-label {
+      font-size: 14px;
+      color: var(--text-primary);
+      user-select: none;
+    }
+
+    .btn {
+      min-height: 48px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 16px;
+      touch-action: manipulation;
+      transition: background 0.15s, transform 0.05s;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-primary:active {
+      background: var(--primary-active);
+    }
+
+    .btn-secondary {
+      background: var(--surface-subtle);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .btn-secondary:active {
+      background: #e8e3db;
+    }
+
+    .btn-small {
+      min-height: 32px;
+      font-size: 12px;
+      padding: 0 10px;
+      border-radius: 6px;
+    }
+
+    .notice-bar {
+      font-size: 12px;
+      color: var(--text-secondary);
+      background: var(--surface-subtle);
+      border: 1px solid var(--border-subtle);
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .comparison-card {
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      background: var(--surface-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .box-before {
+      background: #ffffff;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: 1px dashed var(--text-tertiary);
+    }
+
+    .box-after {
+      background: #ffffff;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: 2px solid var(--primary);
+    }
+
+    .box-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .box-label.before {
+      color: var(--text-secondary);
+    }
+
+    .box-label.after {
+      color: var(--primary);
+    }
+
+    .box-text {
+      font-size: 15px;
+      color: var(--text-primary);
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    .box-reason {
+      font-size: 13px;
+      color: var(--text-primary);
+      background: #ffffff;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+    }
+
+    details {
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      background: var(--card-bg);
+      padding: 12px;
+    }
+
+    summary {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .item-card {
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .item-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2c2c2a;
+      color: #ffffff;
+      font-size: 13px;
+      padding: 10px 18px;
+      border-radius: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+    <header>
+      <div class="badge-group">
+        <span class="badge-tag">01팀 학생 실습 도구 v3</span>
+        <span class="badge-lesson">1차시 질문과 사고력</span>
+      </div>
+      <h1>질문 전후 비교 및 근거 기록기</h1>
+      <p class="desc">처음 떠올린 질문을 점검 기준에 맞춰 다듬고 바꾼 이유를 기록합니다.</p>
+    </header>
+
+    <div class="notice-bar">
+      <span>ℹ️</span>
+      <span>이 기기(LocalStorage)에만 저장되는 개인 실습 기록입니다.</span>
+    </div>
+
+    <!-- Step 1: 처음 질문 작성 -->
+    <section class="card">
+      <div class="card-title">
+        <div class="card-title-left">
+          <span class="step-num">1</span>
+          <span>처음 질문 쓰기</span>
+        </div>
+      </div>
+      <label for="input-before">호기심이나 탐구 과정에서 처음 생각한 질문:</label>
+      <textarea id="input-before" rows="2" placeholder="예: 태양광 패널은 여름 정오에 전기를 가장 많이 만들까?"></textarea>
+    </section>
+
+    <!-- Step 2: 점검 기준 체크 -->
+    <section class="card">
+      <div class="card-title">
+        <div class="card-title-left">
+          <span class="step-num">2</span>
+          <span>점검 기준 체크</span>
+        </div>
+        <span class="criterion-badge" id="criterion-count">0 / 4 통과</span>
+      </div>
+      <p style="font-size: 12px; color: var(--text-secondary);">질문을 다듬기 위해 다음 4가지 기준을 확인하세요:</p>
+      
+      <label class="check-item">
+        <input type="checkbox" id="chk-1" onchange="updateCriterionCount()">
+        <span class="check-label">구체적인 조건과 환경(온도, 시각 등)이 명시되었는가?</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" id="chk-2" onchange="updateCriterionCount()">
+        <span class="check-label">관찰 또는 공공데이터로 사실 검증이 가능한가?</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" id="chk-3" onchange="updateCriterionCount()">
+        <span class="check-label">단순 참/거짓을 넘어 원인을 파고드는 질문인가?</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" id="chk-4" onchange="updateCriterionCount()">
+        <span class="check-label">반례나 예외 상황을 고려할 여지가 있는가?</span>
+      </label>
+    </section>
+
+    <!-- Step 3: 수정한 질문 쓰기 -->
+    <section class="card">
+      <div class="card-title">
+        <div class="card-title-left">
+          <span class="step-num">3</span>
+          <span>고친 질문 쓰기</span>
+        </div>
+      </div>
+      <label for="input-after">점검 기준을 반영해 다듬은 질문:</label>
+      <textarea id="input-after" rows="2" placeholder="예: 패널 표면 온도가 60℃를 넘어서면 반도체 발전 효율 곡선은 어떻게 달라질까?"></textarea>
+    </section>
+
+    <!-- Step 4: 바꾼 이유 한 줄 쓰기 -->
+    <section class="card">
+      <div class="card-title">
+        <div class="card-title-left">
+          <span class="step-num">4</span>
+          <span>바꾼 이유 한 줄 기록</span>
+        </div>
+      </div>
+      <label for="input-reason">질문을 이렇게 바꾼 근거:</label>
+      <input type="text" id="input-reason" placeholder="예: 여름철 고온으로 인한 효율 저하 요인을 반영하여 구체화함">
+    </section>
+
+    <!-- Step 5: 전후 비교 생성 및 초기화 -->
+    <div style="display: flex; gap: 8px;">
+      <button type="button" class="btn btn-primary" style="flex: 2;" onclick="handleCreateComparison()">
+        ⚖️ 전후 비교 카드 보기
+      </button>
+      <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="handleResetInputs()">
+        초기화
+      </button>
+    </div>
+
+    <!-- Step 5 결과 영역 -->
+    <section class="card" id="result-section" style="display: none;">
+      <div class="card-title">
+        <div class="card-title-left">
+          <span class="step-num">5</span>
+          <span>질문 전후 비교 카드</span>
+        </div>
+      </div>
+      
+      <div class="comparison-card">
+        <div class="box-before">
+          <div class="box-label before">● 처음 질문 (다듬기 전)</div>
+          <div class="box-text" id="disp-before">-</div>
+        </div>
+        <div class="box-after">
+          <div class="box-label after">✨ 고친 질문 (다듬은 후)</div>
+          <div class="box-text" id="disp-after">-</div>
+        </div>
+        <div class="box-reason">
+          <strong style="color: var(--primary);">바꾼 이유:</strong> <span id="disp-reason">-</span>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="handleSaveCard()">
+        💾 이 기기에 저장하기
+      </button>
+    </section>
+
+    <!-- Step 6 저장된 기록 목록 (접기/펼치기) -->
+    <details open id="history-details">
+      <summary>
+        <span>📂 저장된 질문 기록 목록</span>
+        <span id="history-count" style="font-size: 12px; color: var(--text-secondary); font-family: monospace;">0건</span>
+      </summary>
+      <div id="history-list" style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+        <!-- 저장 목록 렌더링 -->
+      </div>
+    </details>
+
+  </div>
+
+  <div id="toast" class="toast">저장되었습니다.</div>
+
+  <script>
+    const STORAGE_KEY = 'm2_question_comparison_list_v3';
+
+    function updateCriterionCount() {
+      const checked = document.querySelectorAll('.check-item input[type="checkbox"]:checked').length;
+      const el = document.getElementById('criterion-count');
+      el.textContent = `${checked} / 4 통과`;
+      if (checked >= 3) {
+        el.style.background = '#d5e8cb';
+        el.style.color = '#101f0d';
+      } else {
+        el.style.background = 'var(--surface-subtle)';
+        el.style.color = 'var(--primary)';
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.opacity = '1';
+      setTimeout(() => { t.style.opacity = '0'; }, 2200);
+    }
+
+    function handleCreateComparison() {
+      const before = document.getElementById('input-before').value.trim();
+      const after = document.getElementById('input-after').value.trim();
+      const reason = document.getElementById('input-reason').value.trim();
+
+      if (!before || !after) {
+        showToast('처음 질문과 고친 질문을 모두 입력해주세요.');
+        return;
+      }
+
+      document.getElementById('disp-before').textContent = before;
+      document.getElementById('disp-after').textContent = after;
+      document.getElementById('disp-reason').textContent = reason || '(바꾼 이유 미기재)';
+
+      document.getElementById('result-section').style.display = 'flex';
+      document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function handleResetInputs() {
+      document.getElementById('input-before').value = '';
+      document.getElementById('input-after').value = '';
+      document.getElementById('input-reason').value = '';
+      document.querySelectorAll('.check-item input[type="checkbox"]').forEach(c => c.checked = false);
+      updateCriterionCount();
+      document.getElementById('result-section').style.display = 'none';
+      showToast('입력창이 초기화되었습니다.');
+    }
+
+    function handleSaveCard() {
+      const before = document.getElementById('disp-before').textContent;
+      const after = document.getElementById('disp-after').textContent;
+      const reason = document.getElementById('disp-reason').textContent;
+
+      const item = {
+        id: Date.now(),
+        date: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
+        before,
+        after,
+        reason
+      };
+
+      const list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      list.unshift(item);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+
+      showToast('이 기기에 정상적으로 저장되었습니다.');
+      renderHistory();
+    }
+
+    function copyToClipboard(text) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('클립보드에 복사되었습니다.');
+        }).catch(() => {
+          showToast('복사 실패');
+        });
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('클립보드에 복사되었습니다.');
+      }
+    }
+
+    function deleteItem(id) {
+      let list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      list = list.filter(item => item.id !== id);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      showToast('기록이 삭제되었습니다.');
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('history-list');
+      const countEl = document.getElementById('history-count');
+      const list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+      countEl.textContent = `${list.length}건`;
+
+      if (list.length === 0) {
+        container.innerHTML = '<div style="font-size: 13px; color: var(--text-tertiary); text-align: center; padding: 12px;">아직 저장된 질문 기록이 없습니다.</div>';
+        return;
+      }
+
+      container.innerHTML = list.map(item => `
+        <div class="item-card">
+          <div class="item-header">
+            <span>저장: ${item.date}</span>
+            <div class="item-actions">
+              <button type="button" class="btn-small btn-secondary" onclick="copyToClipboard('${item.after.replace(/'/g, "\\'")}')">복사</button>
+              <button type="button" class="btn-small btn-secondary" onclick="deleteItem(${item.id})">삭제</button>
+            </div>
+          </div>
+          <div style="font-size: 13px; color: var(--text-secondary);"><strong>전:</strong> ${item.before}</div>
+          <div style="font-size: 14px; color: var(--primary); font-weight: 700;"><strong>후:</strong> ${item.after}</div>
+          <div style="font-size: 12px; color: var(--text-primary); background: var(--surface-subtle); padding: 4px 8px; border-radius: 4px; margin-top: 2px;">
+            <strong>근거:</strong> ${item.reason}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderHistory();
+      updateCriterionCount();
+    });
+  </script>
+</body>
+</html>

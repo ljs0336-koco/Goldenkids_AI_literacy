@@ -1,0 +1,1320 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>데이터 과학 탐구 · 등교 이동과 탄소발자국 EDA 웹앱 v2</title>
+  <style>
+    :root {
+      --primary: #0f2744;
+      --primary-light: #1e3a8a;
+      --accent: #0284c7;
+      --teal: #0d9488;
+      --coral: #e11d48;
+      --amber: #d97706;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-subtle: #f1f5f9;
+      --ink: #0f172a;
+      --ink-muted: #475569;
+      --line: #cbd5e1;
+      --line-subtle: #e2e8f0;
+      --radius: 12px;
+      --shadow-sm: 0 1px 3px rgba(15, 39, 68, 0.06);
+      --shadow-md: 0 4px 12px rgba(15, 39, 68, 0.08);
+      --font-base: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Pretendard", "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      overflow-x: hidden;
+      background: var(--bg);
+      color: var(--ink);
+      font: 15px/1.6 var(--font-base);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 상단 헤더 */
+    header {
+      background: linear-gradient(135deg, #0f2744 0%, #1e3a8a 100%);
+      color: #fff;
+      padding: 24px 16px 20px;
+      border-bottom: 4px solid var(--accent);
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    @media (min-width: 768px) {
+      .header-inner {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-end;
+      }
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #bae6fd;
+      margin-bottom: 8px;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+      color: #ffffff;
+      line-height: 1.3;
+    }
+    .lead {
+      color: #cbd5e1;
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+
+    /* 헤더 컨트롤 */
+    .header-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .weather-toggle {
+      display: inline-flex;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 30px;
+      padding: 2px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+    .weather-btn {
+      background: transparent;
+      border: none;
+      color: #cbd5e1;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.2s;
+    }
+    .weather-btn.active {
+      background: #ffffff;
+      color: var(--primary);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .btn-ghost-light {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    /* 메인 컨테이너 */
+    main {
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px 14px 60px;
+      width: 100%;
+    }
+
+    /* 5단계 탐구 로드맵 내비게이션 바 */
+    .flow-indicator {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 20px;
+      padding: 12px;
+      background: var(--surface);
+      border: 1px solid var(--line-subtle);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+    }
+    .flow-step {
+      flex: 1;
+      min-width: 140px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: var(--surface-subtle);
+      border-left: 3px solid var(--line);
+      font-size: 12px;
+      color: var(--ink-muted);
+    }
+    .flow-step.active {
+      background: #eff6ff;
+      border-left-color: var(--accent);
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .flow-step strong { display: block; font-size: 12.5px; }
+
+    /* 단계별 섹션 박스 */
+    .step-section {
+      background: var(--surface);
+      border: 1px solid var(--line-subtle);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line-subtle);
+    }
+    .step-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--primary);
+      color: #fff;
+    }
+    .step-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .step-desc {
+      font-size: 13px;
+      color: var(--ink-muted);
+      margin-bottom: 14px;
+    }
+
+    /* 입력 양식 (가설, 관찰, 수정) */
+    .field-group {
+      margin-bottom: 14px;
+    }
+    .field-label {
+      display: block;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .field-sub {
+      font-size: 12px;
+      color: var(--ink-muted);
+      margin-bottom: 6px;
+    }
+    textarea.styled-textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 1.5;
+      background: #fafafa;
+      color: var(--ink);
+      resize: vertical;
+    }
+    textarea.styled-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: #ffffff;
+      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+    }
+
+    /* KPI 요약 카드 그리드 */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--line-subtle);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--accent);
+    }
+    .kpi-card.teal::before { background: var(--teal); }
+    .kpi-card.coral::before { background: var(--coral); }
+    .kpi-label {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .kpi-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--primary);
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .kpi-unit { font-size: 13px; font-weight: 600; color: var(--ink-muted); }
+    .kpi-sub {
+      font-size: 11.5px;
+      color: var(--ink-muted);
+      margin-top: 6px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .badge-amber { background: #fef3c7; color: #92400e; }
+    .badge-blue { background: #e0f2fe; color: #0369a1; }
+
+    /* 대시보드 2열 레이아웃 */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    @media (min-width: 900px) {
+      .dashboard-layout {
+        grid-template-columns: 1.15fr 0.85fr;
+      }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line-subtle);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .card-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line-subtle);
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .card-desc {
+      font-size: 12px;
+      color: var(--ink-muted);
+      margin-top: 2px;
+    }
+
+    /* 탭 컨트롤 */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--surface-subtle);
+      padding: 3px;
+      border-radius: 8px;
+    }
+    .tab-btn {
+      border: none;
+      background: transparent;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink-muted);
+      cursor: pointer;
+      min-height: 36px;
+    }
+    .tab-btn.active {
+      background: var(--surface);
+      color: var(--primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .chart-panel { display: none; }
+    .chart-panel.active { display: block; }
+
+    /* 산점도 SVG 영역 */
+    .scatter-wrap {
+      width: 100%;
+      position: relative;
+      background: #fafcff;
+      border: 1px solid var(--line-subtle);
+      border-radius: 8px;
+      padding: 6px;
+    }
+    svg.scatter-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      max-width: 100%;
+    }
+    .scatter-dot {
+      cursor: pointer;
+      transition: r 0.15s, opacity 0.15s;
+    }
+    .scatter-dot:hover {
+      r: 8px;
+      stroke: #fff;
+      stroke-width: 2px;
+    }
+    .scatter-dot.highlight-outlier {
+      stroke: #dc2626;
+      stroke-width: 2.5px;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0% { stroke-opacity: 1; }
+      50% { stroke-opacity: 0.3; }
+      100% { stroke-opacity: 1; }
+    }
+    .scatter-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      font-size: 11.5px;
+      margin-top: 8px;
+      color: var(--ink-muted);
+    }
+    .legend-item { display: flex; align-items: center; gap: 4px; }
+    .legend-color { width: 9px; height: 9px; border-radius: 50%; }
+
+    #chart-tooltip {
+      position: absolute;
+      background: rgba(15, 23, 42, 0.94);
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      transform: translate(-50%, -120%);
+      white-space: nowrap;
+      z-index: 10;
+    }
+
+    /* 이동수단 집계 바 */
+    .mode-bar-list { display: grid; gap: 10px; margin-top: 6px; }
+    .mode-bar-item {
+      display: grid;
+      grid-template-columns: 75px 1fr 100px;
+      gap: 8px;
+      align-items: center;
+      font-size: 12px;
+    }
+    .mode-track {
+      height: 20px;
+      background: var(--surface-subtle);
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+    }
+    .mode-bar {
+      height: 100%;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      padding-left: 6px;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .bar-walk { background: #10b981; }
+    .bar-bike { background: #06b6d4; }
+    .bar-transit { background: #3b82f6; }
+    .bar-car { background: #f43f5e; }
+
+    /* 데이터 테이블 */
+    .table-container {
+      max-height: 260px;
+      overflow-y: auto;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--line-subtle);
+      border-radius: 6px;
+      width: 100%;
+    }
+    table.data-table {
+      width: 100%;
+      min-width: 340px;
+      border-collapse: collapse;
+      font-size: 12px;
+      text-align: left;
+    }
+    table.data-table th {
+      background: var(--surface-subtle);
+      padding: 7px 8px;
+      font-weight: 700;
+      color: var(--ink-muted);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    table.data-table td {
+      padding: 6px 8px;
+      border-top: 1px solid var(--line-subtle);
+      white-space: nowrap;
+    }
+    table.data-table td.num { text-align: right; }
+    .tag-mode {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .tag-walk { background: #d1fae5; color: #065f46; }
+    .tag-bike { background: #cffafe; color: #155e75; }
+    .tag-transit { background: #dbeafe; color: #1e40af; }
+    .tag-car { background: #ffe4e6; color: #9f1239; }
+
+    /* 데이터 추가 폼 */
+    .add-data-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--line-subtle);
+    }
+    .add-data-form select,
+    .add-data-form input {
+      padding: 6px 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      font-size: 12px;
+      min-height: 44px;
+    }
+    .add-data-form select { flex: 1; min-width: 80px; }
+    .add-data-form input[type="number"] { width: 70px; }
+    .add-data-form input[type="text"] { flex: 2; min-width: 100px; }
+    .btn-add {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0 14px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 48px;
+    }
+
+    /* 4단계: 단계별 힌트 및 교사용 설명 아코디언 */
+    details.hint-accordion {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 10px;
+    }
+    details.hint-accordion summary {
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      user-select: none;
+      min-height: 40px;
+    }
+    details.hint-accordion summary::-webkit-details-marker { display: none; }
+    .hint-content {
+      padding: 10px 4px 4px;
+      font-size: 12.5px;
+      color: var(--ink-muted);
+      line-height: 1.6;
+      border-top: 1px dashed var(--line-subtle);
+      margin-top: 8px;
+    }
+    .teacher-box {
+      background: #fefce8;
+      border: 1px solid #fef08a;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-top: 12px;
+    }
+
+    /* 토글 스위치 (이상치 스스로 찾기 검증용) */
+    .toggle-highlight-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--ink-muted);
+      margin-top: 10px;
+      padding: 8px;
+      background: var(--surface-subtle);
+      border-radius: 6px;
+    }
+    .toggle-highlight-wrap button {
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      min-height: 36px;
+    }
+    .toggle-highlight-wrap button.active {
+      background: #fee2e2;
+      border-color: #f87171;
+      color: #991b1b;
+    }
+
+    /* 저장 및 인쇄 액션 바 */
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 24px;
+      padding: 14px;
+      background: var(--surface);
+      border: 1px solid var(--line-subtle);
+      border-radius: var(--radius);
+    }
+    .device-note {
+      font-size: 12px;
+      color: var(--ink-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .save-alert {
+      font-size: 12px;
+      color: #0d9488;
+      font-weight: 700;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 헤더 -->
+  <header>
+    <div class="header-inner">
+      <div>
+        <span class="eyebrow">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+          WEEK 05 · 탐색적 데이터 분석(EDA) 실습 웹앱
+        </span>
+        <h1>등교 이동과 탄소발자국 데이터 과학 탐구</h1>
+        <p class="lead">학생 25명의 이동수단, 통학 거리, 소요 시간 데이터를 직접 조작하고 가설을 검증하는 5단계 탐구 과정입니다.</p>
+      </div>
+      <div class="header-controls">
+        <div class="weather-toggle" role="group" aria-label="기상 조건">
+          <button type="button" class="weather-btn active" id="btn-sunny">☀️ 맑은 날</button>
+          <button type="button" class="weather-btn" id="btn-rainy">🌧️ 비 오는 날</button>
+        </div>
+        <button type="button" class="btn-ghost-light" id="btn-reset-data">데이터 초기화</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 본문 -->
+  <main>
+
+    <!-- 5단계 탐구 로드맵 인디케이터 -->
+    <nav class="flow-indicator" aria-label="탐구 학습 단계">
+      <div class="flow-step active" id="step-nav-1"><strong>1단계</strong> 예상 기록 (가설)</div>
+      <div class="flow-step" id="step-nav-2"><strong>2단계</strong> 자료 조작 (탐색)</div>
+      <div class="flow-step" id="step-nav-3"><strong>3단계</strong> 근거 기록 (발견)</div>
+      <div class="flow-step" id="step-nav-4"><strong>4단계</strong> 단계별 힌트 (확인)</div>
+      <div class="flow-step" id="step-nav-5"><strong>5단계</strong> 예상 수정 (성찰)</div>
+    </nav>
+
+    <!-- [1단계] 예상 기록 (자료 조작 전) -->
+    <section class="step-section" id="section-step1">
+      <div class="step-header">
+        <span class="step-badge">STEP 1</span>
+        <h2 class="step-title">예상 기록하기 (가설 수립)</h2>
+      </div>
+      <p class="step-desc">아래의 데이터를 자세히 관찰하기 전에, 우리 반의 통학 현황에 대해 팀의 초기 가설을 먼저 기록해 보세요.</p>
+      
+      <div class="field-group">
+        <label class="field-label" for="hypo-time">Q1. 우리 학급 25명의 평균 통학 시간은 몇 분 정도일까요? 거리가 멀어지면 시간도 항상 정비례할까요?</label>
+        <p class="field-sub">예: 평소 걸음걸이나 신호 대기 시간, 교통 체증 등을 고려해 자유롭게 예상해 보세요.</p>
+        <textarea id="hypo-time" class="styled-textarea" placeholder="초기 예상과 그 이유를 적어보세요..."></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="hypo-carbon">Q2. 어떤 이동수단이 탄소를 가장 많이 배출하며, 전체 배출량의 대략 몇 %를 차지할 것으로 예상되나요?</label>
+        <p class="field-sub">예: 도보, 자전거, 대중교통, 승용차의 이용 인원과 배출 특성을 고려해 예상해 보세요.</p>
+        <textarea id="hypo-carbon" class="styled-textarea" placeholder="이동수단별 배출 비중 예상치를 적어보세요..."></textarea>
+      </div>
+    </section>
+
+    <!-- [2단계] 자료 조작 및 관찰 -->
+    <section class="step-section" id="section-step2">
+      <div class="step-header">
+        <span class="step-badge">STEP 2</span>
+        <h2 class="step-title">자료 조작 및 데이터 탐색</h2>
+      </div>
+      <p class="step-desc">요약 통계와 산점도, 원천 데이터를 조작하며 패턴을 관찰하세요. (상단 '비 오는 날' 버튼도 눌러보세요)</p>
+
+      <!-- 요약 통계량 그리드 (스포일러 이상치 카드 배제) -->
+      <div class="kpi-grid">
+        <article class="kpi-card teal">
+          <div class="kpi-label">조사 표본 수</div>
+          <div class="kpi-value"><span id="kpi-count">25</span><span class="kpi-unit">명</span></div>
+          <div class="kpi-sub"><span class="badge badge-blue">학급 전수 조사</span> 모의 데이터</div>
+        </article>
+
+        <article class="kpi-card">
+          <div class="kpi-label">통학 시간 (평균 vs 중앙값)</div>
+          <div class="kpi-value">
+            <span id="kpi-avg-time">23.2</span><span class="kpi-unit">분</span>
+            <span style="font-size: 13px; color: var(--ink-muted); font-weight: 500; margin-left: 6px;">(중앙값: <b id="kpi-med-time" style="color:var(--primary)">18.0</b>분)</span>
+          </div>
+          <div class="kpi-sub" id="kpi-time-skew"><span class="badge badge-amber">평균 ≠ 중앙값</span> 두 수치 간 차이 발생</div>
+        </article>
+
+        <article class="kpi-card coral">
+          <div class="kpi-label">일일 총 탄소 배출량</div>
+          <div class="kpi-value"><span id="kpi-carbon">19.4</span><span class="kpi-unit">kg CO₂</span></div>
+          <div class="kpi-sub" id="kpi-carbon-sub">승용차 이용자 4명이 주요 배출원</div>
+        </article>
+      </div>
+
+      <!-- 2열 레이아웃: 시각화 & 원천 데이터 -->
+      <div class="dashboard-layout">
+        
+        <!-- 좌측: 거리-시간 산점도 / 수단별 통계 -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">데이터 시각화 (EDA)</h3>
+              <p class="card-desc">점의 위치(거리와 소요 시간)를 직접 눈으로 살펴보세요.</p>
+            </div>
+            <div class="tabs" role="tablist">
+              <button type="button" class="tab-btn active" data-target="panel-scatter">거리-시간 산점도</button>
+              <button type="button" class="tab-btn" data-target="panel-modes">수단별 집계</button>
+            </div>
+          </div>
+
+          <!-- 산점도 뷰 -->
+          <div class="chart-panel active" id="panel-scatter">
+            <div class="scatter-wrap">
+              <div id="chart-tooltip"></div>
+              <svg class="scatter-svg" id="scatter-plot" viewBox="0 0 540 280">
+                <!-- SVG 축 및 데이터 점 동적 렌더링 -->
+              </svg>
+            </div>
+            <div class="scatter-legend">
+              <div class="legend-item"><span class="legend-color" style="background:#10b981"></span> 도보 (0g)</div>
+              <div class="legend-item"><span class="legend-color" style="background:#06b6d4"></span> 자전거 (0g)</div>
+              <div class="legend-item"><span class="legend-color" style="background:#3b82f6"></span> 대중교통 (40g/km)</div>
+              <div class="legend-item"><span class="legend-color" style="background:#f43f5e"></span> 승용차 (150g/km)</div>
+              <div class="legend-item"><span style="border-top:2px dashed #93c5fd; width:14px; display:inline-block;"></span> 기준 경향선</div>
+            </div>
+          </div>
+
+          <!-- 수단별 집계 뷰 -->
+          <div class="chart-panel" id="panel-modes">
+            <div class="mode-bar-list" id="mode-bar-container"></div>
+            <p style="font-size:11.5px; color:var(--ink-muted); margin-top:14px; text-align:right;">
+              * 탄소 배출 계수 기준: 도보·자전거 0g / 대중교통 40g/km / 승용차 150g/km
+            </p>
+          </div>
+
+          <!-- 스스로 찾기 검증 토글 (기본 꺼짐) -->
+          <div class="toggle-highlight-wrap">
+            <span>스스로 이상치를 찾았나요?</span>
+            <button type="button" id="btn-toggle-outliers">이상치 하이라이트 확인 [ 끄기 ]</button>
+          </div>
+        </div>
+
+        <!-- 우측: 원천 데이터 테이블 -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">원천 데이터 레코드</h3>
+              <p class="card-desc">직접 1건을 추가해 통계량 변화를 시험해볼 수 있습니다.</p>
+            </div>
+            <span class="badge badge-blue" id="table-row-count">25건</span>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table" id="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>수단</th>
+                  <th class="num">거리(km)</th>
+                  <th class="num">시간(분)</th>
+                  <th class="num">탄소(g)</th>
+                  <th>비고</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="table-body">
+                <!-- JS 렌더링 -->
+              </tbody>
+            </table>
+          </div>
+
+          <form class="add-data-form" id="add-record-form" onsubmit="return false;">
+            <select id="input-mode" aria-label="이동수단">
+              <option value="도보">도보</option>
+              <option value="자전거">자전거</option>
+              <option value="대중교통">대중교통</option>
+              <option value="승용차">승용차</option>
+            </select>
+            <input type="number" id="input-dist" placeholder="거리(km)" step="0.1" min="0.1" max="50" required aria-label="거리">
+            <input type="number" id="input-time" placeholder="시간(분)" step="1" min="1" max="180" required aria-label="시간">
+            <input type="text" id="input-note" placeholder="메모" aria-label="비고">
+            <button type="button" class="btn-add" id="btn-add-record">추가</button>
+          </form>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- [3단계] 근거 기록 (관찰 결과) -->
+    <section class="step-section" id="section-step3">
+      <div class="step-header">
+        <span class="step-badge">STEP 3</span>
+        <h2 class="step-title">관찰 결과 및 근거 기록하기</h2>
+      </div>
+      <p class="step-desc">데이터를 관찰하여 발견한 특이한 점과 수치적 근거를 기록하세요.</p>
+
+      <div class="field-group">
+        <label class="field-label" for="obs-outliers">Q3. 산점도에서 기준 경향선(거리-시간)에서 유독 크게 벗어난 학생(ID)을 찾고, 그 수치(거리, 시간)와 이유 가설을 적어보세요.</label>
+        <p class="field-sub">안내: 산점도의 점 위에 마우스를 올리거나(터치하여) 학생의 세부 정보를 확인해보세요.</p>
+        <textarea id="obs-outliers" class="styled-textarea" placeholder="발견한 학생의 ID와 구체적인 수치(km, 분), 비정상적으로 빠르거나 느린 이유에 대한 가설을 적어보세요..."></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="obs-stats">Q4. 우리 반 통학 시간의 '평균(23.2분)'과 '중앙값(18.0분)' 중, 학급의 일반적인 상태를 더 잘 대표하는 값은 어느 쪽이며 그 이유는 무엇인가요?</label>
+        <textarea id="obs-stats" class="styled-textarea" placeholder="통계 지표의 특성과 데이터의 왜곡(극단값의 영향)을 고려해 적어보세요..."></textarea>
+      </div>
+    </section>
+
+    <!-- [4단계] 필요할 때 단계별 힌트 (접힘) -->
+    <section class="step-section" id="section-step4">
+      <div class="step-header">
+        <span class="step-badge">STEP 4</span>
+        <h2 class="step-title">단계별 힌트 & 교사용 설명 (필요시 열람)</h2>
+      </div>
+      <p class="step-desc">탐구 중 막히는 부분이 있을 때만 순서대로 펼쳐서 확인하세요.</p>
+
+      <details class="hint-accordion">
+        <summary>💡 1단계 힌트: 산점도에서 눈여겨볼 구역</summary>
+        <div class="hint-content">
+          산점도의 <strong>좌측 상단</strong>(거리는 매우 가까운데 소요 시간이 유독 긴 점)과 <strong>우측 하단</strong>(거리는 꽤 먼데 소요 시간이 짧은 점)을 찾아보세요. 점을 터치하면 상세 정보가 나타납니다.
+        </div>
+      </details>
+
+      <details class="hint-accordion">
+        <summary>💡 2단계 힌트: 속력 계산으로 이상치 판별하기</summary>
+        <div class="hint-content">
+          거리와 시간을 이용해 시속을 계산해 보세요.<br>
+          - 학생 #07: 1.2km를 55분 동안 이동함 (시속 약 1.3km/h로 일반 성인 보행 속도 4km/h의 1/3 수준)<br>
+          - 학생 #24: 9.0km를 12분 만에 이동함 (시속 약 45km/h로 도심 일반 주행 대비 매우 신속한 이동)
+        </div>
+      </details>
+
+      <details class="hint-accordion">
+        <summary>💡 3단계 힌트: 왜도(Skewness)와 대표값의 원리</summary>
+        <div class="hint-content">
+          소수의 극단적인 큰 값(예: 55분 등)이 포함되면 모든 값을 더해 나누는 <strong>평균값</strong>은 크게 상승합니다. 반면 순서대로 줄 세웠을 때 가운데 위치하는 <strong>중앙값</strong>은 극단값의 영향을 덜 받아 더 안정적인 대표값을 제공합니다.
+        </div>
+      </details>
+
+      <details class="hint-accordion">
+        <summary>📘 [교사용 설명] 수업 지도 포인트 및 정답 안내</summary>
+        <div class="hint-content teacher-box">
+          <strong>수업 지도 요령:</strong><br>
+          1. 학생들에게 처음부터 #07, #24가 이상치라고 알려주지 마시고, 산점도를 보며 "이 점은 왜 여기 혼자 떨어져 있을까?"를 유도해 주세요.<br>
+          2. 비 오는 날 버튼을 클릭하면 자전거 이용자가 대중교통/도보로 전환되면서 통학 시간이 늘어나고 탄소 배출이 급변하는 과정을 관찰하도록 지도합니다.<br>
+          3. 단순 계산보다 "왜 이런 데이터가 나왔을까?"에 대한 현실 맥락(공사구간, 문구점 경유, 도시고속도로 이용 등)을 상상하게 하는 것이 핵심입니다.
+        </div>
+      </details>
+    </section>
+
+    <!-- [5단계] 처음 예상과 비교해 수정 (성찰) -->
+    <section class="step-section" id="section-step5">
+      <div class="step-header">
+        <span class="step-badge">STEP 5</span>
+        <h2 class="step-title">초기 예상과 비교 및 가설 수정 (성찰)</h2>
+      </div>
+      <p class="step-desc">1단계에서 세웠던 초기 예상과 실제 관찰한 결과를 대조하고 종합 결론을 내리세요.</p>
+
+      <div class="field-group">
+        <label class="field-label" for="refl-compare">Q5. 1단계에서 작성했던 나의 예상과 실제 데이터 분석 결과는 어떻게 달랐나요? 가설을 어떻게 수정해야 할까요?</label>
+        <textarea id="refl-compare" class="styled-textarea" placeholder="처음 예상과 실제 데이터의 차이점, 새롭게 알게 된 점을 바탕으로 가설을 수정해 보세요..."></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="refl-policy">Q6. 데이터에 근거하여, 우리 학교의 '통학 시간 단축'과 '탄소발자국 감축'을 위한 실천 아이디어 1가지를 제안하세요.</label>
+        <textarea id="refl-policy" class="styled-textarea" placeholder="데이터 수치를 인용하여 설득력 있는 정책 제안을 작성해 보세요..."></textarea>
+      </div>
+    </section>
+
+    <!-- 하단 액션 바 -->
+    <div class="action-bar">
+      <div class="device-note">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        작성한 답변은 <strong>이 기기(브라우저)에만 안전하게 저장</strong>됩니다.
+      </div>
+      <div class="btn-group">
+        <span class="save-alert" id="save-alert">✓ 기기에 저장되었습니다</span>
+        <button type="button" class="btn" id="btn-print">활동지 인쇄</button>
+        <button type="button" class="btn btn-primary" id="btn-save">답변 저장하기</button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 스크립트 로직 (Vanilla JS, 외부 의존성 없음) -->
+  <script>
+    (()=>{
+      // 1. 기본 원천 데이터셋 (학생 25명 보존, 스포일러 머리말 제거)
+      const DEFAULT_RECORDS = [
+        { id: 'S01', mode: '도보', dist: 0.8, time: 12, rainTime: 14, note: '평지 통학' },
+        { id: 'S02', mode: '도보', dist: 1.2, time: 18, rainTime: 20, note: '아파트 단지 통과' },
+        { id: 'S03', mode: '도보', dist: 0.5, time: 8,  rainTime: 9,  note: '학교 정문 바로 앞' },
+        { id: 'S04', mode: '도보', dist: 1.5, time: 22, rainTime: 25, note: '언덕길 경로' },
+        { id: 'S05', mode: '도보', dist: 0.9, time: 13, rainTime: 15, note: '친구와 함께 등교' },
+        { id: 'S06', mode: '도보', dist: 1.0, time: 15, rainTime: 17, note: '횡단보도 2개 대기' },
+        { id: 'S07', mode: '도보', dist: 1.2, time: 55, rainTime: 60, note: '문구점 방문 후 등교' },
+        { id: 'S08', mode: '도보', dist: 1.4, time: 20, rainTime: 23, note: '보도블록 공사구간' },
+        { id: 'S09', mode: '도보', dist: 0.7, time: 10, rainTime: 12, note: '후문 통학' },
+        { id: 'S10', mode: '도보', dist: 1.1, time: 16, rainTime: 18, note: '일반 통학' },
+
+        { id: 'S11', mode: '자전거', dist: 2.2, time: 12, rainTime: 28, rainMode: '대중교통', note: '자전거 전용도로' },
+        { id: 'S12', mode: '자전거', dist: 3.0, time: 16, rainTime: 35, rainMode: '대중교통', note: '하천 자전거길' },
+        { id: 'S13', mode: '자전거', dist: 1.8, time: 10, rainTime: 22, rainMode: '도보',     note: '비 올 때 우산 도보' },
+        { id: 'S14', mode: '자전거', dist: 2.5, time: 14, rainTime: 32, rainMode: '대중교통', note: '안전헬멧 착용' },
+
+        { id: 'S15', mode: '대중교통', dist: 4.2, time: 28, rainTime: 38, note: '시내버스 1회 환승' },
+        { id: 'S16', mode: '대중교통', dist: 5.5, time: 35, rainTime: 45, note: '지하철 4개 역' },
+        { id: 'S17', mode: '대중교통', dist: 3.8, time: 25, rainTime: 34, note: '마을버스 이용' },
+        { id: 'S18', mode: '대중교통', dist: 6.0, time: 40, rainTime: 52, note: '광역버스 배차간격 김' },
+        { id: 'S19', mode: '대중교통', dist: 4.8, time: 32, rainTime: 42, note: '혼잡 노선' },
+        { id: 'S20', mode: '대중교통', dist: 3.5, time: 24, rainTime: 32, note: '정류장 도보 5분' },
+        { id: 'S21', mode: '대중교통', dist: 5.0, time: 34, rainTime: 44, note: '지하철 직통' },
+
+        { id: 'S22', mode: '승용차', dist: 4.5, time: 18, rainTime: 32, note: '부모님 출근길 동승' },
+        { id: 'S23', mode: '승용차', dist: 7.2, time: 25, rainTime: 42, note: '외곽 주택지에서 통학' },
+        { id: 'S24', mode: '승용차', dist: 9.0, time: 12, rainTime: 30, note: '도시고속도로 경유' },
+        { id: 'S25', mode: '승용차', dist: 6.8, time: 26, rainTime: 45, note: '교문 앞 교통정체' }
+      ];
+
+      // 탄소 배출 계수 (g CO2 / km)
+      const CARBON_FACTOR = {
+        '도보': 0,
+        '자전거': 0,
+        '대중교통': 40,
+        '승용차': 150
+      };
+
+      let records = JSON.parse(JSON.stringify(DEFAULT_RECORDS));
+      let isRainy = false;
+      let showOutlierHighlight = false;
+
+      // DOM Elements
+      const kpiCount = document.getElementById('kpi-count');
+      const kpiAvgTime = document.getElementById('kpi-avg-time');
+      const kpiMedTime = document.getElementById('kpi-med-time');
+      const kpiCarbon = document.getElementById('kpi-carbon');
+      const kpiTimeSkew = document.getElementById('kpi-time-skew');
+      const tableBody = document.getElementById('table-body');
+      const tableRowCount = document.getElementById('table-row-count');
+      const scatterSvg = document.getElementById('scatter-plot');
+      const tooltip = document.getElementById('chart-tooltip');
+      const modeBarContainer = document.getElementById('mode-bar-container');
+      const btnToggleOutliers = document.getElementById('btn-toggle-outliers');
+      const saveAlert = document.getElementById('save-alert');
+
+      function getActiveData() {
+        return records.map(r => {
+          let currentMode = r.mode;
+          let currentTime = r.time;
+          if (isRainy) {
+            if (r.rainMode) currentMode = r.rainMode;
+            if (r.rainTime) currentTime = r.rainTime;
+          }
+          const carbon = Math.round(r.dist * (CARBON_FACTOR[currentMode] || 0));
+          return {
+            ...r,
+            activeMode: currentMode,
+            activeTime: currentTime,
+            carbon: carbon
+          };
+        });
+      }
+
+      function detectOutlierIds(data) {
+        const times = data.map(d => d.activeTime).sort((a,b) => a - b);
+        const q1 = times[Math.floor(times.length * 0.25)];
+        const q3 = times[Math.floor(times.length * 0.75)];
+        const iqr = q3 - q1;
+        const upperLimit = q3 + 1.5 * iqr;
+        const lowerLimit = Math.max(0, q1 - 1.5 * iqr);
+
+        const out = data.filter(d => {
+          const speed = d.dist / (d.activeTime / 60);
+          return (d.activeTime > upperLimit || d.activeTime < lowerLimit || (d.activeMode === '도보' && speed < 1.5) || (d.activeMode === '승용차' && speed > 40));
+        });
+        return new Set(out.map(o => o.id));
+      }
+
+      function render() {
+        const data = getActiveData();
+        const total = data.length;
+        if (total === 0) return;
+
+        // 1. KPI 갱신
+        const times = data.map(d => d.activeTime).sort((a,b) => a - b);
+        const avgTime = (times.reduce((a,b) => a + b, 0) / total).toFixed(1);
+        const mid = Math.floor(total / 2);
+        const medTime = (total % 2 !== 0 ? times[mid] : ((times[mid - 1] + times[mid]) / 2)).toFixed(1);
+
+        const totalCarbonG = data.reduce((acc, cur) => acc + cur.carbon, 0);
+        const totalCarbonKg = (totalCarbonG / 1000).toFixed(1);
+
+        kpiCount.textContent = total;
+        kpiAvgTime.textContent = avgTime;
+        kpiMedTime.textContent = medTime;
+        kpiCarbon.textContent = totalCarbonKg;
+
+        const diff = (Number(avgTime) - Number(medTime)).toFixed(1);
+        if (Number(diff) > 2.0) {
+          kpiTimeSkew.innerHTML = `<span class="badge badge-amber">우측 왜도 (+${diff}분)</span> 평균이 중앙값보다 큼`;
+        } else if (Number(diff) < -2.0) {
+          kpiTimeSkew.innerHTML = `<span class="badge badge-blue">좌측 왜도 (${diff}분)</span> 중앙값이 평균보다 큼`;
+        } else {
+          kpiTimeSkew.innerHTML = `<span class="badge badge-blue">대칭 분포</span> 평균과 중앙값 유사`;
+        }
+
+        // 2. 테이블 렌더링
+        tableRowCount.textContent = `${total}건`;
+        tableBody.replaceChildren();
+        const outlierIds = detectOutlierIds(data);
+
+        data.forEach((row, idx) => {
+          const tr = document.createElement('tr');
+          const isOut = showOutlierHighlight && outlierIds.has(row.id);
+          const modeClass = row.activeMode === '도보' ? 'tag-walk' :
+                            row.activeMode === '자전거' ? 'tag-bike' :
+                            row.activeMode === '대중교통' ? 'tag-transit' : 'tag-car';
+
+          tr.innerHTML = `
+            <td><strong>${row.id}</strong></td>
+            <td><span class="tag-mode ${modeClass}">${row.activeMode}</span></td>
+            <td class="num">${row.dist.toFixed(1)}</td>
+            <td class="num" style="${isOut ? 'color:#b91c1c;font-weight:800;' : ''}">${row.activeTime}</td>
+            <td class="num">${row.carbon}</td>
+            <td style="font-size:11.5px; color:var(--ink-muted);">${row.note || '—'}</td>
+            <td style="text-align:center;"><button type="button" data-del="${idx}" style="border:none;background:none;color:#94a3b8;cursor:pointer;font-size:11px;padding:4px;" title="삭제">✕</button></td>
+          `;
+          tableBody.appendChild(tr);
+        });
+
+        // 3. 산점도 및 바 렌더링
+        renderScatter(data, outlierIds);
+        renderModeBars(data);
+      }
+
+      function renderScatter(data, outlierIds) {
+        scatterSvg.replaceChildren();
+        const width = 540, height = 280;
+        const padLeft = 45, padRight = 20, padTop = 20, padBottom = 35;
+        const chartW = width - padLeft - padRight;
+        const chartH = height - padTop - padBottom;
+
+        const maxDist = Math.max(10, Math.ceil(Math.max(...data.map(d => d.dist), 10)));
+        const maxTime = Math.max(60, Math.ceil(Math.max(...data.map(d => d.activeTime), 60) / 10) * 10);
+
+        const scaleX = val => padLeft + (val / maxDist) * chartW;
+        const scaleY = val => padTop + chartH - (val / maxTime) * chartH;
+
+        // 눈금선 (Y축)
+        for (let t = 0; t <= maxTime; t += 15) {
+          const y = scaleY(t);
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('x1', padLeft); line.setAttribute('x2', width - padRight);
+          line.setAttribute('y1', y); line.setAttribute('y2', y);
+          line.setAttribute('stroke', '#e2e8f0'); line.setAttribute('stroke-dasharray', '3,3');
+          scatterSvg.appendChild(line);
+
+          const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          text.setAttribute('x', padLeft - 6); text.setAttribute('y', y + 4);
+          text.setAttribute('text-anchor', 'end'); text.setAttribute('fill', '#64748b');
+          text.setAttribute('font-size', '10.5'); text.textContent = t + '분';
+          scatterSvg.appendChild(text);
+        }
+
+        // 눈금선 (X축)
+        for (let d = 0; d <= maxDist; d += 2) {
+          const x = scaleX(d);
+          const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          text.setAttribute('x', x); text.setAttribute('y', height - 12);
+          text.setAttribute('text-anchor', 'middle'); text.setAttribute('fill', '#64748b');
+          text.setAttribute('font-size', '10.5'); text.textContent = d + 'km';
+          scatterSvg.appendChild(text);
+        }
+
+        // 축선
+        const axisY = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        axisY.setAttribute('x1', padLeft); axisY.setAttribute('x2', padLeft);
+        axisY.setAttribute('y1', padTop); axisY.setAttribute('y2', height - padBottom);
+        axisY.setAttribute('stroke', '#94a3b8'); scatterSvg.appendChild(axisY);
+
+        const axisX = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        axisX.setAttribute('x1', padLeft); axisX.setAttribute('x2', width - padRight);
+        axisX.setAttribute('y1', height - padBottom); axisX.setAttribute('y2', height - padBottom);
+        axisX.setAttribute('stroke', '#94a3b8'); scatterSvg.appendChild(axisX);
+
+        // 경향선
+        const trend = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        trend.setAttribute('x1', scaleX(0.5)); trend.setAttribute('y1', scaleY(10));
+        trend.setAttribute('x2', scaleX(maxDist * 0.9)); trend.setAttribute('y2', scaleY(maxDist * 0.9 * 3.8 + 8));
+        trend.setAttribute('stroke', '#93c5fd'); trend.setAttribute('stroke-width', '2');
+        trend.setAttribute('stroke-dasharray', '5,5'); scatterSvg.appendChild(trend);
+
+        // 데이터 점
+        const modeColors = { '도보': '#10b981', '자전거': '#06b6d4', '대중교통': '#3b82f6', '승용차': '#f43f5e' };
+        data.forEach(d => {
+          const cx = scaleX(d.dist);
+          const cy = scaleY(d.activeTime);
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', cx); circle.setAttribute('cy', cy);
+          circle.setAttribute('r', '5.5');
+          circle.setAttribute('fill', modeColors[d.activeMode] || '#64748b');
+
+          const isOut = showOutlierHighlight && outlierIds.has(d.id);
+          circle.setAttribute('class', isOut ? 'scatter-dot highlight-outlier' : 'scatter-dot');
+
+          const showDotTooltip = () => {
+            tooltip.style.opacity = '1';
+            tooltip.innerHTML = `<strong>${d.id} (${d.activeMode})</strong><br>거리: ${d.dist}km · 시간: ${d.activeTime}분<br>탄소: ${d.carbon}g CO₂${d.note ? '<br>메모: ' + d.note : ''}`;
+            const rect = scatterSvg.getBoundingClientRect();
+            const ptX = (cx / width) * rect.width;
+            const ptY = (cy / height) * rect.height;
+            tooltip.style.left = ptX + 'px';
+            tooltip.style.top = ptY + 'px';
+          };
+          circle.addEventListener('mouseenter', showDotTooltip);
+          circle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showDotTooltip();
+          });
+          circle.addEventListener('mouseleave', () => { tooltip.style.opacity = '0'; });
+          scatterSvg.appendChild(circle);
+        });
+        document.addEventListener('click', () => { tooltip.style.opacity = '0'; });
+      }
+
+      function renderModeBars(data) {
+        modeBarContainer.replaceChildren();
+        const modes = ['도보', '자전거', '대중교통', '승용차'];
+        const modeClasses = { '도보': 'bar-walk', '자전거': 'bar-bike', '대중교통': 'bar-transit', '승용차': 'bar-car' };
+        const total = data.length;
+
+        modes.forEach(mode => {
+          const sub = data.filter(d => d.activeMode === mode);
+          const count = sub.length;
+          const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+          const avgT = count > 0 ? (sub.reduce((a,b) => a + b.activeTime, 0) / count).toFixed(1) : '0';
+          const totalC = sub.reduce((a,b) => a + b.carbon, 0);
+
+          const item = document.createElement('div');
+          item.className = 'mode-bar-item';
+          item.innerHTML = `
+            <div style="font-weight:700;">${mode} (${count}명)</div>
+            <div class="mode-track">
+              <div class="mode-bar ${modeClasses[mode]}" style="width: ${Math.max(pct, 4)}%;">${pct}%</div>
+            </div>
+            <div style="text-align:right; font-size:11.5px; color:var(--ink-muted);">평균 ${avgT}분 · ${Math.round(totalC/1000*10)/10}kg</div>
+          `;
+          modeBarContainer.appendChild(item);
+        });
+      }
+
+      // 이벤트 바인딩
+      // 날씨 토글
+      document.getElementById('btn-sunny').addEventListener('click', () => {
+        isRainy = false;
+        document.getElementById('btn-sunny').classList.add('active');
+        document.getElementById('btn-rainy').classList.remove('active');
+        render();
+      });
+      document.getElementById('btn-rainy').addEventListener('click', () => {
+        isRainy = true;
+        document.getElementById('btn-rainy').classList.add('active');
+        document.getElementById('btn-sunny').classList.remove('active');
+        render();
+      });
+
+      // 데이터 초기화
+      document.getElementById('btn-reset-data').addEventListener('click', () => {
+        if (confirm('데이터를 초기 25명 상태로 되돌리시겠습니까?')) {
+          records = JSON.parse(JSON.stringify(DEFAULT_RECORDS));
+          render();
+        }
+      });
+
+      // 이상치 하이라이트 토글
+      btnToggleOutliers.addEventListener('click', () => {
+        showOutlierHighlight = !showOutlierHighlight;
+        if (showOutlierHighlight) {
+          btnToggleOutliers.classList.add('active');
+          btnToggleOutliers.textContent = '이상치 하이라이트 확인 [ 켜짐 ]';
+        } else {
+          btnToggleOutliers.classList.remove('active');
+          btnToggleOutliers.textContent = '이상치 하이라이트 확인 [ 끄기 ]';
+        }
+        render();
+      });
+
+      // 탭 전환
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.chart-panel').forEach(p => p.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById(btn.dataset.target).classList.add('active');
+        });
+      });
+
+      // 레코드 삭제
+      tableBody.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-del]');
+        if (btn) {
+          const idx = parseInt(btn.dataset.del, 10);
+          records.splice(idx, 1);
+          render();
+        }
+      });
+
+      // 레코드 추가
+      document.getElementById('btn-add-record').addEventListener('click', () => {
+        const mode = document.getElementById('input-mode').value;
+        const dist = parseFloat(document.getElementById('input-dist').value);
+        const time = parseInt(document.getElementById('input-time').value, 10);
+        const note = document.getElementById('input-note').value.trim();
+
+        if (isNaN(dist) || isNaN(time) || dist <= 0 || time <= 0) {
+          alert('유효한 거리와 시간을 입력하세요.');
+          return;
+        }
+
+        const newId = 'S' + String(records.length + 1).padStart(2, '0');
+        records.push({ id: newId, mode, dist, time, note: note || '사용자 추가' });
+        document.getElementById('input-dist').value = '';
+        document.getElementById('input-time').value = '';
+        document.getElementById('input-note').value = '';
+        render();
+      });
+
+      // LocalStorage 저장
+      const STORAGE_KEY = 'eda_commute_v2_answers';
+      const fields = ['hypo-time', 'hypo-carbon', 'obs-outliers', 'obs-stats', 'refl-compare', 'refl-policy'];
+
+      function loadAnswers() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+          fields.forEach(f => {
+            if (saved[f]) document.getElementById(f).value = saved[f];
+          });
+        } catch(e) {}
+      }
+
+      function saveAnswers() {
+        try {
+          const data = {};
+          fields.forEach(f => {
+            data[f] = document.getElementById(f).value;
+          });
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+          saveAlert.textContent = '✓ 임시 저장 완료';
+          saveAlert.style.color = '#15803d';
+          saveAlert.style.display = 'inline';
+          setTimeout(() => { saveAlert.style.display = 'none'; }, 2500);
+        } catch(e) {
+          alert('이 기기에 저장하지 못했습니다. 답을 따로 적어 두세요.');
+          saveAlert.textContent = '⚠️ 저장 실패 (답을 따로 기록하세요)';
+          saveAlert.style.color = '#b91c1c';
+          saveAlert.style.display = 'inline';
+        }
+      }
+
+      document.getElementById('btn-save').addEventListener('click', saveAnswers);
+      document.getElementById('btn-print').addEventListener('click', () => {
+        window.print();
+      });
+
+      // 초기 실행
+      loadAnswers();
+      render();
+    })();
+  </script>
+</body>
+</html>

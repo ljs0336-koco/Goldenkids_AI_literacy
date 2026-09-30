@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+  <title>에듀테크 연계 융합교육 프로젝트 · 5주차 허브</title>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <!-- Pretendard Variable for Korean Typography -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <!-- Material Symbols Outlined -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container-high": "#eae8e4",
+            "secondary-fixed": "#ffdbd0",
+            "on-secondary-container": "#762c12",
+            "surface-tint": "#52634c",
+            "on-error": "#ffffff",
+            "on-primary-container": "#253420",
+            "surface-container-low": "#f6f3f0",
+            "tertiary-container": "#b28e9b",
+            "inverse-primary": "#b9ccb0",
+            "secondary": "#99462a",
+            "tertiary-fixed": "#ffd8e5",
+            "on-background": "#1b1c1a",
+            "on-surface-variant": "#444841",
+            "background": "#fcf9f5",
+            "surface-dim": "#dcdad6",
+            "on-tertiary": "#ffffff",
+            "primary-container": "#8b9d83",
+            "on-secondary": "#ffffff",
+            "surface-variant": "#e5e2df",
+            "on-tertiary-fixed": "#2b141e",
+            "on-secondary-fixed-variant": "#7a2f15",
+            "surface": "#fcf9f5",
+            "primary-fixed-dim": "#b9ccb0",
+            "inverse-on-surface": "#f3f0ed",
+            "tertiary-fixed-dim": "#e4bcca",
+            "on-primary-fixed-variant": "#3b4b36",
+            "on-tertiary-container": "#422833",
+            "outline-variant": "#c4c8be",
+            "error-container": "#ffdad6",
+            "on-surface": "#1b1c1a",
+            "on-tertiary-fixed-variant": "#5b3f4a",
+            "inverse-surface": "#30302e",
+            "surface-bright": "#fcf9f5",
+            "on-error-container": "#93000a",
+            "on-primary-fixed": "#101f0d",
+            "surface-container": "#f0edea",
+            "primary": "#52634c",
+            "on-primary": "#ffffff",
+            "secondary-fixed-dim": "#ffb59e",
+            "surface-container-lowest": "#ffffff",
+            "error": "#ba1a1a",
+            "tertiary": "#755662",
+            "secondary-container": "#fe9572",
+            "outline": "#747870",
+            "on-secondary-fixed": "#390b00",
+            "primary-fixed": "#d5e8cb",
+            "surface-container-highest": "#e5e2df"
+          },
+          borderRadius: {
+            DEFAULT: "0.125rem",
+            lg: "0.25rem",
+            xl: "0.5rem",
+            full: "0.75rem"
+          },
+          spacing: {
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2.25rem",
+            "space-md": "1rem",
+            "space-xs": "0.25rem",
+            "margin": "1.25rem",
+            "gutter": "1rem"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "Pretendard", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      min-height: max(884px, 100dvh);
+      font-family: 'Plus Jakarta Sans', 'Pretendard', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    /* Touch optimization */
+    .touch-target {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  </style>
+</head>
+<body class="bg-surface-dim/40 text-on-surface antialiased flex justify-center selection:bg-primary-fixed selection:text-on-primary-fixed min-h-screen">
+
+  <!-- Desktop Wrapper: Center shell on larger screens -->
+  <div class="w-full max-w-2xl bg-background min-h-screen flex flex-col shadow-2xl relative border-x border-outline-variant/30">
+
+    <!-- Top App Bar -->
+    <header id="top-bar" class="sticky top-0 z-40 bg-surface/95 backdrop-blur-md border-b border-outline-variant/40 px-4 py-3 flex items-center justify-between transition-all">
+      <div class="flex items-center gap-2">
+        <button id="back-btn" onclick="handleBack()" class="hidden p-1.5 rounded-lg hover:bg-surface-container text-on-surface transition-colors">
+          <span class="material-symbols-outlined text-[22px]">arrow_back</span>
+        </button>
+        <div>
+          <div id="bar-badge" class="flex items-center gap-1.5">
+            <span class="inline-block w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+            <span id="bar-tag" class="text-[11px] font-mono tracking-wider text-primary font-semibold uppercase">서울대학교 에듀테크 연계 융합교육 프로젝트</span>
+          </div>
+          <h1 id="bar-title" class="text-base font-bold text-on-surface leading-tight mt-0.5">프로젝트 과제 지도</h1>
+        </div>
+      </div>
+      <div class="flex items-center gap-1">
+        <a href="../../#/" class="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 transition-all mr-1"><span class="material-symbols-outlined text-[15px]">apps</span><span>통합 포털</span></a>
+        <span class="text-[10px] font-mono bg-surface-container px-2 py-0.5 rounded text-on-surface-variant border border-outline-variant/40">DEMO v0.1</span>
+        <button onclick="showToast('제출물 확인 후 팀별 내용과 피드백을 반영합니다.')" class="p-2 rounded-full hover:bg-surface-container text-on-surface-variant relative">
+          <span class="material-symbols-outlined text-[20px]">notifications</span>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-secondary"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area (Hash Route Target Containers) -->
+    <main class="flex-1 pb-24 overflow-y-auto">
+      
+      <!-- ======================================================== -->
+      <!-- VIEW 1: PROJECTS DASHBOARD (#projects)                  -->
+      <!-- ======================================================== -->
+      <section id="view-projects" class="p-4 space-y-4">
+        <!-- Search bar -->
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3.5 top-3 text-[18px] text-outline">search</span>
+          <input id="search-input" type="text" oninput="handleSearch(this.value)" placeholder="학생 이름, 팀 번호 또는 탐구 주제 검색..." 
+                 class="w-full pl-10 pr-4 py-2.5 bg-surface-container-lowest rounded-xl border border-outline-variant/60 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all text-on-surface placeholder:text-outline"/>
+        </div>
+
+        <!-- Filter Chips -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 text-xs font-medium">
+          <button onclick="setFilter('all')" id="btn-filter-all" class="filter-chip px-3 py-1.5 rounded-full bg-primary text-white border border-primary transition-all shadow-sm">
+            전체 (8)
+          </button>
+          <button onclick="setFilter('pending')" id="btn-filter-pending" class="filter-chip px-3 py-1.5 rounded-full bg-surface-container text-on-surface border border-outline-variant/40 hover:bg-surface-container-high transition-all">
+            • 접수 대기
+          </button>
+          <button onclick="setFilter('done')" id="btn-filter-done" class="filter-chip px-3 py-1.5 rounded-full bg-surface-container text-on-surface border border-outline-variant/40 hover:bg-surface-container-high transition-all">
+            • 확인 후 반영
+          </button>
+        </div>
+
+        <!-- Class Metric Card -->
+        <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 text-primary font-bold text-sm">
+              <span class="material-symbols-outlined text-[18px]">analytics</span>
+              <span>학급 탐구 요약</span>
+            </div>
+            <span class="text-[11px] text-outline">팀 메모 기준</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-center pt-1 border-t border-outline-variant/30">
+            <div class="p-2 rounded-lg bg-surface-container-low">
+              <div class="text-[11px] text-outline">편성 현황</div>
+              <div class="text-base font-bold text-on-surface mt-0.5">8팀</div>
+              <div class="text-[10px] text-primary font-medium">총 24명 배정</div>
+            </div>
+            <div class="p-2 rounded-lg bg-surface-container-low">
+              <div class="text-[11px] text-outline">과제 현황</div>
+              <div class="text-base font-bold text-on-surface mt-0.5">접수 대기</div>
+              <div class="text-[10px] text-outline">제출물 확인 후 반영</div>
+            </div>
+            <div class="p-2 rounded-lg bg-surface-container-low">
+              <div class="text-[11px] text-outline">실습 도구</div>
+              <div class="text-base font-bold text-on-surface mt-0.5">Antigravity</div>
+              <div class="text-[10px] text-primary">과정안·웹앱</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Teams List Header -->
+        <div class="flex items-center justify-between pt-1">
+          <h2 class="text-sm font-bold text-on-surface flex items-center gap-1.5">
+            <span>프로젝트 팀별 현황</span>
+            <span id="teams-count-badge" class="text-xs font-mono font-normal text-outline">(8개 팀)</span>
+          </h2>
+          <span class="text-[11px] text-outline">총 24명 팀원</span>
+        </div>
+
+        <!-- Teams Cards Container -->
+        <div id="teams-list" class="space-y-3">
+          <!-- Dynamically Rendered by JS -->
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 2: TEAM DRILL-DOWN DETAIL (#team/:id)              -->
+      <!-- ======================================================== -->
+      <section id="view-team-detail" class="hidden p-4 space-y-4">
+        <!-- Team Selector Carousel -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+          <div id="team-carousel-chips" class="flex gap-2">
+            <!-- Dynamically populated chips (01~08) -->
+          </div>
+        </div>
+
+        <div id="team-detail-content" class="space-y-4">
+          <!-- Dynamically populated by renderTeamDetail() -->
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 3: CURRICULUM SYLLABUS (#curriculum)               -->
+      <!-- ======================================================== -->
+      <section id="view-curriculum" class="hidden p-4 space-y-4">
+        <!-- Team Selector for Curriculum -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+          <div id="curriculum-carousel-chips" class="flex gap-2">
+            <!-- Chips for curriculum -->
+          </div>
+        </div>
+
+        <div id="curriculum-detail-content" class="space-y-4">
+          <!-- Dynamically populated by renderCurriculum() -->
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 4: SIDE APPS PLAYER & ARCHIVE (#apps)              -->
+      <!-- ======================================================== -->
+      <section id="view-apps" class="hidden p-4 space-y-4">
+        <!-- Team Selector for Apps -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+          <div id="apps-carousel-chips" class="flex gap-2">
+            <!-- Chips for apps -->
+          </div>
+        </div>
+
+        <!-- Active Simulator Slot Card -->
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/50 p-4 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold bg-primary-fixed text-on-primary-fixed px-2 py-0.5 rounded">
+              사이드 앱 안내
+            </span>
+            <div class="flex items-center gap-1.5 text-xs text-outline">
+              <button onclick="handleOpenCurrentApp(activeTeamId)" class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface transition-all flex items-center gap-1">
+                <span class="material-symbols-outlined text-[13px]">open_in_new</span> 새 창 열기
+              </button>
+              <button onclick="handleDownloadSideApp(activeTeamId)" class="px-2.5 py-1 rounded bg-primary text-white hover:bg-primary/90 transition-all flex items-center gap-1">
+                <span class="material-symbols-outlined text-[13px]">download</span> 내려받기
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <h2 id="app-player-title" class="text-base font-bold text-on-surface">선택된 사이드 앱</h2>
+            <p id="app-player-desc" class="text-xs text-on-surface-variant mt-1 leading-relaxed">
+              수업 실습과 연계된 단일 HTML 웹앱입니다.
+            </p>
+          </div>
+        </div>
+
+        <!-- 8 Teams Side-App Archive -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-on-surface">유형별 사이드 앱 아카이브</h3>
+            <span class="text-xs text-outline">등록된 실습 앱 3개</span>
+          </div>
+
+          <div id="side-apps-list" class="space-y-2.5">
+            <!-- Dynamically populated by renderSideAppsList() -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 5: SHARED NOTES & DISCUSSIONS (#notes)             -->
+      <!-- ======================================================== -->
+      <section id="view-notes" class="hidden p-4 space-y-4">
+        <!-- Notice banner -->
+        <div class="p-2.5 rounded-lg bg-surface-container-low border border-outline-variant/40 flex items-center gap-2 text-xs text-outline">
+          <span class="material-symbols-outlined text-[16px] text-primary shrink-0">info</span>
+          <span>공동 작업 및 공유는 패들렛을 이용하며, 아래 메모는 이 기기(LocalStorage)에만 저장됩니다.</span>
+        </div>
+
+        <!-- Team Filter Chips -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 text-xs">
+          <div id="notes-team-chips" class="flex gap-2">
+            <!-- Filter by team (All, 01~08) -->
+          </div>
+        </div>
+
+        <!-- Tag Filters -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar text-xs font-medium">
+          <button onclick="setNotesTag('all')" id="btn-ntag-all" class="notes-tag-chip px-3 py-1.5 rounded-full bg-primary text-white border border-primary shadow-sm">
+            전체 피드
+          </button>
+          <button onclick="setNotesTag('notice')" id="btn-ntag-notice" class="notes-tag-chip px-3 py-1.5 rounded-full bg-surface-container text-on-surface border border-outline-variant/40 hover:bg-surface-container-high">
+            📌 교사 코칭/공지
+          </button>
+          <button onclick="setNotesTag('idea')" id="btn-ntag-idea" class="notes-tag-chip px-3 py-1.5 rounded-full bg-surface-container text-on-surface border border-outline-variant/40 hover:bg-surface-container-high">
+            💡 아이디어·발문
+          </button>
+          <button onclick="setNotesTag('tech')" id="btn-ntag-tech" class="notes-tag-chip px-3 py-1.5 rounded-full bg-surface-container text-on-surface border border-outline-variant/40 hover:bg-surface-container-high">
+            ⚙️ 구현·오류
+          </button>
+        </div>
+
+        <!-- Feed List Container -->
+        <div id="notes-feed-list" class="space-y-3">
+          <!-- Dynamically populated by renderNotesFeed() -->
+        </div>
+
+        <!-- Quick Post Floating Drawer / Input Bar -->
+        <div class="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant/50 shadow-sm space-y-2.5">
+          <div class="flex items-center justify-between text-xs text-outline font-medium">
+            <span>새 메모/피드백 남기기</span>
+            <span class="text-[10px] font-mono text-primary font-bold">LocalStorage 자동저장</span>
+          </div>
+
+          <!-- Quick Tag Helpers -->
+          <div class="flex items-center gap-1.5 flex-wrap text-[11px]">
+            <span class="text-outline">빠른태그:</span>
+            <button onclick="insertTag('#아이디어 ')" class="px-2 py-0.5 rounded bg-surface-container hover:bg-surface-container-high text-on-surface">#아이디어</button>
+            <button onclick="insertTag('#질문검증 ')" class="px-2 py-0.5 rounded bg-surface-container hover:bg-surface-container-high text-on-surface">#질문검증</button>
+            <button onclick="insertTag('#오류리포트 ')" class="px-2 py-0.5 rounded bg-surface-container hover:bg-surface-container-high text-on-surface">#오류리포트</button>
+            <button onclick="insertTag('#일정공유 ')" class="px-2 py-0.5 rounded bg-surface-container hover:bg-surface-container-high text-on-surface">#일정공유</button>
+          </div>
+
+          <div class="flex gap-2">
+            <textarea id="note-input" rows="2" placeholder="팀원 및 선생님과 나눌 메모나 피드백을 적어보세요..." 
+                      class="flex-1 p-2.5 bg-surface-container-low rounded-lg border border-outline-variant/50 text-xs text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary focus:bg-white resize-none"></textarea>
+            <button onclick="handleAddNote()" class="px-4 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90 transition-all flex items-center justify-center shrink-0 shadow-sm">
+              등록
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Navigation Bar (Fixed 4 Tabs) -->
+    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-2xl bg-surface/95 backdrop-blur-md border-t border-outline-variant/40 px-4 py-2 flex items-center justify-around z-50 transition-all">
+      <button onclick="navigate('#projects')" id="tab-projects" class="tab-btn flex flex-col items-center gap-1 py-1 px-3 text-primary font-semibold transition-all">
+        <span class="material-symbols-outlined text-[22px] fill">assignment</span>
+        <span class="text-[11px]">과제/프로젝트</span>
+      </button>
+      <button onclick="navigate('#curriculum')" id="tab-curriculum" class="tab-btn flex flex-col items-center gap-1 py-1 px-3 text-outline hover:text-on-surface transition-all">
+        <span class="material-symbols-outlined text-[22px]">menu_book</span>
+        <span class="text-[11px]">커리큘럼</span>
+      </button>
+      <button onclick="navigate('#apps')" id="tab-apps" class="tab-btn flex flex-col items-center gap-1 py-1 px-3 text-outline hover:text-on-surface transition-all">
+        <span class="material-symbols-outlined text-[22px]">sports_esports</span>
+        <span class="text-[11px]">사이드 앱</span>
+      </button>
+      <button onclick="navigate('#notes')" id="tab-notes" class="tab-btn flex flex-col items-center gap-1 py-1 px-3 text-outline hover:text-on-surface transition-all">
+        <span class="material-symbols-outlined text-[22px]">forum</span>
+        <span class="text-[11px]">개인 메모</span>
+      </button>
+    </nav>
+
+    <!-- Global Toast Notification -->
+    <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface text-xs px-4 py-2.5 rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2">
+      <span class="material-symbols-outlined text-[16px] text-emerald-400">check_circle</span>
+      <span id="toast-text">메시지</span>
+    </div>
+
+  </div>
+
+  <!-- Data Script Reference (Inlined for standalone offline reliability) -->
+  <script>
+/**
+ * 8개 팀 전체 기획 데이터셋 및 Notes 초기 피드
+ * 기준 문서: 01_기획/팀정보/팀구성_과제방향_메모.md (출석부순 24명 전원 반영)
+ * 수정일: 2026-09-30 (모루 수정 요청 R4 반영: 지어낸 커리큘럼/가짜 수치 완전 배제, 팀명·방향·팀원역할만 유지)
+ */
+
+const TEAMS_DATA = [
+  {
+    id: "01",
+    name: "질문과 사고력",
+    subtitle: "9/30 제출 후 반영",
+    category: "사고력·질문",
+    status: "9/30 제출 후 반영",
+    statusBadge: "bg-surface-container-high text-on-surface border border-outline-variant/40",
+    members: [
+      { name: "김선우", role: "질문 성장 기록과 교실 적용" },
+      { name: "손보경", role: "문해력·검증 활동 설계" },
+      { name: "윤민서", role: "오개념 진단과 맞춤 발문" }
+    ],
+    target: "9/30 제출 후 반영",
+    direction: "AI가 답을 대신하지 않도록 학생의 질문과 검증 과정을 기록하고 다음 발문을 제안하는 도구",
+    milestone: "9/30 과제 제출 후 등록 예정",
+    links: [
+      { type: "padlet", title: "공동 작업 패들렛", sub: "패들렛 보드", date: "수업용 패들렛 주소 연결 예정", icon: "dashboard", url: "" }
+    ],
+    sideApp: {
+      id: "app-01",
+      title: "질문 전후 비교 및 근거 기록기",
+      badge: "01팀 예시 사이드 앱",
+      tag: "질문 기록",
+      desc: "처음 작성한 질문과 점검 기준을 거쳐 수정한 질문을 비교하고 바꾼 이유를 기록하는 도구",
+      mode: "모바일(390px) 및 PC 대응",
+      appUrl: "apps/질문전후비교_v3.html",
+      downloadName: "01팀_질문전후비교_웹앱_v3.html"
+    },
+    curriculum: null
+  },
+  {
+    id: "02",
+    name: "머신러닝 융합수업",
+    subtitle: "9/30 제출 후 반영",
+    category: "교과×ML",
+    status: "9/30 제출 후 반영",
+    statusBadge: "bg-surface-container-high text-on-surface border border-outline-variant/40",
+    members: [
+      { name: "한솔", role: "학습 플랫폼과 사고과정 기록" },
+      { name: "이정윤", role: "AI 협업·질문 경험 설계" },
+      { name: "정다영", role: "교과×ML 수업과 웹앱 설계" }
+    ],
+    target: "9/30 제출 후 반영",
+    direction: "고등학교 교과에서 머신러닝을 탐구 도구로 활용하고 AI 협업 과정과 판단을 기록하는 학습도구",
+    milestone: "9/30 과제 제출 후 등록 예정",
+    links: [
+      { type: "padlet", title: "공동 작업 패들렛", sub: "패들렛 보드", date: "수업용 패들렛 주소 연결 예정", icon: "dashboard", url: "" }
+    ],
+    sideApp: {
+      id: "app-02",
+      title: "머신러닝 교과 탐구 시뮬레이터",
+      badge: "02팀 사이드 앱",
+      tag: "ML 시뮬레이터",
+      desc: "고교 교과 데이터를 조작하고 모델 예측 결과를 비교하는 탐구 도구 (과제 접수 후 연결)",
+      mode: "9/30 제출 후 반영",
+      appUrl: "",
+      downloadName: ""
+    },
+    curriculum: null
+  },
+  {
+    id: "03",
+    name: "교사 전문성 지원",
+    subtitle: "9/30 제출 후 반영",
+    category: "교원지원",
+    status: "9/30 제출 후 반영",
+    statusBadge: "bg-surface-container-high text-on-surface border border-outline-variant/40",
+    members: [
+      { name: "박세원", role: "교원 업무 흐름과 현장 검증" },
+      { name: "김보경", role: "교사전문성·사업 기획" },
+      { name: "이유나", role: "AI 코칭 로직과 웹 시제품" }
+    ],
+    target: "9/30 제출 후 반영",
+    direction: "교사의 행정과 수업 설계 부담을 줄이고 AI 코칭과 사람 코칭을 연결하는 지원 서비스",
+    milestone: "9/30 과제 제출 후 등록 예정",
+    links: [
+      { type: "padlet", title: "공동 작업 패들렛", sub: "패들렛 보드", date: "수업용 패들렛 주소 연결 예정", icon: "dashboard", url: "" }
+    ],
+    sideApp: {
+      id: "app-03",
+      title: "수업 설계 및 행정 지원 코칭 툴",
+      badge: "03팀 사이드 앱",
+      tag: "교원 지원",
+      desc: "수업 설계 입력 시 맞춤형 교수전략과 행정 서식을 추천해 주는 교사 지원 툴 (과제 접수 후 연결)",
+      mode: "9/30 제출 후 반영",
+      appUrl: "",
+      downloadName: ""
+    },
+    curriculum: null
+  },
+  {
+    id: "04",
+    name: "사회정서 학급운영",
+    subtitle: "9/30 제출 후 반영",
+    category: "사회정서",
+    status: "9/30 제출 후 반영",
+    statusBadge: "bg-surface-container-high text-on-surface border border-outline-variant/40",
+    members: [
+      { name: "김가현", role: "정서 지원 AI와 학습로그" },
+      { name: "이채민", role: "관계 데이터·학급 운영" },
+      { name: "한지연", role: "자기조절학습 스캐폴딩" }
+    ],
+    target: "9/30 제출 후 반영",
+    direction: "정서·관계·학습 동기를 파악해 교사가 적절한 개입과 작은 힌트를 제공하도록 돕는 시스템",
+    milestone: "9/30 과제 제출 후 등록 예정",
+    links: [
+      { type: "padlet", title: "공동 작업 패들렛", sub: "패들렛 보드", date: "수업용 패들렛 주소 연결 예정", icon: "dashboard", url: "" }
+    ],
+    sideApp: {
+      id: "app-04",
+      title: "감정 체크인 및 자기조절 러너",
+      badge: "04팀 사이드 앱",
+      tag: "정서 케어",
+      desc: "학생이 기분/상태를 선택하면 자기조절 미션과 따뜻한 피드백을 제공하는 웹앱 (과제 접수 후 연결)",
+      mode: "9/30 제출 후 반영",
+      appUrl: "",
+      downloadName: ""
+    },
+    curriculum: null
+  },
+  {
+    id: "05",
+    name: "기초학력과 학습루틴",
+    subtitle: "9/30 제출 후 반영",
+    category: "기초학력",
+    status: "9/30 제출 후 반영",
+    statusBadge: "bg-surface-container-high text-on-surface border border-outline-variant/40",
+    members: [
+      { name: "문혜림", role: "기초학력·학습습관 설계" },
+      { name: "신민경", role: "글쓰기 과정·학습분석" },
+      { name: "홍한나", role: "영어 글쓰기와 맞춤지원" }
+    ],
+    target: "9/30 제출 후 반영",
+    direction: "기초학력과 영어 글쓰기 학습자에게 과정 시각화, 학습루틴, 단계적 스캐폴딩을 제공하는 AI 도구",
+    milestone: "9/30 과제 제출 후 등록 예정",
+    links: [
+      { type: "padlet", title: "공동 작업 패들렛", sub: "패들렛 보드", date: "수업용 패들렛 주소 연결 예정", icon: "dashboard", url: "" }
+    ],
+    sideApp: {
+      id: "app-05",
+      title: "문장 카드 루틴 및 스캐폴딩 러너",
+      badge: "05팀 사이드 앱",
+      tag: "학습 루틴",
+      desc: "문장 카드 배열과 빈칸 채우기로 단계적 글쓰기를 돕고 칭찬 스탬프를 주는 웹앱 (과제 접수 후 연결)",
+      mode: "9/30 제출 후 반영",
+      appUrl: "",
+      downloadName: ""
+    },
+    curriculum: null
+  },
+  {
+    id: "06",
+    name: "피지컬 AI와 메이커",
+    subtitle: "9/30 제출 후 반영",
+    category: "피지컬AI",
+    status: "9/30 제출 후 반영",
+    statusBadge: "bg-surface-container-high text-on-surface border border-outline-variant/40",
+    members: [
+      { name: "구주영", role: "게임화·영재·발명교육" },
+      { name: "서민택", role: "로봇·메이커 에듀테크" },
+      { name: "정은서", role: "피지컬 컴퓨팅·PBL 참여도" }
+    ],
+    target: "9/30 제출 후 반영",
+    direction: "로봇·발명·피지컬 컴퓨팅·PBL 수업에서 학생의 설계와 제작 과정을 지원하는 에듀테크",
+    milestone: "9/30 과제 제출 후 등록 예정",
+    links: [
+      { type: "padlet", title: "공동 작업 패들렛", sub: "패들렛 보드", date: "수업용 패들렛 주소 연결 예정", icon: "dashboard", url: "" }
+    ],
+    sideApp: {
+      id: "app-06",
+      title: "로보독 RL Playground (강화학습)",
+      badge: "06팀 예시 사이드 앱",
+      tag: "로보독 시뮬레이터",
+      desc: "Q-Learning 기반 로보독 절벽 탈출 및 간식 획득 강화학습 시뮬레이터",
+      mode: "PC 및 태블릿 권장",
+      appUrl: "apps/robotdog_rl/index.html",
+      downloadName: "로보독_RL_Playground.html"
+    },
+    curriculum: null
+  },
+  {
+    id: "07",
+    name: "탐구와 학습자 주도성",
+    subtitle: "9/30 제출 후 반영",
+    category: "탐구·주도성",
+    status: "9/30 제출 후 반영",
+    statusBadge: "bg-surface-container-high text-on-surface border border-outline-variant/40",
+    members: [
+      { name: "유형지", role: "사회·진로 탐구의 학습 흐름" },
+      { name: "이서연", role: "인지적 개입·주도성 분석" },
+      { name: "장윤하", role: "과학 수업과 타당한 평가" }
+    ],
+    target: "9/30 제출 후 반영",
+    direction: "관심에서 출발해 질문 생성, 자료 탐색, 판단, 결과물 제작으로 이어지는 AI 탐구학습 지원 서비스",
+    milestone: "9/30 과제 제출 후 등록 예정",
+    links: [
+      { type: "padlet", title: "공동 작업 패들렛", sub: "패들렛 보드", date: "수업용 패들렛 주소 연결 예정", icon: "dashboard", url: "" }
+    ],
+    sideApp: {
+      id: "app-07",
+      title: "탐구 질문 및 팩트체크 네비게이터",
+      badge: "07팀 사이드 앱",
+      tag: "탐구 네비게이터",
+      desc: "탐구 키워드를 바탕으로 핵심 질문과 자료 수집 체크리스트를 구성하는 웹 도구 (과제 접수 후 연결)",
+      mode: "9/30 제출 후 반영",
+      appUrl: "",
+      downloadName: ""
+    },
+    curriculum: null
+  },
+  {
+    id: "08",
+    name: "AI 코칭과 교육서비스",
+    subtitle: "9/30 제출 후 반영",
+    category: "코칭·서비스",
+    status: "9/30 제출 후 반영",
+    statusBadge: "bg-surface-container-high text-on-surface border border-outline-variant/40",
+    members: [
+      { name: "주은영", role: "교사 AI 수업 지원과 멘토링" },
+      { name: "홍승주", role: "부모 코칭·사업모델 기획" },
+      { name: "김영후", role: "관심 분야 확인 후 역할 확정" }
+    ],
+    target: "9/30 제출 후 반영",
+    direction: "교사 AI 수업 지원과 학부모 동반형 사고력 교육을 연결하는 코칭·서비스 모델",
+    milestone: "9/30 과제 제출 후 등록 예정",
+    links: [
+      { type: "padlet", title: "공동 작업 패들렛", sub: "패들렛 보드", date: "수업용 패들렛 주소 연결 예정", icon: "dashboard", url: "" }
+    ],
+    sideApp: {
+      id: "app-08",
+      title: "가족 AI 윤리 및 서약 인터랙션",
+      badge: "08팀 사이드 앱",
+      tag: "AI 코칭",
+      desc: "학부모와 학생이 함께 AI 사용 규칙을 테스트하고 실천 서약서를 발급하는 웹 도구 (과제 접수 후 연결)",
+      mode: "9/30 제출 후 반영",
+      appUrl: "",
+      downloadName: ""
+    },
+    curriculum: null
+  }
+];
+
+// 강사 예시 사이드 앱 데이터 (모둠 과제와 분리)
+const INSTRUCTOR_APP = {
+  id: "inst-01",
+  title: "강사 예시: 통학 데이터 탐구",
+  badge: "강사 예시 (실습자료 v1)",
+  tag: "데이터 탐구",
+  desc: "실습자료 v1 기반 통학 탐구 앱 교정본: 1회성 완료형에서 가설-차트-이상치-판단 5단계 탐구 학습 흐름으로 전환한 웹앱",
+  mode: "모바일(390px) 및 PC 대응",
+  appUrl: "apps/통학_데이터_탐구_v2.html",
+  downloadName: "강사예시_통학_데이터_탐구_v2.html"
+};
+
+const INITIAL_NOTES_DATA = [
+  {
+    id: "n-01",
+    author: "강사 안내",
+    role: "수업 공지",
+    time: "9/30",
+    tag: "notice",
+    content: "팀 과제는 제출을 확인한 뒤 이 화면에 반영합니다.",
+    likes: 0,
+    comments: 0
+  }
+];
+
+</script>
+  
+  <!-- SPA Routing & Logic Controller -->
+  <script>
+    // State management
+    let currentRoute = "#projects";
+    let activeTeamId = "01";
+    let activeFilter = "all";
+    let activeNotesTeam = "all";
+    let activeNotesTag = "all";
+    let customNotes = JSON.parse(localStorage.getItem("quietcraft_notes") || "[]");
+
+    // Initialize application
+    window.addEventListener("DOMContentLoaded", () => {
+      // Fallback if teams_data.js not loaded
+      if (typeof TEAMS_DATA === "undefined") {
+        console.error("TEAMS_DATA missing!");
+        return;
+      }
+      
+      initRouting();
+      renderProjectsDashboard();
+      renderTeamCarouselChips();
+      renderSideAppsList();
+      renderNotesFeed();
+    });
+
+    // Hash change routing
+    function initRouting() {
+      window.addEventListener("hashchange", handleHashChange);
+      if (window.location.hash) {
+        handleHashChange();
+      } else {
+        navigate("#projects");
+      }
+    }
+
+    function navigate(route) {
+      window.location.hash = route;
+    }
+
+    function handleHashChange() {
+      const hash = window.location.hash || "#projects";
+      currentRoute = hash;
+
+      const views = ["view-projects", "view-team-detail", "view-curriculum", "view-apps", "view-notes"];
+      views.forEach(v => document.getElementById(v)?.classList.add("hidden"));
+
+      const backBtn = document.getElementById("back-btn");
+      const barTitle = document.getElementById("bar-title");
+      const barTag = document.getElementById("bar-tag");
+
+      // Reset tab styling
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.classList.remove("text-primary", "font-semibold");
+        btn.classList.add("text-outline");
+        btn.querySelector(".material-symbols-outlined")?.classList.remove("fill");
+      });
+
+      if (hash.startsWith("#team/")) {
+        const teamId = hash.replace("#team/", "");
+        activeTeamId = teamId;
+        document.getElementById("view-team-detail")?.classList.remove("hidden");
+        backBtn.classList.remove("hidden");
+        barTitle.textContent = `팀 ${teamId} 상세 과제 및 피드백`;
+        barTag.textContent = "팀별 DRILL-DOWN";
+        highlightTab("tab-projects");
+        renderTeamDetail(teamId);
+      } else if (hash === "#curriculum") {
+        document.getElementById("view-curriculum")?.classList.remove("hidden");
+        backBtn.classList.add("hidden");
+        barTitle.textContent = "팀별 8차시 교육 커리큘럼";
+        barTag.textContent = "8-SESSION SYLLABUS";
+        highlightTab("tab-curriculum");
+        renderCurriculum(activeTeamId);
+      } else if (hash === "#apps") {
+        document.getElementById("view-apps")?.classList.remove("hidden");
+        backBtn.classList.add("hidden");
+        barTitle.textContent = "팀별 사이드 앱 플레이어";
+        barTag.textContent = "";
+        highlightTab("tab-apps");
+        renderAppsView(activeTeamId);
+      } else if (hash === "#notes") {
+        document.getElementById("view-notes")?.classList.remove("hidden");
+        backBtn.classList.add("hidden");
+        barTitle.textContent = "개인 메모";
+        barTag.textContent = "";
+        highlightTab("tab-notes");
+        renderNotesFeed();
+      } else {
+        // Default #projects
+        document.getElementById("view-projects")?.classList.remove("hidden");
+        backBtn.classList.add("hidden");
+        barTitle.textContent = "프로젝트 과제 지도";
+        barTag.textContent = "서울대학교 에듀테크 연계 융합교육 프로젝트";
+        highlightTab("tab-projects");
+        renderProjectsDashboard();
+      }
+
+      window.scrollTo(0, 0);
+    }
+
+    function highlightTab(tabId) {
+      const tab = document.getElementById(tabId);
+      if (tab) {
+        tab.classList.remove("text-outline");
+        tab.classList.add("text-primary", "font-semibold");
+        tab.querySelector(".material-symbols-outlined")?.classList.add("fill");
+      }
+    }
+
+    function handleBack() {
+      navigate("#projects");
+    }
+
+    // -------------------------------------------------------------
+    // RENDER: PROJECTS DASHBOARD (_1)
+    // -------------------------------------------------------------
+    function renderProjectsDashboard() {
+      const container = document.getElementById("teams-list");
+      if (!container) return;
+
+      const filtered = TEAMS_DATA.filter(t => {
+        if (activeFilter === "pending") return t.status.includes("피드백") || t.status.includes("코칭");
+        if (activeFilter === "done") return t.status.includes("완료");
+        return true;
+      });
+
+      document.getElementById("teams-count-badge").textContent = `(${filtered.length}개 팀)`;
+
+      container.innerHTML = filtered.map(t => `
+        <div onclick="navigate('#team/${t.id}')" class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm hover:border-primary/50 transition-all cursor-pointer space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-mono font-bold bg-surface-container px-2 py-0.5 rounded text-on-surface">팀 ${t.id}</span>
+              <span class="text-xs font-bold text-on-surface">${t.name}</span>
+            </div>
+            <span class="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full ${t.statusBadge}">
+              ${t.status}
+            </span>
+          </div>
+
+          <div class="text-xs text-outline flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[15px]">group</span>
+            <span>팀원: ${t.members.map(m => m.name).join(", ")}</span>
+          </div>
+
+          <p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed bg-surface-container-low p-2 rounded-lg border border-outline-variant/30">
+            "${t.direction}"
+          </p>
+
+          <div class="flex items-center justify-between pt-1 border-t border-outline-variant/30 text-xs">
+            <span class="text-[11px] font-mono text-outline">과제 현황</span>
+            <span class="text-[11px] font-mono text-primary font-medium">9/30 제출 후 반영</span>
+          </div>
+
+          <div class="flex items-center justify-between pt-1 border-t border-outline-variant/30 text-xs">
+            <span class="text-[11px] font-mono text-outline flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px]">sports_esports</span>
+              ${t.sideApp.title.substring(0, 14)}...
+            </span>
+            <span class="text-primary font-bold flex items-center gap-0.5">
+              상세 과제 보기
+              <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+            </span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function handleSearch(query) {
+      const q = query.trim().toLowerCase();
+      const container = document.getElementById("teams-list");
+      if (!q) {
+        renderProjectsDashboard();
+        return;
+      }
+
+      const filtered = TEAMS_DATA.filter(t => {
+        const matchName = t.name.toLowerCase().includes(q);
+        const matchId = t.id.includes(q);
+        const matchMember = t.members.some(m => m.name.toLowerCase().includes(q));
+        const matchDir = t.direction.toLowerCase().includes(q);
+        return matchName || matchId || matchMember || matchDir;
+      });
+
+      container.innerHTML = filtered.map(t => `
+        <div onclick="navigate('#team/${t.id}')" class="bg-surface-container-lowest p-4 rounded-xl border border-primary/50 shadow-sm cursor-pointer space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-primary font-mono">팀 ${t.id} • ${t.name}</span>
+            <span class="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full ${t.statusBadge}">${t.status}</span>
+          </div>
+          <div class="text-xs text-on-surface">학생: ${t.members.map(m => m.name).join(", ")}</div>
+          <p class="text-xs text-on-surface-variant line-clamp-1">"${t.direction}"</p>
+        </div>
+      `).join("");
+    }
+
+    function setFilter(type) {
+      activeFilter = type;
+      document.querySelectorAll(".filter-chip").forEach(btn => {
+        btn.classList.remove("bg-primary", "text-white", "border-primary");
+        btn.classList.add("bg-surface-container", "text-on-surface");
+      });
+      const activeBtn = document.getElementById(`btn-filter-${type}`);
+      if (activeBtn) {
+        activeBtn.classList.remove("bg-surface-container", "text-on-surface");
+        activeBtn.classList.add("bg-primary", "text-white", "border-primary");
+      }
+      renderProjectsDashboard();
+    }
+
+    // -------------------------------------------------------------
+    // RENDER: TEAM DRILL-DOWN DETAIL (_2)
+    // -------------------------------------------------------------
+    function renderTeamCarouselChips() {
+      const c1 = document.getElementById("team-carousel-chips");
+      const c2 = document.getElementById("curriculum-carousel-chips");
+      const c3 = document.getElementById("apps-carousel-chips");
+      const c4 = document.getElementById("notes-team-chips");
+
+      const chipsHtml = TEAMS_DATA.map(t => `
+        <button onclick="switchTeam('${t.id}')" id="chip-team-${t.id}" class="team-chip shrink-0 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${t.id === activeTeamId ? 'bg-primary text-white border-primary shadow-sm' : 'bg-surface-container-lowest text-on-surface border-outline-variant/50 hover:bg-surface-container'}">
+          <span class="font-mono font-bold">${t.id}</span> ${t.name}
+        </button>
+      `).join("");
+
+      if (c1) c1.innerHTML = chipsHtml;
+      if (c2) c2.innerHTML = chipsHtml;
+      if (c3) c3.innerHTML = chipsHtml;
+
+      if (c4) {
+        c4.innerHTML = `
+          <button onclick="setNotesTeamFilter('all')" id="nteam-all" class="nteam-chip shrink-0 px-3 py-1.5 rounded-lg border text-xs font-medium bg-primary text-white border-primary">전체 팀</button>
+        ` + TEAMS_DATA.map(t => `
+          <button onclick="setNotesTeamFilter('${t.id}')" id="nteam-${t.id}" class="nteam-chip shrink-0 px-3 py-1.5 rounded-lg border text-xs font-medium bg-surface-container-lowest text-on-surface border-outline-variant/50 hover:bg-surface-container">
+            팀 ${t.id}
+          </button>
+        `).join("");
+      }
+    }
+
+    function switchTeam(teamId) {
+      activeTeamId = teamId;
+      renderTeamCarouselChips();
+      if (currentRoute.startsWith("#team/")) {
+        navigate(`#team/${teamId}`);
+      } else if (currentRoute === "#curriculum") {
+        renderCurriculum(teamId);
+      } else if (currentRoute === "#apps") {
+        renderAppsView(teamId);
+      }
+    }
+
+    function renderTeamDetail(teamId) {
+      const t = TEAMS_DATA.find(x => x.id === teamId) || TEAMS_DATA[0];
+      const container = document.getElementById("team-detail-content");
+      if (!container) return;
+
+      container.innerHTML = `
+        <!-- Team Profile Overview Card -->
+        <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold bg-primary text-white px-2 py-0.5 rounded">TEAM ${t.id}</span>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-surface-container text-on-surface border border-outline-variant/40">과제 현황: 9/30 제출 후 반영</span>
+          </div>
+
+          <h2 class="text-lg font-bold text-on-surface">${t.name}</h2>
+
+          <div class="text-xs text-outline flex items-center gap-2 flex-wrap">
+            <span class="font-medium text-on-surface">팀원:</span>
+            ${t.members.map(m => `
+              <span class="bg-surface-container px-2 py-0.5 rounded text-on-surface text-xs">
+                ${m.name}
+              </span>
+            `).join("")}
+          </div>
+
+          <!-- Direction Box -->
+          <div class="bg-surface-container-low p-3 rounded-lg border border-outline-variant/30 space-y-1">
+            <div class="flex items-center gap-1.5 text-xs text-primary font-bold">
+              <span class="material-symbols-outlined text-[16px]">lightbulb</span>
+              <span>탐구 방향 및 목표</span>
+            </div>
+            <p class="text-xs text-on-surface-variant leading-relaxed">
+              ${t.direction}
+            </p>
+          </div>
+
+          <!-- Progress status box -->
+          <div class="space-y-1 text-xs bg-surface-container-low p-2.5 rounded-lg border border-outline-variant/30">
+            <div class="flex items-center justify-between text-[11px] text-outline">
+              <span>과제 진행 현황</span>
+              <span class="font-medium text-primary">9/30 제출 후 반영</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Role Division Card -->
+        <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-on-surface flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[18px] text-primary">diversity_3</span>
+              <span>팀원 역할 및 분담</span>
+            </h3>
+            <span class="text-[11px] text-outline">팀 메모 기준</span>
+          </div>
+
+          <div class="space-y-2">
+            ${t.members.map(m => `
+              <div class="p-2.5 rounded-lg bg-surface-container-low border border-outline-variant/30 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <strong class="text-xs text-on-surface">${m.name}</strong>
+                  <span class="text-xs text-outline">|</span>
+                  <span class="text-xs text-on-surface-variant font-medium">${m.role}</span>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+
+        <!-- External Artifacts Hub Card -->
+        <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-on-surface flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[18px] text-secondary">hub</span>
+              <span>공동 작업 패들렛</span>
+            </h3>
+            <span class="text-[11px] text-outline">패들렛 연동</span>
+          </div>
+          <p class="text-xs text-outline">과제 공유 및 실시간 동료 피드백을 위한 패들렛 보드입니다.</p>
+
+          <div class="space-y-2">
+            ${t.links.map(l => `
+              <div onclick="${l.url ? `window.open('${l.url}', '_blank')` : `showToast('패들렛 주소 확인 후 연결됩니다.')`}" class="p-2.5 rounded-lg bg-surface-container-low border border-outline-variant/30 hover:border-primary/40 transition-all cursor-pointer flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <div class="p-2 rounded bg-surface-container-high text-primary">
+                    <span class="material-symbols-outlined text-[20px]">${l.icon}</span>
+                  </div>
+                  <div>
+                    <div class="text-xs font-bold text-on-surface">${l.title}</div>
+                    <div class="text-[11px] text-outline">${l.sub} • ${l.date}</div>
+                  </div>
+                </div>
+                <span class="text-xs font-mono text-primary flex items-center gap-0.5">
+                  ${l.url ? '열기 <span class="material-symbols-outlined text-[14px]">open_in_new</span>' : '연결 대기'}
+                </span>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+
+        <!-- Teacher Quick Feedback & Observation Memo Card -->
+        <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-on-surface flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[18px] text-primary">rate_review</span>
+              <span>지도 교사 빠른 피드백 & 관찰 메모</span>
+            </h3>
+            <span class="text-[10px] text-outline">자동 저장됨</span>
+          </div>
+
+          <textarea id="feedback-input-${t.id}" rows="3" placeholder="팀 ${t.id} 학생들에게 전달할 발문 피드백이나 수업 관찰 내용을 입력하세요..." 
+                    class="w-full p-2.5 bg-surface-container-low rounded-lg border border-outline-variant/50 text-xs text-on-surface focus:outline-none focus:ring-1 focus:ring-primary focus:bg-white resize-none"></textarea>
+
+          <div class="flex items-center gap-1.5 flex-wrap text-xs">
+            <button onclick="insertFeedbackPreset('${t.id}', '💡 발문 구체화 필요: ')" class="px-2.5 py-1 rounded bg-surface-container text-on-surface hover:bg-surface-container-high text-[11px]">💡 발문 구체화</button>
+            <button onclick="insertFeedbackPreset('${t.id}', '검토할 근거: ')" class="px-2.5 py-1 rounded bg-surface-container text-on-surface hover:bg-surface-container-high text-[11px]">근거 적기</button>
+            <button onclick="insertFeedbackPreset('${t.id}', '👥 팀 면담 신청: 내일 랩실 10분 ')" class="px-2.5 py-1 rounded bg-surface-container text-on-surface hover:bg-surface-container-high text-[11px]">👥 팀 면담</button>
+            <button onclick="handleSendFeedback('${t.id}')" class="ml-auto px-4 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90 transition-all flex items-center gap-1 shadow-sm">
+              <span class="material-symbols-outlined text-[14px]">send</span> 피드백 전송
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function insertFeedbackPreset(teamId, text) {
+      const ta = document.getElementById(`feedback-input-${teamId}`);
+      if (ta) {
+        ta.value = text + ta.value;
+        ta.focus();
+      }
+    }
+
+    function handleSendFeedback(teamId) {
+      const ta = document.getElementById(`feedback-input-${teamId}`);
+      if (!ta || !ta.value.trim()) {
+        showToast("피드백 내용을 입력해주세요.");
+        return;
+      }
+      const text = ta.value.trim();
+      ta.value = "";
+      
+      // Save to customNotes
+      const newNote = {
+        id: `feedback-${Date.now()}`,
+        author: "지도교사 코멘트",
+        authorBadge: "선생님",
+        time: "방금 전",
+        teamId: teamId,
+        tag: "notice",
+        content: `[팀 ${teamId} 전용 피드백] ${text}`,
+        likes: 1,
+        comments: 0
+      };
+      customNotes.unshift(newNote);
+      localStorage.setItem("quietcraft_notes", JSON.stringify(customNotes));
+      showToast(`팀 ${teamId} 메모를 이 기기에 저장했습니다. 공유할 내용은 실제 협업 보드에 옮겨 주세요.`);
+    }
+
+    // -------------------------------------------------------------
+    // RENDER: CURRICULUM SYLLABUS (8_e_book)
+    // -------------------------------------------------------------
+    function renderCurriculum(teamId) {
+      const t = TEAMS_DATA.find(x => x.id === teamId) || TEAMS_DATA[0];
+      const container = document.getElementById("curriculum-detail-content");
+      if (!container) return;
+
+      const c = t.curriculum;
+      if (!c || !c.courseTitle) {
+        container.innerHTML = `
+          <div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant/50 shadow-sm space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono font-bold bg-primary text-white px-2 py-0.5 rounded">VOL. ${t.id}</span>
+              <span class="text-[11px] font-mono text-outline bg-surface-container px-2 py-0.5 rounded">제출물 확인 후 반영</span>
+            </div>
+            <h2 class="text-base font-bold text-on-surface">TEAM ${t.id}. ${t.name}</h2>
+            <div class="text-xs text-outline">팀원: ${t.members.map(m => m.name).join(" · ")}</div>
+            <div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/30 text-xs text-on-surface">
+              <strong>기획 방향:</strong> ${t.direction || "9/30 제출 후 반영"}
+            </div>
+            <div class="p-6 rounded-xl bg-surface-container border border-dashed border-outline-variant/80 text-center space-y-2">
+              <span class="material-symbols-outlined text-3xl text-outline">pending_actions</span>
+              <div class="text-sm font-bold text-on-surface">9/30 제출 후 반영</div>
+              <div class="text-xs text-outline max-w-sm mx-auto">
+                팀별 과제(차시별 교육과정 및 상세 지도안)는 제출을 확인한 뒤 반영합니다.
+              </div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <!-- E-Book Header Banner -->
+        <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold bg-primary text-white px-2 py-0.5 rounded">VOL. ${t.id}</span>
+            
+          </div>
+          <h2 class="text-base font-bold text-on-surface">TEAM ${t.id}. ${t.name}</h2>
+          <div class="text-xs text-outline">팀원: ${t.members.map(m => m.name).join(" · ")}</div>
+
+          </div>
+        </div>
+
+        <!-- Curriculum Framework Card -->
+        <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm space-y-3">
+          <div class="flex items-center justify-between border-b border-outline-variant/30 pb-2">
+            <h3 class="text-sm font-bold text-on-surface flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[18px] text-primary">school</span>
+              <span>커리큘럼 구조 및 교육 목표</span>
+            </h3>
+            
+          </div>
+
+          <div class="space-y-2.5 text-xs">
+            <div>
+              <span class="text-outline">교육과정 명칭:</span>
+              <div class="text-sm font-bold text-on-surface mt-0.5">${c.courseTitle}</div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-[11px] bg-surface-container-low p-2.5 rounded-lg border border-outline-variant/30">
+              <div>
+                <span class="text-outline">대상 및 편성:</span>
+                <div class="font-medium text-on-surface mt-0.5">${t.target}</div>
+              </div>
+              <div>
+                <span class="text-outline">적용 교과군:</span>
+                <div class="font-medium text-on-surface mt-0.5">${c.subject}</div>
+              </div>
+            </div>
+            <div>
+              <span class="text-outline">핵심 역량:</span>
+              <div class="font-medium text-on-surface mt-0.5">${c.competency}</div>
+            </div>
+            <div>
+              <span class="text-outline">평가 방식:</span>
+              <div class="font-medium text-on-surface mt-0.5">${c.evalMethod}</div>
+            </div>
+            <div>
+              <span class="text-outline">최종 학습 산출물:</span>
+              <div class="font-medium text-primary mt-0.5 bg-primary-fixed/40 p-2 rounded border border-primary/20">${c.deliverable}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3rd Session Detailed Lesson Plan (T/S Timeline) -->
+        <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-on-surface flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[18px] text-secondary">menu_book</span>
+              <span>대표 3차시 상세 지도계획 (Lesson Plan)</span>
+            </h3>
+            <span class="text-[11px] font-mono bg-surface-container px-2 py-0.5 rounded text-outline">블록타임 실습</span>
+          </div>
+
+          <h4 class="text-xs font-bold text-primary">${c.lesson3.title}</h4>
+          <div class="text-[11px] font-mono text-outline">수업 구조: ${c.lesson3.timeline}</div>
+
+          <div class="space-y-2.5 pt-1">
+            ${c.lesson3.steps.map(s => `
+              <div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant/30 space-y-1.5">
+                <div class="flex items-center justify-between text-[11px]">
+                  <strong class="text-primary font-bold">${s.phase}</strong>
+                  <span class="text-outline font-mono bg-surface-container px-2 py-0.5 rounded">${s.tag}</span>
+                </div>
+                <div class="text-xs text-on-surface"><strong>교사 발문(T):</strong> ${s.t}</div>
+                <div class="text-xs text-on-surface-variant"><strong>학생 활동(S):</strong> ${s.s}</div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+
+        <!-- 8-Session Synopsis List -->
+        <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm space-y-3">
+          <h3 class="text-sm font-bold text-on-surface flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px] text-primary">view_timeline</span>
+            <span>8차시 압축 시놉시스 (전체 로드맵)</span>
+          </h3>
+          <div class="divide-y divide-outline-variant/30 text-xs">
+            ${c.synopsis.map(syn => `
+              <div class="py-2.5 flex items-start gap-3">
+                <span class="font-mono font-bold text-primary shrink-0">${syn.session}</span>
+                <div>
+                  <div class="font-bold text-on-surface">${syn.title}</div>
+                  <div class="text-[11px] text-outline mt-0.5">${syn.desc}</div>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------
+    // RENDER: SIDE APPS & SIMULATOR (_4)
+    // -------------------------------------------------------------
+    function renderAppsView(teamId) {
+      const t = TEAMS_DATA.find(x => x.id === teamId) || TEAMS_DATA[0];
+      const title = document.getElementById("app-player-title");
+      const desc = document.getElementById("app-player-desc");
+      if (title) title.textContent = t.sideApp.title;
+      if (desc) desc.textContent = t.sideApp.desc;
+
+      const promptText = document.getElementById("sim-prompt-text");
+      if (promptText) {
+        promptText.textContent = `[팀 ${t.id} ${t.name} 특화 발문 시뮬레이션]\n"${t.direction}"에 부합하는 학습자 조작 및 의사결정을 실시간 테스트합니다.`;
+      }
+    }
+
+    function renderSideAppsList() {
+      const container = document.getElementById("side-apps-list");
+      if (!container) return;
+
+      const instructorCard = `
+        <div class="p-4 rounded-xl bg-primary-fixed/20 border-2 border-primary/30 space-y-2 mb-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="text-[10px] font-mono font-bold bg-primary text-white px-2 py-0.5 rounded">강사 공통 예시</span>
+              <span class="text-[11px] text-primary font-bold">실습자료 v1 연계</span>
+            </div>
+            <span class="text-[10px] font-mono text-outline">데이터 탐구</span>
+          </div>
+          <h4 class="text-xs font-bold text-on-surface">통학 데이터 탐구 웹앱 (v2 교정본)</h4>
+          <p class="text-[11px] text-on-surface-variant leading-relaxed">
+            실습자료 v1 기반 통학 탐구 앱 교정본: 1회성 완료형에서 가설-차트-이상치-판단 5단계 탐구 학습 흐름으로 전환한 웹앱입니다.
+          </p>
+          <div class="flex items-center justify-between pt-1 border-t border-outline-variant/30 text-[11px]">
+            <span class="text-outline font-mono">모바일(390px) 및 PC 대응</span>
+            <div class="flex items-center gap-1.5">
+              <button onclick="openInstructorApp()" class="px-2.5 py-1 bg-surface-container hover:bg-surface-container-high text-on-surface rounded text-xs font-medium transition-all flex items-center gap-1">
+                <span class="material-symbols-outlined text-[13px]">open_in_new</span> 새 창 열기
+              </button>
+              <button onclick="downloadInstructorApp()" class="px-2.5 py-1 bg-primary text-white hover:bg-primary/90 rounded text-xs font-medium transition-all flex items-center gap-1">
+                <span class="material-symbols-outlined text-[13px]">download</span> 내려받기
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const teamCards = TEAMS_DATA.map(t => `
+        <div class="p-3.5 rounded-xl bg-surface-container-lowest border border-outline-variant/50 hover:border-primary/50 transition-all space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="text-[10px] font-mono font-bold bg-primary-fixed text-on-primary-fixed px-1.5 py-0.5 rounded">TEAM ${t.id}</span>
+              <span class="text-[11px] text-outline font-medium">${t.name}</span>
+            </div>
+            <span class="text-[10px] font-mono text-outline">${t.sideApp.tag}</span>
+          </div>
+          <h4 class="text-xs font-bold text-on-surface">${t.sideApp.title}</h4>
+          <p class="text-[11px] text-on-surface-variant line-clamp-2 leading-relaxed">${t.sideApp.desc}</p>
+          <div class="flex items-center justify-between pt-1 border-t border-outline-variant/30 text-[11px]">
+            <span class="text-outline font-mono">${t.sideApp.mode}</span>
+            <div class="flex items-center gap-1.5">
+              <button onclick="loadSideApp('${t.id}')" class="px-2.5 py-1 bg-surface-container hover:bg-surface-container-high text-on-surface rounded text-xs font-medium transition-all flex items-center gap-1">
+                <span class="material-symbols-outlined text-[13px]">play_circle</span> 실행
+              </button>
+              <button onclick="handleDownloadSideApp('${t.id}')" class="px-2.5 py-1 ${t.sideApp.appUrl ? 'bg-primary text-white hover:bg-primary/90' : 'bg-surface-container text-outline'} rounded text-xs font-medium transition-all flex items-center gap-1">
+                <span class="material-symbols-outlined text-[13px]">download</span> ${t.sideApp.appUrl ? '내려받기' : '접수 대기'}
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join("");
+
+      container.innerHTML = instructorCard + teamCards;
+    }
+
+    function handleOpenCurrentApp(teamId) {
+      if (teamId === '01') {
+        window.open('apps/질문전후비교_v3.html', '_blank');
+        showToast('01팀 질문 전후 비교 웹앱을 새 창에서 엽니다.');
+      } else if (teamId === '06') {
+        window.open('apps/robotdog_rl/index.html', '_blank');
+        showToast('06팀 로보독 RL Playground로 이동합니다.');
+      } else {
+        showToast(`팀 ${teamId} 사이드 앱은 9/30 과제 접수 후 연결 예정입니다.`);
+      }
+    }
+
+    function handleDownloadSideApp(teamId) {
+      if (teamId === '01') {
+        const url = 'apps/질문전후비교_v3.html';
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = '01팀_질문전후비교_웹앱_v3.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast('01팀 질문 전후 비교 웹앱을 내려받습니다.');
+      } else if (teamId === '06') {
+        window.open('apps/robotdog_rl/index.html', '_blank');
+        showToast('06팀 로보독 RL Playground로 이동합니다.');
+      } else {
+        showToast(`팀 ${teamId} 사이드 앱은 9/30 과제 접수 후 제작 및 연결 예정입니다.`);
+      }
+    }
+
+    function openInstructorApp() {
+      window.open('apps/통학_데이터_탐구_v2.html', '_blank');
+      showToast('강사 예시 통학 데이터 탐구 웹앱을 새 창에서 엽니다.');
+    }
+
+    function downloadInstructorApp() {
+      const url = 'apps/통학_데이터_탐구_v2.html';
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '강사예시_통학_데이터_탐구_v2.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast('강사 예시 통학 데이터 탐구 웹앱을 내려받습니다.');
+    }
+
+    function loadSideApp(teamId) {
+      activeTeamId = teamId;
+      renderAppsView(teamId);
+      renderTeamCarouselChips();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      showToast(`팀 ${teamId} 사이드 앱이 플레이어에 로드되었습니다.`);
+    }
+
+    function toggleViewportMode(mode) {
+      const frame = document.getElementById("simulator-frame");
+      const btnP = document.getElementById("btn-mode-portrait");
+      const btnL = document.getElementById("btn-mode-landscape");
+      if (mode === "landscape") {
+        frame.style.minHeight = "200px";
+        btnL.classList.add("bg-surface-container", "text-on-surface");
+        btnP.classList.remove("bg-surface-container", "text-on-surface");
+        showToast("가로 뷰 모드 적용 (16:9 와이드)");
+      } else {
+        frame.style.minHeight = "280px";
+        btnP.classList.add("bg-surface-container", "text-on-surface");
+        btnL.classList.remove("bg-surface-container", "text-on-surface");
+        showToast("세로 뷰 모드 적용 (모바일 9:16)");
+      }
+    }
+
+    function handleSimSubmit() {
+      const input = document.getElementById("sim-input");
+      if (!input || !input.value.trim()) return;
+      const val = input.value.trim();
+      input.value = "";
+      showToast(`답변 '${val}'이(가) 시뮬레이터에 전달되었습니다.`);
+    }
+
+    // -------------------------------------------------------------
+    // RENDER: NOTES & COLLABORATIVE FEED (_5)
+    // -------------------------------------------------------------
+    function renderNotesFeed() {
+      const container = document.getElementById("notes-feed-list");
+      if (!container) return;
+
+      const allNotes = [...customNotes, ...INITIAL_NOTES_DATA];
+
+      const filtered = allNotes.filter(n => {
+        if (activeNotesTeam !== "all" && n.teamId !== activeNotesTeam && n.teamId !== "all") return false;
+        if (activeNotesTag !== "all" && n.tag !== activeNotesTag) return false;
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-xs text-outline bg-surface-container-lowest rounded-xl border border-outline-variant/30">해당 조건의 메모가 없습니다. 첫 메모를 남겨보세요!</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(n => `
+        <div class="bg-surface-container-lowest p-4 rounded-xl border ${n.isPinned ? 'border-secondary/40 bg-secondary-fixed/10' : 'border-outline-variant/50'} shadow-sm space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              ${n.isPinned ? '<span class="material-symbols-outlined text-secondary text-[18px]">push_pin</span>' : ''}
+              <span class="text-xs font-bold text-on-surface">${n.author}</span>
+              ${n.authorBadge ? `<span class="text-[10px] font-mono px-1.5 py-0.2 bg-surface-container text-outline rounded">${n.authorBadge}</span>` : ''}
+              ${n.badge ? `<span class="text-[10px] font-mono px-2 py-0.5 rounded font-bold ${n.badgeClass}">${n.badge}</span>` : ''}
+            </div>
+            <span class="text-[11px] font-mono text-outline">${n.time}</span>
+          </div>
+
+          <p class="text-xs text-on-surface leading-relaxed">${n.content}</p>
+
+          ${n.attachment ? `
+            <div onclick="showToast('첨부파일 열기 (데모)')" class="p-2 rounded bg-surface-container-low border border-outline-variant/40 flex items-center justify-between text-xs cursor-pointer hover:border-primary/40">
+              <span class="flex items-center gap-1.5 font-mono text-[11px] text-on-surface">
+                <span class="material-symbols-outlined text-[16px] text-primary">description</span>
+                ${n.attachment.name}
+              </span>
+              <span class="text-[11px] text-primary font-bold">열기</span>
+            </div>
+          ` : ''}
+
+          ${n.tags ? `
+            <div class="flex items-center gap-1 flex-wrap text-[10px] font-mono text-primary">
+              ${n.tags.map(tg => `<span class="bg-primary-fixed/40 px-1.5 py-0.5 rounded">${tg}</span>`).join("")}
+            </div>
+          ` : ''}
+
+          ${n.feedback ? `
+            <div class="p-2.5 rounded bg-surface-container-low border-l-2 border-primary space-y-1 text-xs">
+              <div class="flex items-center justify-between text-[11px]">
+                <span class="font-bold text-primary">${n.feedback.author}</span>
+                <span class="text-outline font-mono">${n.feedback.time}</span>
+              </div>
+              <p class="text-[11px] text-on-surface-variant">${n.feedback.text}</p>
+            </div>
+          ` : ''}
+
+          <div class="flex items-center justify-between pt-1 border-t border-outline-variant/20 text-[11px] text-outline">
+            <button onclick="toggleLike('${n.id}')" class="flex items-center gap-1 hover:text-secondary transition-colors">
+              <span class="material-symbols-outlined text-[15px]">favorite</span>
+              <span>공감 ${n.likes || 0}</span>
+            </button>
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-[15px]">chat_bubble</span>
+              <span>댓글 ${n.comments || 0}</span>
+            </span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function setNotesTeamFilter(teamId) {
+      activeNotesTeam = teamId;
+      document.querySelectorAll(".nteam-chip").forEach(btn => {
+        btn.classList.remove("bg-primary", "text-white", "border-primary");
+        btn.classList.add("bg-surface-container-lowest", "text-on-surface");
+      });
+      const b = document.getElementById(teamId === "all" ? "nteam-all" : `nteam-${teamId}`);
+      if (b) {
+        b.classList.remove("bg-surface-container-lowest", "text-on-surface");
+        b.classList.add("bg-primary", "text-white", "border-primary");
+      }
+      renderNotesFeed();
+    }
+
+    function setNotesTag(tag) {
+      activeNotesTag = tag;
+      document.querySelectorAll(".notes-tag-chip").forEach(btn => {
+        btn.classList.remove("bg-primary", "text-white", "border-primary");
+        btn.classList.add("bg-surface-container", "text-on-surface");
+      });
+      const b = document.getElementById(`btn-ntag-${tag}`);
+      if (b) {
+        b.classList.remove("bg-surface-container", "text-on-surface");
+        b.classList.add("bg-primary", "text-white", "border-primary");
+      }
+      renderNotesFeed();
+    }
+
+    function insertTag(tagText) {
+      const ta = document.getElementById("note-input");
+      if (ta) {
+        ta.value = tagText + ta.value;
+        ta.focus();
+      }
+    }
+
+    function handleAddNote() {
+      const ta = document.getElementById("note-input");
+      if (!ta || !ta.value.trim()) {
+        showToast("메모 내용을 입력해 주세요.");
+        return;
+      }
+      const val = ta.value.trim();
+      ta.value = "";
+
+      const newNote = {
+        id: `user-note-${Date.now()}`,
+        author: "나 (연수생)",
+        authorBadge: "현장작성",
+        time: "방금 전",
+        teamId: activeNotesTeam === "all" ? activeTeamId : activeNotesTeam,
+        tag: val.includes("#오류") ? "tech" : (val.includes("#아이디어") ? "idea" : "notice"),
+        content: val,
+        likes: 0,
+        comments: 0
+      };
+
+      customNotes.unshift(newNote);
+      localStorage.setItem("quietcraft_notes", JSON.stringify(customNotes));
+      renderNotesFeed();
+      showToast("이 기기에 저장했습니다. 함께 볼 내용은 패들렛에 올려 주세요.");
+    }
+
+    function toggleLike(noteId) {
+      const n = [...customNotes, ...INITIAL_NOTES_DATA].find(x => x.id === noteId);
+      if (n) {
+        n.likes = (n.likes || 0) + 1;
+        showToast("공감을 표시했습니다.");
+        renderNotesFeed();
+      }
+    }
+
+    // -------------------------------------------------------------
+    // UTILITIES
+    // -------------------------------------------------------------
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      const text = document.getElementById("toast-text");
+      if (!toast || !text) return;
+
+      text.textContent = msg;
+      toast.classList.remove("opacity-0", "pointer-events-none");
+      toast.classList.add("opacity-100");
+
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove("opacity-100");
+        toast.classList.add("opacity-0", "pointer-events-none");
+      }, 2500);
+    }
+  </script>
+</body>
+</html>

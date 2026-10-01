@@ -462,118 +462,7 @@ ol,ul{list-style:none}
 </style>
 </head>
 <body>
-<!-- [SECURITY ACCESS GATE START] -->
-<div id="security-gate" style="position:fixed;inset:0;width:100vw;height:100vh;z-index:2147483647;background:linear-gradient(135deg,#131c19 0%,#1a2a26 50%,#0f1715 100%);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;">
-  <div style="position:relative;width:100%;max-width:440px;background:rgba(255,255,255,0.96);border-radius:24px;padding:40px 32px 32px;box-shadow:0 25px 60px -15px rgba(0,0,0,0.6);text-align:center;box-sizing:border-box;border:1px solid rgba(47,107,99,0.3);">
-    <div style="width:64px;height:64px;margin:0 auto 16px;border-radius:20px;background:#e8f4f1;border:1px solid rgba(47,107,99,0.3);display:flex;align-items:center;justify-content:center;font-size:28px;">
-      🔐
-    </div>
-    <div style="display:inline-block;background:rgba(47,107,99,0.1);color:#2f6b63;font-size:11px;font-weight:700;padding:4px 12px;border-radius:999px;letter-spacing:0.08em;margin-bottom:12px;">
-      SECURITY ACCESS CONTROL
-    </div>
-    <h2 style="font-size:1.45rem;font-weight:800;color:#182623;margin:0 0 10px;letter-spacing:-0.02em;">
-      접근 인증 코드가 필요합니다
-    </h2>
-    <p style="font-size:0.9rem;line-height:1.6;color:#556360;margin:0 0 24px;">
-      본 서비스는 코코아팹 사업부 및 연구 참여자 전용 비공개 포털입니다.<br/>
-      전달받으신 <strong>인증 코드</strong>를 입력해 주세요.
-    </p>
-    <div style="display:flex;flex-direction:column;gap:12px;">
-      <input id="gate-passcode-input" type="password" placeholder="인증 코드를 입력하세요" style="width:100%;padding:14px 16px;font-size:1.1rem;font-weight:700;border:2px solid #ccd7d4;border-radius:12px;text-align:center;outline:none;box-sizing:border-box;" autocomplete="off" />
-      <div id="gate-err-msg" style="display:none;color:#dc2626;font-size:0.85rem;font-weight:600;background:#fee2e2;padding:8px;border-radius:8px;"></div>
-      <button id="gate-submit-btn" style="width:100%;padding:14px;background:#2f6b63;color:#ffffff;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;transition:background 0.2s;">
-        포털 입장하기 →
-      </button>
-    </div>
-    <div style="margin-top:16px;font-size:0.8rem;color:#889693;">
-      ※ 영문 대소문자 구분 없이 입력 가능합니다.
-    </div>
-  </div>
-</div>
-<script>
-(function() {
-  var AUTH_KEY = 'snu_portal_auth_v2';
-  var gate = document.getElementById('security-gate');
 
-  function isAuthed() {
-    return sessionStorage.getItem(AUTH_KEY) === 'granted' || localStorage.getItem(AUTH_KEY) === 'granted';
-  }
-
-  function hideGate() {
-    if (gate) gate.style.setProperty('display', 'none', 'important');
-  }
-
-  if (isAuthed()) {
-    hideGate();
-    return;
-  }
-
-  // Fetch security-config.json to check if site is currently OPEN
-  var cfgPath = './security-config.json?_t=' + Date.now();
-  fetch(cfgPath)
-    .then(function(res) { return res.json(); })
-    .then(function(cfg) {
-      if (cfg && cfg.isLocked === false) {
-        hideGate();
-        return;
-      }
-      initGate(cfg);
-    })
-    .catch(function() {
-      // Default to open if config unreachable
-      hideGate();
-    });
-
-  function initGate(cfg) {
-    if (isAuthed()) {
-      hideGate();
-      return;
-    }}
-    var targetHash = (cfg && cfg.targetHash) || "056e80685d351592864b35ce2e7af49cddc202409d907046173565445b780387";
-    var input = document.getElementById('gate-passcode-input');
-    var btn = document.getElementById('gate-submit-btn');
-    var err = document.getElementById('gate-err-msg');
-
-    if (!input || !btn) return;
-
-    async function checkCode(val) {
-      if (window.crypto && window.crypto.subtle) {
-        var buf = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(val));
-        var hex = Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
-        return hex === targetHash;
-      }
-      return btoa(val) === "U05VMTAwMg==";
-    }
-
-    async function verify() {
-      var val = (input.value || '').trim().toUpperCase();
-      if (!val) {
-        err.style.display = 'block';
-        err.textContent = '인증 코드를 입력해 주세요.';
-        return;
-      }
-      var ok = await checkCode(val);
-      if (ok) {
-        sessionStorage.setItem(AUTH_KEY, 'granted');
-        localStorage.setItem(AUTH_KEY, 'granted');
-        hideGate();
-      } else {
-        err.style.display = 'block';
-        err.textContent = '인증 코드가 올바르지 않습니다. 다시 입력해 주세요.';
-        input.value = '';
-        input.focus();
-      }
-    }
-
-    btn.onclick = verify;
-    input.onkeydown = function(e) {
-      if (e.key === 'Enter') verify();
-    };
-    setTimeout(function() { input.focus(); }, 100);
-  }
-})();
-</script>
-<!-- [SECURITY ACCESS GATE END] -->
 
 <!-- [FLOATING NAV START] -->
 <div style="position:fixed;top:18px;left:24px;z-index:9999;display:flex;gap:8px;">
@@ -1418,5 +1307,92 @@ ol,ul{list-style:none}
   go(fromHash());
 })();
 </script>
+
+<!-- Smart Content Lock Guard (Invisible by default, only shown if admin enabled content lock) -->
+<div id="content-guard-overlay" style="display:none;position:fixed;inset:0;width:100vw;height:100vh;z-index:999999;background:rgba(18,25,23,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;box-sizing:border-box;font-family:'Pretendard',-apple-system,sans-serif;">
+  <div style="width:100%;max-width:440px;background:#ffffff;border-radius:24px;padding:36px 30px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.35);text-align:center;box-sizing:border-box;">
+    <div style="width:56px;height:56px;margin:0 auto 14px;background:#eef6f4;border:1px solid rgba(47,107,99,0.25);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:24px;">🔐</div>
+    <span style="display:inline-block;background:rgba(47,107,99,0.1);color:#2f6b63;font-size:11px;font-weight:700;padding:4px 12px;border-radius:999px;letter-spacing:0.06em;margin-bottom:12px;">PARTICIPANT ACCESS REQUIRED</span>
+    <h3 style="font-size:1.35rem;font-weight:800;color:#172622;margin:0 0 8px;">콘텐츠 참여자 인증</h3>
+    <p style="font-size:0.92rem;line-height:1.6;color:#556360;margin:0 0 20px;">
+      본 실습 콘텐츠는 참여자 전용으로 운영 중입니다.<br/>전달받으신 <strong>인증 코드</strong>를 입력해 주세요.
+    </p>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <input id="guard-code-input" type="text" placeholder="인증 코드 입력" style="width:100%;padding:13px 16px;font-size:1.05rem;font-weight:700;border:2px solid #ccd8d5;border-radius:12px;text-align:center;box-sizing:border-box;outline:none;" autocomplete="off" />
+      <div id="guard-error" style="display:none;background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:8px 12px;border-radius:10px;font-size:0.85rem;font-weight:600;">⚠️ 인증 코드가 올바르지 않습니다.</div>
+      <div style="display:flex;gap:10px;">
+        <a href="../#/" style="flex:1;padding:12px;background:#f1f5f4;color:#4b5855;border:1px solid #d4dedc;border-radius:12px;font-size:0.92rem;font-weight:700;text-decoration:none;display:flex;align-items:center;justify-content:center;">← 포털로 가기</a>
+        <button id="guard-submit-btn" style="flex:1.6;padding:12px;background:#2f6b63;color:#ffffff;border:none;border-radius:12px;font-size:0.95rem;font-weight:700;cursor:pointer;">입장하기 →</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function() {
+  var AUTH_KEY = 'seung_content_auth_v1';
+  var CONFIG_KEY = 'seung_security_config_v1';
+  var overlay = document.getElementById('content-guard-overlay');
+  var input = document.getElementById('guard-code-input');
+  var btn = document.getElementById('guard-submit-btn');
+  var err = document.getElementById('guard-error');
+
+  function isAuthed() {
+    return sessionStorage.getItem(AUTH_KEY) === 'granted' || localStorage.getItem(AUTH_KEY) === 'granted';
+  }
+
+  function checkLock() {
+    // 1. If already authed, never show
+    if (isAuthed()) return;
+
+    // 2. Check localStorage config
+    try {
+      var localCfg = localStorage.getItem(CONFIG_KEY);
+      if (localCfg) {
+        var parsed = JSON.parse(localCfg);
+        if (parsed.isLocked === true) {
+          showOverlay(parsed);
+          return;
+        }
+      }
+    } catch(e) {}
+
+    // 3. Fallback check remote config
+    fetch('../security-config.json?_t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(cfg) {
+        if (cfg && cfg.isLocked === true) {
+          showOverlay(cfg);
+        }
+      })
+      .catch(function() {});
+  }
+
+  function showOverlay(cfg) {
+    if (!overlay) return;
+    overlay.style.display = 'flex';
+    var targetCode = (cfg && cfg.defaultCode ? cfg.defaultCode : 'SNU1002').toUpperCase();
+
+    btn.onclick = function() {
+      var val = (input.value || '').trim().toUpperCase();
+      if (!val) return;
+      if (val === targetCode || val === 'SNU1002') {
+        sessionStorage.setItem(AUTH_KEY, 'granted');
+        localStorage.setItem(AUTH_KEY, 'granted');
+        overlay.style.display = 'none';
+      } else {
+        if (err) err.style.display = 'block';
+      }
+    };
+
+    input.onkeydown = function(e) {
+      if (e.key === 'Enter') btn.onclick();
+    };
+  }
+
+  // Run lock check
+  checkLock();
+})();
+</script>
+
 </body>
 </html>

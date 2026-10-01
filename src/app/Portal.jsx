@@ -7,9 +7,11 @@ import './Portal.css';
 export default function Portal() {
   const navigate = useNavigate();
   const [isLocked, setIsLocked] = useState(securityService.isContentLocked());
-  const [modalTarget, setModalTarget] = useState(null); // { title, action }
+  const [modalTarget, setModalTarget] = useState(null);
 
   useEffect(() => {
+    document.title = "Seung AI Labs · 에듀테크 통합 포털";
+
     const handleConfigChange = () => {
       setIsLocked(securityService.isContentLocked());
     };
@@ -23,7 +25,6 @@ export default function Portal() {
   }, []);
 
   const handleCardClick = (title, targetPath, isExternal = false) => {
-    // If content is locked AND user is not authenticated: show gentle unlock modal
     if (securityService.isContentLocked() && !securityService.isContentAuthed()) {
       setModalTarget({
         title,
@@ -39,7 +40,6 @@ export default function Portal() {
       return;
     }
 
-    // Unlocked or already authenticated: proceed directly!
     if (isExternal) {
       window.location.href = targetPath;
     } else {
@@ -49,7 +49,7 @@ export default function Portal() {
 
   return (
     <div className="portal-container">
-      {/* Dynamic Content Lock Modal */}
+      {/* Content Lock Modal */}
       <ContentLockModal
         isOpen={Boolean(modalTarget)}
         contentTitle={modalTarget ? modalTarget.title : ''}
@@ -115,13 +115,13 @@ export default function Portal() {
             <div className="card-body">
               <div className="card-header-row">
                 <div className="card-badge literacy-badge">
-                  <span>MODULE 01 · 리터러시 실습</span>
+                  <span>MODULE 01 · 리터러시 실습 연구소</span>
                 </div>
                 <span className="card-status-pill">4개 인터랙티브 모듈</span>
               </div>
 
               <h2 className="card-headline">
-                금쪽이 AI 리터러시 실험실
+                초등 AI 리터러시 탐험 연구소
               </h2>
               <p className="card-summary">
                 초등 학습자의 편향 인식, 생성형 AI 환각 팩트체크, 역할 분담 및 안전성 검증을 직접 시뮬레이션하는 인터랙티브 활동 공간입니다.
@@ -162,9 +162,9 @@ export default function Portal() {
                 <button
                   type="button"
                   className="card-cta-button literacy-cta"
-                  onClick={() => handleCardClick('금쪽이 AI 리터러시 실험실', '/literacy', false)}
+                  onClick={() => handleCardClick('초등 AI 리터러시 탐험 연구소', '/literacy', false)}
                 >
-                  리터러시 실험실 입장하기 →
+                  리터러시 연구소 입장하기 →
                 </button>
               </div>
             </div>
@@ -233,7 +233,7 @@ export default function Portal() {
         </div>
       </main>
 
-      {/* Portal Footer with Security Status & Admin Link */}
+      {/* Portal Footer */}
       <footer className="portal-footer">
         <div className="portal-footer-content">
           <div className="footer-left">
@@ -245,7 +245,6 @@ export default function Portal() {
           </div>
 
           <div className="footer-right">
-            {/* Real-time Content Security Mode Indicator */}
             <div className={`footer-security-pill ${isLocked ? 'pill-locked' : 'pill-open'}`}>
               <span className="pill-dot"></span>
               <span>{isLocked ? '🔒 콘텐츠 잠금 모드 활성' : '🔓 콘텐츠 전체 공개 중'}</span>

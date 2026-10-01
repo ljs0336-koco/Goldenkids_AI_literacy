@@ -22,7 +22,7 @@ export default function AppRoutes() {
       <Route
         path="/literacy"
         element={
-          <ContentProtected contentName="금쪽이 AI 리터러시 실험실">
+          <ContentProtected contentName="초등 AI 리터러시 탐험 연구소">
             <Home />
           </ContentProtected>
         }

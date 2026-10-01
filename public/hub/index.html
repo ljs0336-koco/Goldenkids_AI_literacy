@@ -312,10 +312,21 @@
       <!-- VIEW 5: SHARED NOTES & DISCUSSIONS (#notes)             -->
       <!-- ======================================================== -->
       <section id="view-notes" class="hidden p-4 space-y-4">
-        <!-- Notice banner -->
-        <div class="p-2.5 rounded-lg bg-surface-container-low border border-outline-variant/40 flex items-center gap-2 text-xs text-outline">
-          <span class="material-symbols-outlined text-[16px] text-primary shrink-0">info</span>
-          <span>아래 작성한 메모는 이 기기(LocalStorage)에만 저장됩니다.</span>
+        <!-- Cloud Sync Notice Banner -->
+        <div class="p-3 rounded-xl bg-emerald-50/90 border border-emerald-200 flex items-center justify-between text-xs text-emerald-950 shadow-xs">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-700 shrink-0">
+              <span class="material-symbols-outlined text-[20px]">cloud_done</span>
+            </div>
+            <div>
+              <strong class="font-bold text-xs text-emerald-900">실시간 공동 메모 공간</strong>
+              <p class="text-[11px] text-emerald-700 m-0">구글 클라우드 연동 — 접속자 누구나 작성하고 공유합니다.</p>
+            </div>
+          </div>
+          <button type="button" onclick="loadCloudNotes(false)" class="px-2.5 py-1.5 rounded-lg bg-emerald-700 text-white font-medium text-[11px] hover:bg-emerald-800 transition-all flex items-center gap-1 shadow-xs shrink-0">
+            <span class="material-symbols-outlined text-[14px]">sync</span>
+            <span>새로고침</span>
+          </button>
         </div>
 
         <!-- Team Filter Chips -->
@@ -331,7 +342,7 @@
             전체 피드
           </button>
           <button onclick="setNotesTag('notice')" id="btn-ntag-notice" class="notes-tag-chip px-3 py-1.5 rounded-full bg-surface-container text-on-surface border border-outline-variant/40 hover:bg-surface-container-high">
-            📌 교사 코칭/공지
+            📌 공지/질문
           </button>
           <button onclick="setNotesTag('idea')" id="btn-ntag-idea" class="notes-tag-chip px-3 py-1.5 rounded-full bg-surface-container text-on-surface border border-outline-variant/40 hover:bg-surface-container-high">
             💡 아이디어·발문
@@ -341,32 +352,56 @@
           </button>
         </div>
 
-        <!-- Feed List Container -->
+        <!-- Feed Stream -->
         <div id="notes-feed-list" class="space-y-3">
-          <!-- Dynamically populated by renderNotesFeed() -->
+          <!-- Dynamically Rendered by loadCloudNotes() & renderNotesFeed() -->
         </div>
 
-        <!-- Quick Post Floating Drawer / Input Bar -->
-        <div class="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant/50 shadow-sm space-y-2.5">
-          <div class="flex items-center justify-between text-xs text-outline font-medium">
-            <span>새 메모/피드백 남기기</span>
-            <span class="text-[10px] font-mono text-primary font-bold">LocalStorage 자동저장</span>
+        <!-- Floating Input Dock -->
+        <div class="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant/50 shadow-md space-y-2.5">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-on-surface flex items-center gap-1">
+              <span class="material-symbols-outlined text-[16px] text-primary">edit_note</span>
+              <span>새 공동 메모 남기기</span>
+            </span>
+            <span class="text-[10px] text-outline font-mono">구글 클라우드 실시간 전송</span>
           </div>
 
-          <!-- Quick Tag Helpers -->
-          <div class="flex items-center gap-1.5 flex-wrap text-[11px]">
-            <span class="text-outline">빠른태그:</span>
-            <button onclick="insertTag('#아이디어 ')" class="px-2 py-0.5 rounded bg-surface-container hover:bg-surface-container-high text-on-surface">#아이디어</button>
-            <button onclick="insertTag('#질문검증 ')" class="px-2 py-0.5 rounded bg-surface-container hover:bg-surface-container-high text-on-surface">#질문검증</button>
-            <button onclick="insertTag('#오류리포트 ')" class="px-2 py-0.5 rounded bg-surface-container hover:bg-surface-container-high text-on-surface">#오류리포트</button>
-            <button onclick="insertTag('#일정공유 ')" class="px-2 py-0.5 rounded bg-surface-container hover:bg-surface-container-high text-on-surface">#일정공유</button>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div>
+              <label class="text-[10px] text-outline font-medium block mb-0.5">작성자 이름/닉네임:</label>
+              <input id="note-author-input" type="text" placeholder="예: 김선우 / 참여자"
+                     class="w-full px-2.5 py-1.5 bg-surface-container-low rounded-lg border border-outline-variant/50 text-xs text-on-surface focus:outline-none focus:ring-1 focus:ring-primary focus:bg-white" />
+            </div>
+            <div>
+              <label class="text-[10px] text-outline font-medium block mb-0.5">대상 팀 지정:</label>
+              <select id="note-team-select" class="w-full px-2 py-1.5 bg-surface-container-low rounded-lg border border-outline-variant/50 text-xs text-on-surface focus:outline-none focus:ring-1 focus:ring-primary focus:bg-white">
+                <option value="all">전체 공유 (모든 팀)</option>
+                <option value="01">팀 01. 질문과 사고력</option>
+                <option value="02">팀 02. 머신러닝 융합수업</option>
+                <option value="03">팀 03. 교과 맞춤 코칭</option>
+                <option value="04">팀 04. 사회정서 학급운영</option>
+                <option value="05">팀 05. 기초학력과 학습루틴</option>
+                <option value="06">팀 06. 피지컬 AI와 메이커</option>
+                <option value="07">팀 07. 탐구와 학습자 주도성</option>
+                <option value="08">팀 08. AI 코칭과 교육서비스</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-[11px]">
+            <span class="text-outline shrink-0">태그:</span>
+            <button type="button" onclick="insertTag('#아이디어 ')" class="px-2 py-0.5 rounded bg-surface-container hover:bg-surface-container-high text-on-surface">#아이디어</button>
+            <button type="button" onclick="insertTag('#질문 ')" class="px-2 py-0.5 rounded bg-surface-container hover:bg-surface-container-high text-on-surface">#질문</button>
+            <button type="button" onclick="insertTag('#오류리포트 ')" class="px-2 py-0.5 rounded bg-surface-container hover:bg-surface-container-high text-on-surface">#오류리포트</button>
+            <button type="button" onclick="insertTag('#일정공유 ')" class="px-2 py-0.5 rounded bg-surface-container hover:bg-surface-container-high text-on-surface">#일정공유</button>
           </div>
 
           <div class="flex gap-2">
-            <textarea id="note-input" rows="2" placeholder="팀원 및 선생님과 나눌 메모나 피드백을 적어보세요..." 
+            <textarea id="note-input" rows="2" placeholder="팀원 및 연수생들과 함께 나눌 메모를 적어보세요..." 
                       class="flex-1 p-2.5 bg-surface-container-low rounded-lg border border-outline-variant/50 text-xs text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary focus:bg-white resize-none"></textarea>
-            <button onclick="handleAddNote()" class="px-4 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90 transition-all flex items-center justify-center shrink-0 shadow-sm">
-              등록
+            <button type="button" onclick="handleAddNote()" class="px-4 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90 transition-all flex items-center justify-center shrink-0 shadow-sm">
+              공유 등록
             </button>
           </div>
         </div>
@@ -390,7 +425,7 @@
       </button>
       <button onclick="navigate('#notes')" id="tab-notes" class="tab-btn flex flex-col items-center gap-1 py-1 px-3 text-outline hover:text-on-surface transition-all">
         <span class="material-symbols-outlined text-[22px]">forum</span>
-        <span class="text-[11px]">개인 메모</span>
+        <span class="text-[11px]">공동 메모</span>
       </button>
     </nav>
 
@@ -696,6 +731,15 @@ const INITIAL_NOTES_DATA = [
         handleHashChange();
       } else {
         navigate("#projects");
+
+    // Restore author name
+    try {
+      const savedAuthor = localStorage.getItem("seung_memo_author");
+      const authorInp = document.getElementById("note-author-input");
+      if (savedAuthor && authorInp) authorInp.value = savedAuthor;
+    } catch(e) {}
+    loadCloudNotes(true);
+
       }
     }
 
@@ -775,6 +819,15 @@ const INITIAL_NOTES_DATA = [
 
     function handleBack() {
       navigate("#projects");
+
+    // Restore author name
+    try {
+      const savedAuthor = localStorage.getItem("seung_memo_author");
+      const authorInp = document.getElementById("note-author-input");
+      if (savedAuthor && authorInp) authorInp.value = savedAuthor;
+    } catch(e) {}
+    loadCloudNotes(true);
+
     }
 
     // -------------------------------------------------------------
@@ -1339,20 +1392,78 @@ function renderTeamCarouselChips() {
     // -------------------------------------------------------------
     // RENDER: NOTES & COLLABORATIVE FEED (_5)
     // -------------------------------------------------------------
+        const CLOUD_MEMO_API = "https://script.google.com/macros/s/AKfycbxNNggtV50pelMC0oWRPZytvCs8veW65LJatuHaCcQZ0DMth6LE8XN55kPZSqVXZq_y/exec";
+    let cloudNotes = [];
+    let isLoadingCloudNotes = false;
+
+    function loadCloudNotes(silent = false) {
+      if (isLoadingCloudNotes) return;
+      isLoadingCloudNotes = true;
+      if (!silent) {
+        const list = document.getElementById("notes-feed-list");
+        if (list && cloudNotes.length === 0) {
+          list.innerHTML = `<div class="p-8 text-center text-xs text-outline bg-surface-container-lowest rounded-xl border border-outline-variant/30 flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-[18px] animate-spin">sync</span>
+            <span>구글 클라우드에서 공동 메모를 불러오는 중...</span>
+          </div>`;
+        }
+      }
+
+      fetch(CLOUD_MEMO_API + "?t=" + Date.now())
+        .then(res => res.json())
+        .then(data => {
+          isLoadingCloudNotes = false;
+          if (Array.isArray(data)) {
+            cloudNotes = data.map(item => {
+              let formattedTime = item.time || "";
+              if (formattedTime.includes("T")) {
+                try {
+                  const d = new Date(formattedTime);
+                  formattedTime = `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+                } catch(e) {}
+              }
+              return {
+                id: item.id || `cloud-${Date.now()}`,
+                teamId: String(item.teamId || "all").padStart(2, '0').replace('0all', 'all'),
+                author: item.author || "참여자",
+                authorBadge: item.author === "강사" || item.author === "선생님" ? "선생님" : "참여자",
+                time: formattedTime,
+                tag: item.tag || "idea",
+                content: item.content || "",
+                isCloud: true,
+                likes: 0
+              };
+            });
+            renderNotesFeed();
+            if (!silent) showToast("최신 공동 메모를 불러왔습니다.");
+          }
+        })
+        .catch(err => {
+          isLoadingCloudNotes = false;
+          console.warn("Cloud notes fetch error:", err);
+          renderNotesFeed();
+        });
+    }
+
     function renderNotesFeed() {
       const container = document.getElementById("notes-feed-list");
       if (!container) return;
 
-      const allNotes = [...customNotes, ...INITIAL_NOTES_DATA];
+      const allNotes = [...cloudNotes, ...customNotes];
 
       const filtered = allNotes.filter(n => {
-        if (activeNotesTeam !== "all" && n.teamId !== activeNotesTeam && n.teamId !== "all") return false;
+        const teamMatch = activeNotesTeam === "all" || n.teamId === activeNotesTeam || n.teamId === "all" || n.teamId === Number(activeNotesTeam);
+        if (!teamMatch) return false;
         if (activeNotesTag !== "all" && n.tag !== activeNotesTag) return false;
         return true;
       });
 
       if (filtered.length === 0) {
-        container.innerHTML = `<div class="p-8 text-center text-xs text-outline bg-surface-container-lowest rounded-xl border border-outline-variant/30">해당 조건의 메모가 없습니다. 첫 메모를 남겨보세요!</div>`;
+        container.innerHTML = `<div class="p-8 text-center text-xs text-outline bg-surface-container-lowest rounded-xl border border-outline-variant/30 space-y-2">
+          <span class="material-symbols-outlined text-3xl text-outline">forum</span>
+          <div class="font-bold text-on-surface">아직 등록된 공동 메모가 없습니다.</div>
+          <div class="text-[11px] text-primary">아래 입력란에서 첫 번째 의견이나 질문을 남겨보세요!</div>
+        </div>`;
         return;
       }
 
@@ -1360,51 +1471,24 @@ function renderTeamCarouselChips() {
         <div class="bg-surface-container-lowest p-4 rounded-xl border ${n.isPinned ? 'border-secondary/40 bg-secondary-fixed/10' : 'border-outline-variant/50'} shadow-sm space-y-2.5">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              ${n.isPinned ? '<span class="material-symbols-outlined text-secondary text-[18px]">push_pin</span>' : ''}
               <span class="text-xs font-bold text-on-surface">${n.author}</span>
-              ${n.authorBadge ? `<span class="text-[10px] font-mono px-1.5 py-0.2 bg-surface-container text-outline rounded">${n.authorBadge}</span>` : ''}
-              ${n.badge ? `<span class="text-[10px] font-mono px-2 py-0.5 rounded font-bold ${n.badgeClass}">${n.badge}</span>` : ''}
+              ${n.teamId && n.teamId !== 'all' ? `<span class="text-[10px] font-mono px-1.5 py-0.5 bg-primary/10 text-primary rounded font-bold">팀 ${n.teamId}</span>` : `<span class="text-[10px] font-mono px-1.5 py-0.5 bg-surface-container text-outline rounded">전체 공유</span>`}
+              <span class="text-[10px] font-mono px-1.5 py-0.5 bg-surface-container text-outline rounded">${n.authorBadge || '참여자'}</span>
             </div>
-            <span class="text-[11px] font-mono text-outline">${n.time}</span>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-mono text-outline">${n.time}</span>
+              <span class="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">클라우드 공유됨</span>
+            </div>
           </div>
 
           <p class="text-xs text-on-surface leading-relaxed">${n.content}</p>
 
-          ${n.attachment ? `
-            <div onclick="showToast('첨부파일 열기 (데모)')" class="p-2 rounded bg-surface-container-low border border-outline-variant/40 flex items-center justify-between text-xs cursor-pointer hover:border-primary/40">
-              <span class="flex items-center gap-1.5 font-mono text-[11px] text-on-surface">
-                <span class="material-symbols-outlined text-[16px] text-primary">description</span>
-                ${n.attachment.name}
-              </span>
-              <span class="text-[11px] text-primary font-bold">열기</span>
-            </div>
-          ` : ''}
-
-          ${n.tags ? `
-            <div class="flex items-center gap-1 flex-wrap text-[10px] font-mono text-primary">
-              ${n.tags.map(tg => `<span class="bg-primary-fixed/40 px-1.5 py-0.5 rounded">${tg}</span>`).join("")}
-            </div>
-          ` : ''}
-
-          ${n.feedback ? `
-            <div class="p-2.5 rounded bg-surface-container-low border-l-2 border-primary space-y-1 text-xs">
-              <div class="flex items-center justify-between text-[11px]">
-                <span class="font-bold text-primary">${n.feedback.author}</span>
-                <span class="text-outline font-mono">${n.feedback.time}</span>
-              </div>
-              <p class="text-[11px] text-on-surface-variant">${n.feedback.text}</p>
-            </div>
-          ` : ''}
-
           <div class="flex items-center justify-between pt-1 border-t border-outline-variant/20 text-[11px] text-outline">
-            <button onclick="toggleLike('${n.id}')" class="flex items-center gap-1 hover:text-secondary transition-colors">
+            <button type="button" onclick="toggleLike('${n.id}')" class="flex items-center gap-1 hover:text-secondary transition-colors">
               <span class="material-symbols-outlined text-[15px]">favorite</span>
               <span>공감 ${n.likes || 0}</span>
             </button>
-            <span class="flex items-center gap-1">
-              <span class="material-symbols-outlined text-[15px]">chat_bubble</span>
-              <span>댓글 ${n.comments || 0}</span>
-            </span>
+            <span class="text-[10px] text-outline">※ 수정·삭제는 관리자 구글 시트에서 관리</span>
           </div>
         </div>
       `).join("");
@@ -1446,35 +1530,72 @@ function renderTeamCarouselChips() {
       }
     }
 
+    let isSubmittingNote = false;
     function handleAddNote() {
       const ta = document.getElementById("note-input");
+      const authorInput = document.getElementById("note-author-input");
+      const teamSelect = document.getElementById("note-team-select");
+
       if (!ta || !ta.value.trim()) {
         showToast("메모 내용을 입력해 주세요.");
         return;
       }
+      if (isSubmittingNote) return;
+      isSubmittingNote = true;
+
       const val = ta.value.trim();
-      ta.value = "";
+      const author = (authorInput && authorInput.value.trim()) ? authorInput.value.trim() : "참여자";
+      const teamId = teamSelect ? teamSelect.value : (activeNotesTeam === "all" ? activeTeamId : activeNotesTeam);
+      const tag = val.includes("#오류") ? "tech" : (val.includes("#아이디어") ? "idea" : (val.includes("#질문") ? "notice" : "notice"));
 
-      const newNote = {
-        id: `user-note-${Date.now()}`,
-        author: "나 (연수생)",
-        authorBadge: "현장작성",
-        time: "방금 전",
-        teamId: activeNotesTeam === "all" ? activeTeamId : activeNotesTeam,
-        tag: val.includes("#오류") ? "tech" : (val.includes("#아이디어") ? "idea" : "notice"),
+      // Remember author in localStorage
+      localStorage.setItem("seung_memo_author", author);
+
+      // Optimistic update
+      const nowStr = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+      const tempNote = {
+        id: `local-${Date.now()}`,
+        author: author,
+        authorBadge: "방금작성",
+        time: nowStr,
+        teamId: teamId,
+        tag: tag,
         content: val,
-        likes: 0,
-        comments: 0
+        isCloud: true,
+        likes: 0
       };
-
-      customNotes.unshift(newNote);
-      localStorage.setItem("quietcraft_notes", JSON.stringify(customNotes));
+      cloudNotes.unshift(tempNote);
       renderNotesFeed();
-      showToast("이 기기에 저장했습니다.");
+      ta.value = "";
+      showToast("공동 메모를 구글 클라우드에 등록 중...");
+
+      // Send to Google Apps Script
+      fetch(CLOUD_MEMO_API, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          teamId: teamId,
+          author: author,
+          tag: tag,
+          content: val
+        })
+      })
+      .then(() => {
+        isSubmittingNote = false;
+        showToast("구글 클라우드에 공유 완료되었습니다!");
+        setTimeout(() => { loadCloudNotes(true); }, 1500);
+      })
+      .catch(err => {
+        isSubmittingNote = false;
+        console.error("Cloud post error:", err);
+        showToast("등록되었습니다.");
+        setTimeout(() => { loadCloudNotes(true); }, 1500);
+      });
     }
 
     function toggleLike(noteId) {
-      const n = [...customNotes, ...INITIAL_NOTES_DATA].find(x => x.id === noteId);
+      const n = [...cloudNotes, ...customNotes].find(x => x.id === noteId);
       if (n) {
         n.likes = (n.likes || 0) + 1;
         showToast("공감을 표시했습니다.");

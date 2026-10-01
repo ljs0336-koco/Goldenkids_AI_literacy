@@ -62,10 +62,6 @@ export default function Portal() {
         <div className="portal-hero-layout">
           {/* Left Column: Title & Intro */}
           <div className="portal-hero-text">
-            <div className="portal-kicker-badge">
-              <span className="portal-kicker-dot"></span>
-              <span>SNU 에듀테크 연계 연수특강 통합 플랫폼</span>
-            </div>
             <h1 className="portal-main-title">
               Seung AI Labs
             </h1>

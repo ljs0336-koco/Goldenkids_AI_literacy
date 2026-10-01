@@ -3,10 +3,10 @@
 const AUTH_KEY = 'seung_content_auth_v1';
 const CONFIG_KEY = 'seung_security_config_v1';
 
-// Default config: OPEN by default!
+// Default config: Locked by default for student participant control!
 export const DEFAULT_CONFIG = {
-  isLocked: false,
-  mode: 'public',
+  isLocked: true,
+  mode: 'restricted',
   defaultCode: 'SNU1002',
   targetHash: '056e80685d351592864b35ce2e7af49cddc202409d907046173565445b780387',
   updatedAt: new Date().toISOString()
@@ -39,14 +39,18 @@ export const securityService = {
 
   async syncRemoteConfig() {
     try {
-      const res = await fetch('./security-config.json?_t=' + Date.now());
+      const res = await fetch('./security-config.json?_t=' + Date.now(), { cache: 'no-store' });
       if (res.ok) {
         const remote = await res.json();
         const currentLocal = localStorage.getItem(CONFIG_KEY);
-        if (!currentLocal && remote) {
+        if (!currentLocal) {
           localStorage.setItem(CONFIG_KEY, JSON.stringify(remote));
+          return remote;
+        } else {
+          // If local exists, return merged config
+          const localObj = JSON.parse(currentLocal);
+          return { ...DEFAULT_CONFIG, ...remote, ...localObj };
         }
-        return remote;
       }
     } catch (e) {
       // ignore
@@ -91,11 +95,14 @@ export const securityService = {
   grantContentAuth() {
     sessionStorage.setItem(AUTH_KEY, 'granted');
     localStorage.setItem(AUTH_KEY, 'granted');
+    sessionStorage.setItem('seung_auth_time', Date.now().toString());
   },
 
   revokeContentAuth() {
     sessionStorage.removeItem(AUTH_KEY);
     localStorage.removeItem(AUTH_KEY);
+    sessionStorage.removeItem('seung_auth_time');
+    window.dispatchEvent(new Event('seung_content_auth_revoked'));
   },
 
   async setContentLockMode(locked, customCode) {
@@ -106,13 +113,20 @@ export const securityService = {
     const updated = {
       ...current,
       isLocked: Boolean(locked),
-      mode: locked ? 'private' : 'public',
+      mode: locked ? 'restricted' : 'public',
       defaultCode: newCode,
       targetHash: newHash,
       updatedAt: new Date().toISOString()
     };
 
     localStorage.setItem(CONFIG_KEY, JSON.stringify(updated));
+
+    // CRITICAL: When locked mode is turned ON, immediately wipe visitor authorization
+    // so that lock triggers instantly on the current browser!
+    if (locked) {
+      this.revokeContentAuth();
+    }
+
     window.dispatchEvent(new Event('seung_security_config_changed'));
     return updated;
   }

@@ -25,7 +25,11 @@ export default function Portal() {
   }, []);
 
   const handleCardClick = (title, targetPath, isExternal = false) => {
-    if (securityService.isContentLocked() && !securityService.isContentAuthed()) {
+    // 에듀테크 융합교육 허브는 공개 여부와 상관없이 무조건 코드 입력 필수
+    const isEdutechHub = targetPath.includes('hub/index.html') || title.includes('에듀테크 융합교육 허브');
+    const requiresPasscode = isEdutechHub || securityService.isContentLocked();
+
+    if (requiresPasscode && !securityService.isContentAuthed()) {
       setModalTarget({
         title,
         onSuccess: () => {
@@ -172,7 +176,9 @@ export default function Portal() {
                 <div className="card-badge edutech-badge">
                   <span>MODULE 02 · 융합 교육 허브</span>
                 </div>
-                <span className="card-status-pill">피지컬·강화학습·데이터</span>
+                <span className="card-status-pill" style={{ color: '#047857', borderColor: '#a7f3d0', background: '#ecfdf5', fontWeight: 600 }}>
+                  🔒 전용 참여코드 필수
+                </span>
               </div>
 
               <h2 className="card-headline">

@@ -209,10 +209,18 @@
       <!-- ======================================================== -->
       <section id="view-team-detail" class="hidden p-4 space-y-4">
         <!-- Team Selector Carousel -->
-        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-          <div id="team-carousel-chips" class="flex gap-2">
-            <!-- Dynamically populated chips (01~08) -->
+        <div class="flex items-center gap-1.5 py-1">
+          <button type="button" onclick="scrollCarousel('team-carousel-chips', -240)" class="shrink-0 w-8 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container border border-outline-variant/40 flex items-center justify-center text-outline hover:text-on-surface shadow-xs transition-all" aria-label="이전 팀">
+            <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+          </button>
+          <div class="flex-1 overflow-x-auto no-scrollbar py-0.5 select-none carousel-drag-area" style="cursor: grab;">
+            <div id="team-carousel-chips" class="flex gap-2">
+              <!-- Dynamically populated chips (01~08) -->
+            </div>
           </div>
+          <button type="button" onclick="scrollCarousel('team-carousel-chips', 240)" class="shrink-0 w-8 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container border border-outline-variant/40 flex items-center justify-center text-outline hover:text-on-surface shadow-xs transition-all" aria-label="다음 팀">
+            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+          </button>
         </div>
 
         <div id="team-detail-content" class="space-y-4">
@@ -225,10 +233,18 @@
       <!-- ======================================================== -->
       <section id="view-curriculum" class="hidden p-4 space-y-4">
         <!-- Team Selector for Curriculum -->
-        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-          <div id="curriculum-carousel-chips" class="flex gap-2">
-            <!-- Chips for curriculum -->
+        <div class="flex items-center gap-1.5 py-1">
+          <button type="button" onclick="scrollCarousel('curriculum-carousel-chips', -240)" class="shrink-0 w-8 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container border border-outline-variant/40 flex items-center justify-center text-outline hover:text-on-surface shadow-xs transition-all" aria-label="이전 팀">
+            <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+          </button>
+          <div class="flex-1 overflow-x-auto no-scrollbar py-0.5 select-none carousel-drag-area" style="cursor: grab;">
+            <div id="curriculum-carousel-chips" class="flex gap-2">
+              <!-- Chips for curriculum -->
+            </div>
           </div>
+          <button type="button" onclick="scrollCarousel('curriculum-carousel-chips', 240)" class="shrink-0 w-8 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container border border-outline-variant/40 flex items-center justify-center text-outline hover:text-on-surface shadow-xs transition-all" aria-label="다음 팀">
+            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+          </button>
         </div>
 
         <div id="curriculum-detail-content" class="space-y-4">
@@ -241,10 +257,18 @@
       <!-- ======================================================== -->
       <section id="view-apps" class="hidden p-4 space-y-4">
         <!-- Team Selector for Apps -->
-        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-          <div id="apps-carousel-chips" class="flex gap-2">
-            <!-- Chips for apps -->
+        <div class="flex items-center gap-1.5 py-1">
+          <button type="button" onclick="scrollCarousel('apps-carousel-chips', -240)" class="shrink-0 w-8 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container border border-outline-variant/40 flex items-center justify-center text-outline hover:text-on-surface shadow-xs transition-all" aria-label="이전 팀">
+            <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+          </button>
+          <div class="flex-1 overflow-x-auto no-scrollbar py-0.5 select-none carousel-drag-area" style="cursor: grab;">
+            <div id="apps-carousel-chips" class="flex gap-2">
+              <!-- Chips for apps -->
+            </div>
           </div>
+          <button type="button" onclick="scrollCarousel('apps-carousel-chips', 240)" class="shrink-0 w-8 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container border border-outline-variant/40 flex items-center justify-center text-outline hover:text-on-surface shadow-xs transition-all" aria-label="다음 팀">
+            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+          </button>
         </div>
 
         <!-- Active Simulator Slot Card -->
@@ -842,7 +866,87 @@ const INITIAL_NOTES_DATA = [
     // -------------------------------------------------------------
     // RENDER: TEAM DRILL-DOWN DETAIL (_2)
     // -------------------------------------------------------------
-    function renderTeamCarouselChips() {
+    
+    // -------------------------------------------------------------
+    // CAROUSEL INTERACTION CONTROLLER (Mouse Drag & Wheel & Arrows)
+    // -------------------------------------------------------------
+    function scrollCarousel(containerId, offset) {
+      const container = document.getElementById(containerId);
+      const wrap = container ? container.parentElement : null;
+      if (wrap) {
+        wrap.scrollBy({ left: offset, behavior: 'smooth' });
+      }
+    }
+
+    function scrollActiveChipIntoView(teamId) {
+      setTimeout(() => {
+        document.querySelectorAll(`.team-chip[id$="-${teamId}"]`).forEach(chip => {
+          chip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        });
+      }, 60);
+    }
+
+    function initDraggableCarousels() {
+      const wraps = document.querySelectorAll(".carousel-drag-area, #notes-team-chips");
+      wraps.forEach(el => {
+        if (!el || el._dragInited) return;
+        el._dragInited = true;
+
+        let isDown = false;
+        let startX = 0;
+        let scrollLeft = 0;
+        let hasDragged = false;
+
+        el.addEventListener("mousedown", (e) => {
+          isDown = true;
+          hasDragged = false;
+          el.style.cursor = "grabbing";
+          startX = e.pageX - el.offsetLeft;
+          scrollLeft = el.scrollLeft;
+        });
+
+        window.addEventListener("mouseup", () => {
+          if (!isDown) return;
+          isDown = false;
+          el.style.cursor = "grab";
+        });
+
+        el.addEventListener("mouseleave", () => {
+          if (!isDown) return;
+          isDown = false;
+          el.style.cursor = "grab";
+        });
+
+        el.addEventListener("mousemove", (e) => {
+          if (!isDown) return;
+          e.preventDefault();
+          const x = e.pageX - el.offsetLeft;
+          const walk = (x - startX) * 1.6;
+          if (Math.abs(walk) > 4) {
+            hasDragged = true;
+          }
+          el.scrollLeft = scrollLeft - walk;
+        });
+
+        // Prevent click triggered on chip if mouse was dragging
+        el.addEventListener("click", (e) => {
+          if (hasDragged) {
+            e.stopPropagation();
+            e.preventDefault();
+          }
+        }, true);
+
+        // Enable horizontal mouse wheel scrolling
+        el.addEventListener("wheel", (e) => {
+          if (e.deltaY !== 0) {
+            e.preventDefault();
+            el.scrollLeft += e.deltaY;
+          }
+        }, { passive: false });
+      });
+    }
+
+function renderTeamCarouselChips() {
       const c1 = document.getElementById("team-carousel-chips");
       const c2 = document.getElementById("curriculum-carousel-chips");
       const c3 = document.getElementById("apps-carousel-chips");
@@ -857,6 +961,7 @@ const INITIAL_NOTES_DATA = [
       if (c1) c1.innerHTML = chipsHtml;
       if (c2) c2.innerHTML = chipsHtml;
       if (c3) c3.innerHTML = chipsHtml;
+      initDraggableCarousels();
 
       if (c4) {
         c4.innerHTML = `
@@ -872,6 +977,7 @@ const INITIAL_NOTES_DATA = [
     function switchTeam(teamId) {
       activeTeamId = teamId;
       renderTeamCarouselChips();
+      scrollActiveChipIntoView(teamId);
       if (currentRoute.startsWith("#team/")) {
         navigate(`#team/${teamId}`);
       } else if (currentRoute === "#curriculum") {
@@ -1431,17 +1537,10 @@ const INITIAL_NOTES_DATA = [
 
     function checkLock() {
       if (isAuthed()) return;
-      try {
-        var localCfg = localStorage.getItem(CONFIG_KEY);
-        if (localCfg) {
-          var parsed = JSON.parse(localCfg);
-          if (parsed && parsed.isLocked === false) return;
-        }
-      } catch (e) {}
+      // 에듀테크 허브는 전체 공개 여부와 상관없이 무조건 코드 입력 필수!
       fetch('../security-config.json?t=' + Date.now())
         .then(function(res) { return res.json(); })
         .then(function(data) {
-          if (data && data.isLocked === false) return;
           showOverlay(data);
         })
         .catch(function() {

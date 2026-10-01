@@ -161,19 +161,6 @@
                  class="w-full pl-10 pr-4 py-2.5 bg-surface-container-lowest rounded-xl border border-outline-variant/60 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all text-on-surface placeholder:text-outline"/>
         </div>
 
-        <!-- Filter Chips -->
-        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 text-xs font-medium">
-          <button onclick="setFilter('all')" id="btn-filter-all" class="filter-chip px-3 py-1.5 rounded-full bg-primary text-white border border-primary transition-all shadow-sm">
-            전체 (8)
-          </button>
-          <button onclick="setFilter('pending')" id="btn-filter-pending" class="filter-chip px-3 py-1.5 rounded-full bg-surface-container text-on-surface border border-outline-variant/40 hover:bg-surface-container-high transition-all">
-            • 접수 대기
-          </button>
-          <button onclick="setFilter('done')" id="btn-filter-done" class="filter-chip px-3 py-1.5 rounded-full bg-surface-container text-on-surface border border-outline-variant/40 hover:bg-surface-container-high transition-all">
-            • 확인 후 반영
-          </button>
-        </div>
-
         <!-- Class Metric Card -->
         <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm space-y-3">
           <div class="flex items-center justify-between">
@@ -366,8 +353,8 @@
     <!-- Bottom Navigation Bar (Fixed 4 Tabs) -->
     <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-2xl bg-surface/95 backdrop-blur-md border-t border-outline-variant/40 px-4 py-2 flex items-center justify-around z-50 transition-all">
       <button onclick="navigate('#projects')" id="tab-projects" class="tab-btn flex flex-col items-center gap-1 py-1 px-3 text-primary font-semibold transition-all">
-        <span class="material-symbols-outlined text-[22px] fill">assignment</span>
-        <span class="text-[11px]">과제/프로젝트</span>
+        <span class="material-symbols-outlined text-[22px] fill">groups</span>
+        <span class="text-[11px]">팀 정보</span>
       </button>
       <button onclick="navigate('#curriculum')" id="tab-curriculum" class="tab-btn flex flex-col items-center gap-1 py-1 px-3 text-outline hover:text-on-surface transition-all">
         <span class="material-symbols-outlined text-[22px]">menu_book</span>
@@ -773,15 +760,9 @@ const INITIAL_NOTES_DATA = [
       const container = document.getElementById("teams-list");
       if (!container) return;
 
-      const filtered = TEAMS_DATA.filter(t => {
-        if (activeFilter === "pending") return t.status.includes("피드백") || t.status.includes("코칭");
-        if (activeFilter === "done") return t.status.includes("완료");
-        return true;
-      });
+      document.getElementById("teams-count-badge").textContent = `(${TEAMS_DATA.length}개 팀)`;
 
-      document.getElementById("teams-count-badge").textContent = `(${filtered.length}개 팀)`;
-
-      container.innerHTML = filtered.map(t => `
+      container.innerHTML = TEAMS_DATA.map(t => `
         <div onclick="navigate('#team/${t.id}')" class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm hover:border-primary/50 transition-all cursor-pointer space-y-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">

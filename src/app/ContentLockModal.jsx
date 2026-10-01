@@ -69,7 +69,7 @@ export default function ContentLockModal({ isOpen, contentTitle, onClose, onSucc
               setPasscode(e.target.value);
               if (errorMsg) setErrorMsg('');
             }}
-            placeholder="인증 코드 입력 (예: SNU1002)"
+            placeholder="인증 코드 입력 (예: ABC1234)"
             autoFocus
             className="content-modal-input"
             autoComplete="off"

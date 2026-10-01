@@ -310,7 +310,7 @@ export default function AdminPage() {
                 type="text"
                 value={newCodeInput}
                 onChange={(e) => setNewCodeInput(e.target.value.toUpperCase())}
-                placeholder="예: SNU1002"
+                placeholder="예: ABC1234"
                 className="admin-code-input"
               />
               <button type="submit" className="admin-code-save-btn">

@@ -72,7 +72,7 @@ export default function Portal() {
           </div>
 
           {/* Right Column: Serialized Magazine Tab Clip */}
-          <aside className="portal-magazine-clip-wrap" aria-label="연재 매거진 탭">
+          <aside className="portal-magazine-clip-wrap" aria-label="매거진 탭">
             <div className="magazine-brass-clip" aria-hidden="true"></div>
             <div
               className="magazine-clip-card"
@@ -84,15 +84,13 @@ export default function Portal() {
               }}
             >
               <div className="magazine-clip-header">
-                <span className="magazine-badge-pill">📎 연재 매거진 · VOL. 01</span>
-                <span className="magazine-period-tag">MONTHLY</span>
+                <span className="magazine-badge-pill">📎 매거진 Vol.01</span>
               </div>
               <h2 className="magazine-clip-title">The Agentic Shift</h2>
               <p className="magazine-clip-desc">
                 도구에서 협력자로 — 에이전틱 AI 전환기의 조직과 교육 현장 설계 인사이트
               </p>
               <div className="magazine-clip-footer">
-                <span className="magazine-update-hint">※ 정기 연재 호 발행 중</span>
                 <span className="magazine-read-btn">
                   매거진 읽기 →
                 </span>

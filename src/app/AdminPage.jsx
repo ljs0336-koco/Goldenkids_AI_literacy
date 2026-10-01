@@ -449,7 +449,7 @@ export default function AdminPage() {
               <div className="admin-service-info">
                 <span className="service-emoji">📎</span>
                 <div>
-                  <strong>연재 매거진 덱 (Vol. 01)</strong>
+                  <strong>매거진 덱 (Vol. 01)</strong>
                   <span>The Agentic Shift · 코코아팹 사업부 에디토리얼 프레젠테이션</span>
                 </div>
               </div>

@@ -459,6 +459,44 @@ export default function AdminPage() {
             </div>
           </div>
         </section>
+        {/* Card 4: Experimental Lab Apps (Hidden from Students) */}
+        <section className="admin-card">
+          <div className="admin-card-head">
+            <span className="admin-card-icon">🧪</span>
+            <div>
+              <h3>비공개 실험실 앱 (Experimental Labs)</h3>
+              <p>수강생 화면에서 은닉된 연구·개발 단계의 전용 앱 런처</p>
+            </div>
+          </div>
+
+          <div className="admin-service-list">
+            <div className="admin-service-item">
+              <div className="admin-service-info">
+                <span className="service-emoji">⚔️</span>
+                <div>
+                  <strong>삼국 난세록: 영웅지 (Three Kingdoms Roguelike)</strong>
+                  <span>2D 픽셀아트 턴제 전술 로그라이크 (연의 호걸 기백 × 정사 보급/사기 군략)</span>
+                </div>
+              </div>
+              <a href="./hub/apps/three_kingdoms/index.html" target="_blank" rel="noreferrer" className="admin-service-btn">
+                실행 ↗
+              </a>
+            </div>
+
+            <div className="admin-service-item">
+              <div className="admin-service-info">
+                <span className="service-emoji">🎨</span>
+                <div>
+                  <strong>Logo Studio (AI 브랜드 디자인 스튜디오)</strong>
+                  <span>브랜드 브리프 분석, SVG 벡터 로고 에디터 및 커스텀 내보내기 도구</span>
+                </div>
+              </div>
+              <a href="./hub/apps/logo_studio/index.html" target="_blank" rel="noreferrer" className="admin-service-btn">
+                실행 ↗
+              </a>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   );

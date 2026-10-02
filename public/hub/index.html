@@ -2173,29 +2173,58 @@ function renderTeamCarouselChips() {
           </p>
         </div>
 
-        <!-- App 1: Three Kingdoms Roguelike -->
+        <!-- App 1: Malang Run -->
         <div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/40 space-y-3 hover:border-primary/50 transition-all">
           <div class="flex items-start justify-between gap-2">
             <div>
               <div class="flex items-center gap-1.5 mb-1">
-                <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-red-100 text-red-800 border border-red-200">2D Pixel Roguelike</span>
-                <span class="text-[10px] font-mono text-outline">Vite · Canvas 2D</span>
+                <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">2D Canvas Runner</span>
+                <span class="text-[10px] font-mono text-outline">모루 제작 · 단일 HTML</span>
               </div>
               <h3 class="text-sm font-bold text-on-surface flex items-center gap-1.5">
-                <span>⚔️ 삼국 난세록: 영웅지</span>
-                <span class="text-[11px] font-normal text-outline">(Three Kingdoms: Age of Strife)</span>
+                <span>🏃 말랑 런 (Malang Run)</span>
+                <span class="text-[11px] font-normal text-outline">장애물 피하기 러너</span>
               </h3>
             </div>
           </div>
           <p class="text-xs text-on-surface-variant leading-relaxed">
-            나관중 《삼국지연의》의 영웅적 무용(호걸 게이지)과 진수 《삼국지 정사》의 군량·보급·사기·지형 전술을 융합한 턴제 탑다운 픽셀아트 로그라이크 게임입니다.
+            쿠키런의 경쾌한 점프·2단 점프·슬라이드 조작감과 크롬 공룡 게임 루프를 계승한 캔버스 기반 탭형 장애물 회피 러너 게임입니다. (외부 이미지·라이브러리 없는 순수 HTML5 캔버스 구현)
           </p>
           <div class="flex items-center gap-2 pt-1 border-t border-outline-variant/30">
-            <button onclick="window.open('apps/three_kingdoms/index.html', '_blank')" class="flex-1 py-2 bg-primary text-white hover:bg-primary/90 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5">
+            <button onclick="window.open('apps/malang_run/index.html', '_blank')" class="flex-1 py-2 bg-primary text-white hover:bg-primary/90 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5">
               <span class="material-symbols-outlined text-[15px]">open_in_new</span>
               <span>새 창에서 게임 실행</span>
             </button>
-            <button onclick="toggleAppPreview('apps/three_kingdoms/index.html', '삼국 난세록: 영웅지')" class="px-3 py-2 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-lg text-xs font-medium transition-all flex items-center gap-1">
+            <button onclick="toggleAppPreview('apps/malang_run/index.html', '말랑 런')" class="px-3 py-2 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-lg text-xs font-medium transition-all flex items-center gap-1">
+              <span class="material-symbols-outlined text-[15px]">preview</span>
+              <span>화면 미리보기</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- App 2: Dawn of Changban -->
+        <div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/40 space-y-3 hover:border-primary/50 transition-all">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <div class="flex items-center gap-1.5 mb-1">
+                <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200">Interactive Fiction</span>
+                <span class="text-[10px] font-mono text-outline">모루 제작 · 텍스트 어드벤처</span>
+              </div>
+              <h3 class="text-sm font-bold text-on-surface flex items-center gap-1.5">
+                <span>📜 장판의 새벽 (Dawn of Changban)</span>
+                <span class="text-[11px] font-normal text-outline">삼국지 선택지형 픽션</span>
+              </h3>
+            </div>
+          </div>
+          <p class="text-xs text-on-surface-variant leading-relaxed">
+            『삼국지연의』 41~42회 장판파 대목을 각색한 선택지형 인터랙티브 픽션 어드벤처입니다. 조자룡이 되어 당양현 벌판에서 유선(아두)과 감부인을 구출하고 조조 5천 기병의 추격을 돌파하세요.
+          </p>
+          <div class="flex items-center gap-2 pt-1 border-t border-outline-variant/30">
+            <button onclick="window.open('apps/jangpan_dawn/index.html', '_blank')" class="flex-1 py-2 bg-primary text-white hover:bg-primary/90 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5">
+              <span class="material-symbols-outlined text-[15px]">open_in_new</span>
+              <span>새 창에서 게임 실행</span>
+            </button>
+            <button onclick="toggleAppPreview('apps/jangpan_dawn/index.html', '장판의 새벽')" class="px-3 py-2 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-lg text-xs font-medium transition-all flex items-center gap-1">
               <span class="material-symbols-outlined text-[15px]">preview</span>
               <span>화면 미리보기</span>
             </button>

@@ -157,7 +157,7 @@
         <!-- Search bar -->
         <div class="relative">
           <span class="material-symbols-outlined absolute left-3.5 top-3 text-[18px] text-outline">search</span>
-          <input id="search-input" type="text" oninput="handleSearch(this.value)" placeholder="학생 이름, 팀 번호 또는 탐구 주제 검색..." 
+          <input id="search-input" type="text" oninput="handleSearch(this.value)" placeholder="참여자 이름, 팀 번호 또는 탐구 주제 검색..." 
                  class="w-full pl-10 pr-4 py-2.5 bg-surface-container-lowest rounded-xl border border-outline-variant/60 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all text-on-surface placeholder:text-outline"/>
         </div>
 
@@ -166,7 +166,7 @@
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2 text-primary font-bold text-sm">
               <span class="material-symbols-outlined text-[18px]">analytics</span>
-              <span>학급 탐구 요약</span>
+              <span>연수 팀 현황</span>
             </div>
             <span class="text-[11px] text-outline">팀 메모 기준</span>
           </div>
@@ -186,6 +186,10 @@
               <div class="text-base font-bold text-on-surface mt-0.5">Antigravity</div>
               <div class="text-[10px] text-primary">과정안·웹앱</div>
             </div>
+          </div>
+          <div class="pt-2.5 mt-1 border-t border-outline-variant/30">
+            <div class="text-[11px] text-outline font-bold mb-1">연수 허브 이용 순서</div>
+            <div class="text-sm text-on-surface leading-relaxed">① 내 팀 확인 → ② 실습 앱 체험 → ③ 공동 메모 남기기</div>
           </div>
         </div>
 
@@ -275,22 +279,25 @@
         <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/50 p-4 shadow-sm space-y-3">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold bg-primary-fixed text-on-primary-fixed px-2 py-0.5 rounded">
-              사이드 앱 안내
+              실습 앱 안내
             </span>
-            <div class="flex items-center gap-1.5 text-xs text-outline">
-              <button onclick="handleOpenCurrentApp(activeTeamId)" class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface transition-all flex items-center gap-1">
+            <div id="app-top-buttons" class="flex items-center gap-1.5 text-xs text-outline">
+              <button id="btn-app-open" onclick="handleOpenCurrentApp(activeTeamId)" class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface transition-all flex items-center gap-1">
                 <span class="material-symbols-outlined text-[13px]">open_in_new</span> 새 창 열기
               </button>
-              <button onclick="handleDownloadSideApp(activeTeamId)" class="px-2.5 py-1 rounded bg-primary text-white hover:bg-primary/90 transition-all flex items-center gap-1">
+              <button id="btn-app-download" onclick="handleDownloadSideApp(activeTeamId)" class="px-2.5 py-1 rounded bg-primary text-white hover:bg-primary/90 transition-all flex items-center gap-1">
                 <span class="material-symbols-outlined text-[13px]">download</span> 내려받기
               </button>
             </div>
           </div>
 
           <div>
-            <h2 id="app-player-title" class="text-base font-bold text-on-surface">선택된 사이드 앱</h2>
-            <p id="app-player-desc" class="text-xs text-on-surface-variant mt-1 leading-relaxed">
+            <h2 id="app-player-title" class="text-base font-bold text-on-surface">선택된 실습 앱</h2>
+            <p id="app-player-desc" class="text-sm text-on-surface-variant mt-1 leading-relaxed">
               수업 실습과 연계된 단일 HTML 웹앱입니다.
+            </p>
+            <p id="app-player-notice" class="text-sm text-outline mt-2 leading-relaxed hidden">
+              이 팀의 실습 앱은 준비 중입니다. 등록 후 이용할 수 있습니다.
             </p>
           </div>
         </div>
@@ -298,7 +305,7 @@
         <!-- 8 Teams Side-App Archive -->
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <h3 class="text-sm font-bold text-on-surface">유형별 사이드 앱 아카이브</h3>
+            <h3 class="text-sm font-bold text-on-surface">실습 앱 목록</h3>
             <span class="text-xs text-outline">등록된 실습 앱 3개</span>
           </div>
 
@@ -421,7 +428,7 @@
       </button>
       <button onclick="navigate('#apps')" id="tab-apps" class="tab-btn flex flex-col items-center gap-1 py-1 px-3 text-outline hover:text-on-surface transition-all">
         <span class="material-symbols-outlined text-[22px]">sports_esports</span>
-        <span class="text-[11px]">사이드 앱</span>
+        <span class="text-[11px]">실습 앱</span>
       </button>
       <button onclick="navigate('#notes')" id="tab-notes" class="tab-btn flex flex-col items-center gap-1 py-1 px-3 text-outline hover:text-on-surface transition-all">
         <span class="material-symbols-outlined text-[22px]">forum</span>
@@ -528,6 +535,45 @@ const TEAMS_DATA = [
       appUrl: "",
       downloadName: ""
     },
+    submission: {
+      checkedAt: "2026-10-02",
+      files: "디지털새싹 제안서 양식(hwpx) 1건",
+      title: "로봇 탐정단, AI의 실수를 찾아라! — 모두를 위한 로보독 만들기",
+      facts: [
+        { label: "대상", value: "초등 5~6학년 · 20명(2인 1조)" },
+        { label: "차시", value: "8차시 · 80분 블록 × 4회 방문" },
+        { label: "단계", value: "진입 3 · 도약 3 · 성장 2" },
+        { label: "주요 도구", value: "티처블 머신, 로보독 10세트, 스크래치" },
+        { label: "운영비", value: "150만 원(1개 학급) · 1인 75,000원" }
+      ],
+      summary: "학생이 티처블 머신으로 직접 학습시킨 AI가 조명·각도·다른 친구의 손 앞에서 틀리는 장면을 '사건'으로 수사합니다. 반복되는 실수(편향)의 원인을 데이터에서 찾아 고치고, 로보독에 거리 센서 규칙과 '사람 확인 규칙'을 더해 누구도 놓치지 않는 로봇을 완성하는 AI 윤리·피지컬 AI 융합 프로그램입니다.",
+      stages: [
+        { name: "진입", sessions: "1~3차시", text: "손 신호 인식기 학습, 조건별 실수 사냥과 데이터 보강, 로보독 연결과 표정·소리 신호" },
+        { name: "도약", sessions: "4~6차시", text: "관절·반복 동작, 거리 센서 규칙 로봇과 학습 AI 비교, 사람이 확인하고 움직이는 '관제 센터'" },
+        { name: "성장", sessions: "7~8차시", text: "'가장 낮은 경우도 10회 중 7회' 목표 설계, 교차 수사와 사건 보고회" }
+      ],
+      outputs: "개선 전후 인식기, 실수 사냥 기록표, 세 칸 기록표, 판단 설명서, 로보독 사용설명서",
+      feedback: {
+        headline: "AI의 '실수'를 수업의 출발점으로 삼은 설계가 돋보입니다. 실험 → 편향 → 공정 → 책임의 흐름이 8차시 안에 자연스럽게 이어져, 지금 상태로도 현장 적용을 기대할 수 있습니다.",
+        strengths: [
+          "평균이 아니라 '가장 낮은 경우도 10회 중 7회 이상'을 목표로 삼아, 공정성을 숫자로 확인하게 한 점이 탁월합니다.",
+          "한 번에 하나만 바꾸는 변인 통제 실험과 반 전체 결과표로, 편향을 학생이 직접 데이터로 보게 합니다.",
+          "사람이 AI 결과를 확인한 뒤 로봇을 움직이는 구조와 세 칸 기록표, 얼굴 대신 손 데이터 사용과 수업 후 삭제까지 책임과 개인정보를 함께 챙겼습니다."
+        ],
+        improvements: [
+          "교육 소양이 '인공지능 소양'과 '데이터 소양' 두 곳에 체크되어 있습니다. 기본과정은 소양 하나만 고르는 규정이라 하나로 정리해 주세요.",
+          "80분 블록마다 활동이 3~4개입니다. 활동별 분 배분을 한 줄씩 적으면 실행 가능성이 더 잘 드러납니다(특히 6차시 관제 센터).",
+          "교구 임차 30만 원의 산출 근거(세트 수 × 횟수 × 단가)를 채워 주세요."
+        ],
+        aiCheck: [
+          "'로보록 안전관리' 오타",
+          "교구재 표의 'AI 수사 실험 키트'와 '수사일지'가 같은 자료인지 구분하기",
+          "Human-in-the-loop, 확신도 같은 용어는 초등 고학년 눈높이의 말로 바꾸기"
+        ],
+        next: "6차시 '관제 센터'를 4번 양식 교수학습과정안(80분 블록)으로 풀어 보세요."
+      },
+      score: [14, 13, 18, 14, 9, 8, 12]
+    },
     curriculum: null
   },
   {
@@ -583,6 +629,45 @@ const TEAMS_DATA = [
       mode: "웹앱 실습",
       appUrl: "",
       downloadName: ""
+    },
+    submission: {
+      checkedAt: "2026-10-02",
+      files: "교수학습과정안 8차시(docx), 차시별 세부내용·활동자료 8종과 종합본(docx), 운영계획·운영비(hwpx)",
+      title: "중학교 AI 기반 또래 소통 교육",
+      facts: [
+        { label: "대상", value: "중학교 1~3학년 · 학급당 20명 내외" },
+        { label: "차시", value: "8차시 · 차시당 45분" },
+        { label: "단계", value: "진입 3 · 도약 3 · 성장 2" },
+        { label: "주요 도구", value: "생성형 AI 챗봇, 활동 카드 세트, 학생 활동지" },
+        { label: "운영비", value: "418만 원(20학급·400명) · 1인 10,450원" }
+      ],
+      summary: "생성형 AI를 친구를 대신하는 존재가 아니라 '대화 연습 파트너'로 활용합니다. 안전한 AI 사용 약속에서 출발해 나 전달법, 여러 관점으로 상황 읽기, 경청과 재진술, 갈등 해결 선택지, 존중하는 대화문 고쳐 쓰기, 역할극을 거쳐 성장 포트폴리오와 우리 반 대화 약속으로 마무리합니다.",
+      stages: [
+        { name: "진입", sessions: "1~3차시", text: "AI 소통 안전선과 학급 약속, 사실과 감정 구분·나 전달법, 여러 관점에서 상황 읽기" },
+        { name: "도약", sessions: "4~6차시", text: "요약·재진술 경청, 갈등 해결 선택지와 결과 예측, 존중하는 대화문 고쳐 쓰기" },
+        { name: "성장", sessions: "7~8차시", text: "AI 리허설 후 3인 1조 역할극, 성장 포트폴리오와 우리 반 대화 약속 선언" }
+      ],
+      outputs: "AI 소통 약속, 나 전달법 문장, 선택지 비교표, 고쳐 쓴 대화문, 성장 포트폴리오, 대화 약속 포스터",
+      feedback: {
+        headline: "AI를 '정답을 주는 존재'가 아니라 '연습 파트너'로 한정한 설계가 정확합니다. 과정안·활동지·챗봇 프롬프트까지 갖춰, 바로 수업에 쓸 수 있는 자료가 특히 풍부합니다.",
+        strengths: [
+          "8차시 모두 도입–전개–정리 시간이 45분에 정확히 맞고, 활동마다 교사·학생·AI의 역할이 구분되어 있습니다.",
+          "실명과 실제 갈등 대신 가상 상황을 쓰는 원칙이 1차시부터 8차시까지 일관되어, 정서·관계라는 민감한 주제를 안전하게 다룹니다.",
+          "차시마다 심화(+)·보충(−) 모듈, 학생 활동지, 챗봇 프롬프트 템플릿을 갖춰 수준별 지원이 구체적입니다."
+        ],
+        improvements: [
+          "성취기준 코드를 교육과정 원문에서 다시 옮겨 주세요. '[9국어01-04]'처럼 표준 형식(예: [9국01-04])과 다르고, 같은 코드에 서로 다른 문장이 다섯 가지 붙어 있습니다.",
+          "운영비에 강사료가 없습니다. 디지털새싹은 수업 1회에 주강사·보조강사 2인 배치가 원칙이라, 강사료를 넣어야 1인 단가가 현실적인 값이 됩니다.",
+          "교육 소양(4개 중 1개)과 수업에 쓸 AI 챗봇을 하나로 정해 주세요. 서비스마다 이용 연령이 달라(예: Claude는 만 18세 이상) 중학생이 쓸 수 있는지 확인이 필요합니다."
+        ],
+        aiCheck: [
+          "8차시의 평가 기준(잘함·보통·노력 필요) 문장이 모두 같습니다. 차시 목표에 맞춘 행동 기준으로 바꾸기",
+          "운영계획의 사후 진단 '다음 요소를 평가함' 뒤 목록이 빠짐, '학교 교실 화용' 오타",
+          "제안서 1장(개요·총괄표) 양식이 따로 없음 — 종합본의 로드맵을 양식으로 옮기기"
+        ],
+        next: "성취기준 코드와 차시별 평가 기준 두 가지만 정리하면 바로 운영할 수 있는 수준입니다."
+      },
+      score: [13, 9, 18, 12, 8, 6, 10]
     },
     curriculum: null
   },
@@ -668,8 +753,61 @@ const TEAMS_DATA = [
       appUrl: "",
       downloadName: ""
     },
+    submission: {
+      checkedAt: "2026-10-02",
+      files: "디지털새싹 제안서 양식(hwpx) 1건",
+      title: "사운드 리메이크 — AI와 피지컬 컴퓨팅으로 만드는 1928 애니메이션 사운드트랙",
+      facts: [
+        { label: "대상", value: "중학교 · 20명(4개 모둠)" },
+        { label: "차시", value: "8차시 · 탐색 3 · 제작 3 · 공유 2" },
+        { label: "융합 교과", value: "국어·음악·역사·정보·기술가정" },
+        { label: "주요 도구", value: "Suno, micro:bit V2·CreateAI, BandLab" },
+        { label: "운영비", value: "2,200만 원(20학급) · 1인 55,000원" }
+      ],
+      summary: "권리 상태를 확인한 1928년 「Steamboat Willie」 영상의 소리를 지우고, 모둠마다 장면을 해석해 Cue Sheet를 설계합니다. Suno로 만든 음악 시안, 직접 녹음한 Foley·목소리, micro:bit 피지컬 사운드를 BandLab에서 믹싱해 새 사운드트랙을 완성하고, 같은 영상의 서로 다른 해석을 상영·비평합니다.",
+      stages: [
+        { name: "탐색", sessions: "1~3차시", text: "플롯·시대 맥락 분석, 장면의 느낌을 음악 요소와 Cue Sheet로 설계, Suno 시안 A/B 비교와 수정" },
+        { name: "제작", sessions: "4~6차시", text: "학교 소리·Foley·보이스 녹음, MakeCode 피지컬 사운드, CreateAI 동작 인식 사운드" },
+        { name: "공유", sessions: "7~8차시", text: "BandLab 멀티트랙 믹싱과 영상 싱크, 4개 모둠 상영회와 음악 비평" }
+      ],
+      outputs: "Cue Sheet, 프롬프트 버전 기록, Foley·보이스 음원, micro:bit 프로그램, 7분 사운드트랙 영상, 출처 기록지",
+      feedback: {
+        headline: "주제가 무척 참신합니다. 같은 영상을 모둠마다 다르게 해석하게 해서 '음악 요소가 느낌을 만든다'는 것을 결과물끼리 비교할 수 있게 한 설계가 훌륭합니다.",
+        strengths: [
+          "AI 음악을 그대로 쓰지 않고 '너무 밝다·느리다'처럼 음악적으로 진단해 다시 만드는 수정 과정이 수업 안에 들어 있습니다.",
+          "직접 녹음한 소리와 출처 기록, 권리 상태를 확인한 영상 선택으로 창작 주도성과 저작권 책임을 함께 다룹니다.",
+          "운영비 산식이 모든 항목에서 맞아떨어지고(합계 2,200만 원 검산 일치), 5개 교과 15개 성취기준으로 연계 범위가 넓습니다."
+        ],
+        improvements: [
+          "단계 이름을 공모 양식의 '진입–도약–성장'으로 맞추고, 교육 소양은 4개 중 하나만 골라 주세요(현재 3개 체크).",
+          "숫자 두 곳을 맞춰 주세요. 목표 인원은 500명인데 운영비는 400명(20학급 × 20명) 기준이고, 정원 20명(모둠당 5명)인데 모둠 역할은 6개입니다.",
+          "Suno·BandLab은 학생 계정이 필요한 외부 서비스입니다. 이용 연령, 만 14세 미만 보호자 동의, 무료 플랜 생성물의 이용 범위를 한 줄씩 확인해 두면 안심입니다."
+        ],
+        aiCheck: [
+          "차시당 수업 시간(중학교 45분)이 적혀 있지 않음 — 45분 안에 Suno 시안 생성·비교·수정이 가능한지 확인하기",
+          "역사 성취기준(두 차례 세계 대전)은 1928년 애니메이션과 연결이 다소 멂",
+          "단계별 핵심역량 레벨표가 없음, 헤드셋 마이크는 예산 항목이 없음"
+        ],
+        next: "6차시(CreateAI 동작 인식)를 45분 교수학습과정안으로 풀어 보세요."
+      },
+      score: [13, 13, 17, 15, 7, 8, 9]
+    },
     curriculum: null
   }
+];
+
+// 과제 피드백 점수표 표시 여부 (공개 배포에서 숨기려면 false)
+const SHOW_SUBMISSION_SCORE = true;
+
+// 디지털새싹 2026 선정심사 서류평가 항목을 팀 과제용으로 조정한 모의 평가표 (합계 100)
+const SUBMISSION_RUBRIC = [
+  { name: "사업목표 부합도", max: 15 },
+  { name: "학교교육 연관성", max: 15 },
+  { name: "교육내용 우수성", max: 20 },
+  { name: "교육 혁신성", max: 15 },
+  { name: "평가·성과계획", max: 10 },
+  { name: "사업비 적정성", max: 10 },
+  { name: "공모 요건·문서 정합성", max: 15 }
 ];
 
 // 강사 예시 사이드 앱 데이터 (모둠 과제와 분리)
@@ -770,8 +908,8 @@ const INITIAL_NOTES_DATA = [
         activeTeamId = teamId;
         document.getElementById("view-team-detail")?.classList.remove("hidden");
         backBtn.classList.remove("hidden");
-        barTitle.textContent = `팀 ${teamId} 상세 과제 및 피드백`;
-        barTag.textContent = "팀별 DRILL-DOWN";
+        barTitle.textContent = `팀 ${teamId} 구성 및 탐구 방향`;
+        barTag.textContent = "팀 상세";
         highlightTab("tab-projects");
         renderTeamDetail(teamId);
       } else if (hash === "#curriculum") {
@@ -784,14 +922,14 @@ const INITIAL_NOTES_DATA = [
       } else if (hash === "#apps") {
         document.getElementById("view-apps")?.classList.remove("hidden");
         backBtn.classList.add("hidden");
-        barTitle.textContent = "팀별 사이드 앱 플레이어";
+        barTitle.textContent = "팀별 실습 앱";
         barTag.textContent = "";
         highlightTab("tab-apps");
         renderAppsView(activeTeamId);
       } else if (hash === "#notes") {
         document.getElementById("view-notes")?.classList.remove("hidden");
         backBtn.classList.add("hidden");
-        barTitle.textContent = "개인 메모";
+        barTitle.textContent = "공동 메모";
         barTag.textContent = "";
         highlightTab("tab-notes");
         renderNotesFeed();
@@ -846,9 +984,12 @@ const INITIAL_NOTES_DATA = [
               <span class="text-xs font-mono font-bold bg-surface-container px-2 py-0.5 rounded text-on-surface">팀 ${t.id}</span>
               <span class="text-xs font-bold text-on-surface">${t.name}</span>
             </div>
-            <span class="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-surface-container text-on-surface-variant border border-outline-variant/30">
-              ${t.category}
-            </span>
+            <div class="flex items-center gap-1.5">
+              ${t.submission ? `<span class="text-[11px] font-medium px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed">과제 제출</span>` : ""}
+              <span class="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-surface-container text-on-surface-variant border border-outline-variant/30">
+                ${t.category}
+              </span>
+            </div>
           </div>
 
           <div class="text-xs text-outline flex items-center gap-1.5">
@@ -856,14 +997,14 @@ const INITIAL_NOTES_DATA = [
             <span>팀원: ${t.members.map(m => m.name).join(", ")}</span>
           </div>
 
-          <p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed bg-surface-container-low p-2 rounded-lg border border-outline-variant/30">
+          <p class="text-sm text-on-surface-variant line-clamp-2 leading-relaxed bg-surface-container-low p-2 rounded-lg border border-outline-variant/30">
             "${t.direction}"
           </p>
 
           <div class="flex items-center justify-between pt-1 border-t border-outline-variant/30 text-xs">
             <span class="text-[11px] font-mono text-outline flex items-center gap-1">
               <span class="material-symbols-outlined text-[14px]">sports_esports</span>
-              ${t.sideApp ? t.sideApp.title.substring(0, 14) + '...' : '사이드 앱 연계'}
+              ${t.sideApp ? t.sideApp.title.substring(0, 14) + '...' : '실습 앱 연계'}
             </span>
             <span class="text-primary font-bold flex items-center gap-0.5">
               팀 구성 및 정보 보기
@@ -896,8 +1037,8 @@ const INITIAL_NOTES_DATA = [
             <span class="text-xs font-bold text-primary font-mono">팀 ${t.id} • ${t.name}</span>
             <span class="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-surface-container text-on-surface-variant">${t.category}</span>
           </div>
-          <div class="text-xs text-on-surface">학생: ${t.members.map(m => m.name).join(", ")}</div>
-          <p class="text-xs text-on-surface-variant line-clamp-1">"${t.direction}"</p>
+          <div class="text-xs text-on-surface">팀원: ${t.members.map(m => m.name).join(", ")}</div>
+          <p class="text-sm text-on-surface-variant line-clamp-2 leading-relaxed">"${t.direction}"</p>
         </div>
       `).join("");
     }
@@ -1070,7 +1211,7 @@ function renderTeamCarouselChips() {
               <span class="material-symbols-outlined text-[16px]">lightbulb</span>
               <span>탐구 방향 및 목표</span>
             </div>
-            <p class="text-xs text-on-surface-variant leading-relaxed">
+            <p class="text-sm text-on-surface-variant leading-relaxed">
               ${t.direction}
             </p>
           </div>
@@ -1098,6 +1239,132 @@ function renderTeamCarouselChips() {
             `).join("")}
           </div>
         </div>
+
+        <!-- 제출 과제 -->
+        <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm space-y-3">
+          <h3 class="text-sm font-bold text-on-surface flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px] text-primary">assignment_turned_in</span>
+            <span>제출 과제</span>
+          </h3>
+          ${t.submission ? `
+            <div class="text-sm font-bold text-on-surface leading-snug">${t.submission.title}</div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">${t.submission.feedback.headline}</p>
+            <button type="button" onclick="openTeamSubmission('${t.id}')" class="w-full min-h-[44px] px-4 rounded-lg bg-primary text-white text-sm font-bold flex items-center justify-center gap-1.5">
+              과제 요약·피드백 보기
+              <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+            </button>
+          ` : `
+            <p class="text-sm text-outline leading-relaxed">과제 접수 대기 · 제출물 확인 후 반영합니다.</p>
+          `}
+        </div>
+      `;
+    }
+
+    function openTeamSubmission(teamId) {
+      activeTeamId = teamId;
+      renderTeamCarouselChips();
+      navigate("#curriculum");
+    }
+
+    function renderSubmissionView(t) {
+      const s = t.submission;
+      const f = s.feedback;
+      const list = (items, icon, iconClass) => items.map(x => `
+        <li class="flex items-start gap-2">
+          <span class="material-symbols-outlined text-[18px] ${iconClass} shrink-0 mt-0.5">${icon}</span>
+          <span>${x}</span>
+        </li>`).join("");
+      const total = s.score.reduce((a, b) => a + b, 0);
+      const scoreCard = !SHOW_SUBMISSION_SCORE ? "" : `
+        <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-on-surface flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[18px] text-primary">analytics</span>
+              <span>모의 사업평가</span>
+            </h3>
+            <span class="text-xs font-mono font-bold text-primary">${total} / 100</span>
+          </div>
+          <div class="space-y-2.5">
+            ${SUBMISSION_RUBRIC.map((r, i) => `
+              <div class="space-y-1">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-on-surface">${r.name}</span>
+                  <span class="font-mono text-on-surface-variant">${s.score[i]} / ${r.max}</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-surface-container overflow-hidden">
+                  <div class="h-full bg-primary rounded-full" style="width:${Math.round(s.score[i] / r.max * 100)}%"></div>
+                </div>
+              </div>`).join("")}
+          </div>
+          <p class="text-[11px] text-outline leading-relaxed">디지털새싹 2026 선정심사 서류평가 항목(제안기관 역량 제외)을 팀 과제용으로 조정한 모의 채점입니다. 순위가 아니라 다음 수정의 우선순위를 보는 용도입니다.</p>
+        </div>`;
+
+      return `
+        <!-- 제출 과제 요약 -->
+        <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm space-y-3">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-mono font-bold bg-primary text-white px-2 py-0.5 rounded">TEAM ${t.id}</span>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-medium">과제 제출 · ${s.checkedAt.slice(5).replace("-", "/")} 확인</span>
+          </div>
+          <h2 class="text-base font-bold text-on-surface leading-snug">${s.title}</h2>
+          <div class="text-xs text-outline leading-relaxed">제출물: ${s.files}</div>
+          <div class="rounded-lg bg-surface-container-low border border-outline-variant/30 divide-y divide-outline-variant/30">
+            ${s.facts.map(x => `
+              <div class="flex items-start gap-3 px-3 py-2">
+                <span class="shrink-0 w-16 text-[11px] text-outline pt-0.5">${x.label}</span>
+                <span class="text-sm font-medium text-on-surface leading-snug">${x.value}</span>
+              </div>`).join("")}
+          </div>
+          <p class="text-sm text-on-surface-variant leading-relaxed">${s.summary}</p>
+        </div>
+
+        <!-- 8차시 흐름 -->
+        <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm space-y-3">
+          <h3 class="text-sm font-bold text-on-surface flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px] text-primary">view_timeline</span>
+            <span>8차시 흐름</span>
+          </h3>
+          <div class="divide-y divide-outline-variant/30">
+            ${s.stages.map(g => `
+              <div class="py-2.5 flex items-start gap-3">
+                <div class="shrink-0 w-16">
+                  <div class="text-xs font-bold text-primary">${g.name}</div>
+                  <div class="text-[11px] font-mono text-outline">${g.sessions}</div>
+                </div>
+                <div class="text-sm text-on-surface leading-relaxed">${g.text}</div>
+              </div>`).join("")}
+          </div>
+          <div class="text-xs text-on-surface-variant leading-relaxed bg-surface-container-low p-2.5 rounded-lg border border-outline-variant/30">
+            <strong class="text-on-surface">주요 산출물</strong> · ${s.outputs}
+          </div>
+        </div>
+
+        <!-- 강사 피드백 -->
+        <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm space-y-4">
+          <h3 class="text-sm font-bold text-on-surface flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px] text-primary">rate_review</span>
+            <span>강사 피드백</span>
+          </h3>
+          <p class="text-sm text-on-surface leading-relaxed bg-primary-fixed/40 p-3 rounded-lg border border-primary/20">${f.headline}</p>
+          <div class="space-y-2">
+            <div class="text-xs font-bold text-primary">잘된 점</div>
+            <ul class="space-y-2 text-sm text-on-surface leading-relaxed">${list(f.strengths, "check_circle", "text-primary")}</ul>
+          </div>
+          <div class="space-y-2">
+            <div class="text-xs font-bold text-secondary">다듬으면 좋을 점</div>
+            <ul class="space-y-2 text-sm text-on-surface leading-relaxed">${list(f.improvements, "edit_note", "text-secondary")}</ul>
+          </div>
+          <div class="space-y-2 p-3 rounded-lg bg-surface-container-low border border-outline-variant/30">
+            <div class="text-xs font-bold text-on-surface-variant">AI로 만든 문서 점검</div>
+            <ul class="space-y-1.5 text-xs text-on-surface-variant leading-relaxed">${list(f.aiCheck, "fact_check", "text-outline")}</ul>
+          </div>
+          <div class="text-sm text-on-surface leading-relaxed flex items-start gap-2">
+            <span class="material-symbols-outlined text-[18px] text-primary shrink-0 mt-0.5">arrow_forward</span>
+            <span><strong>다음 단계</strong> · ${f.next}</span>
+          </div>
+        </div>
+
+        ${scoreCard}
       `;
     }
 
@@ -1108,6 +1375,11 @@ function renderTeamCarouselChips() {
       const t = TEAMS_DATA.find(x => x.id === teamId) || TEAMS_DATA[0];
       const container = document.getElementById("curriculum-detail-content");
       if (!container) return;
+
+      if (t.submission) {
+        container.innerHTML = renderSubmissionView(t);
+        return;
+      }
 
       const c = t.curriculum;
       if (!c || !c.courseTitle) {
@@ -1120,11 +1392,11 @@ function renderTeamCarouselChips() {
             <h2 class="text-base font-bold text-on-surface">TEAM ${t.id}. ${t.name}</h2>
             <div class="text-xs text-outline">팀원: ${t.members.map(m => m.name).join(" · ")}</div>
             <div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/30 text-xs text-on-surface">
-              <strong>기획 방향:</strong> ${t.direction || "9/30 제출 후 반영"}
+              <strong>기획 방향:</strong> ${t.direction || "제출물 확인 후 반영"}
             </div>
             <div class="p-6 rounded-xl bg-surface-container border border-dashed border-outline-variant/80 text-center space-y-2">
               <span class="material-symbols-outlined text-3xl text-outline">pending_actions</span>
-              <div class="text-sm font-bold text-on-surface">9/30 제출 후 반영</div>
+              <div class="text-sm font-bold text-on-surface">제출물 확인 후 반영</div>
               <div class="text-xs text-outline max-w-sm mx-auto">
                 팀별 과제(차시별 교육과정 및 상세 지도안)는 제출을 확인한 뒤 반영합니다.
               </div>
@@ -1242,8 +1514,53 @@ function renderTeamCarouselChips() {
       const t = TEAMS_DATA.find(x => x.id === teamId) || TEAMS_DATA[0];
       const title = document.getElementById("app-player-title");
       const desc = document.getElementById("app-player-desc");
+      const notice = document.getElementById("app-player-notice");
+      const btnOpen = document.getElementById("btn-app-open");
+      const btnDl = document.getElementById("btn-app-download");
       if (title) title.textContent = t.sideApp.title;
       if (desc) desc.textContent = t.sideApp.desc;
+
+      // 팀별 버튼 상태 갱신
+      const hasApp = !!t.sideApp.appUrl;
+      const isRobodog = teamId === '06';
+
+      if (notice) {
+        if (hasApp) {
+          notice.classList.add('hidden');
+        } else {
+          notice.classList.remove('hidden');
+        }
+      }
+
+      if (btnOpen) {
+        if (hasApp) {
+          btnOpen.classList.remove('hidden');
+          btnOpen.disabled = false;
+          btnOpen.classList.remove('opacity-50', 'cursor-not-allowed');
+        } else {
+          btnOpen.classList.add('hidden');
+        }
+      }
+
+      if (btnDl) {
+        if (hasApp && !isRobodog) {
+          // 01팀 등 단일 HTML 다운로드 가능
+          btnDl.classList.remove('hidden');
+          btnDl.disabled = false;
+          btnDl.classList.remove('opacity-50', 'cursor-not-allowed');
+          btnDl.innerHTML = '<span class="material-symbols-outlined text-[13px]">download</span> 내려받기';
+          btnDl.className = 'px-2.5 py-1 rounded bg-primary text-white hover:bg-primary/90 transition-all flex items-center gap-1';
+        } else if (!hasApp) {
+          // 미등록 팀: 준비 중 표시
+          btnDl.classList.remove('hidden');
+          btnDl.disabled = true;
+          btnDl.innerHTML = '<span class="material-symbols-outlined text-[13px]">hourglass_empty</span> 준비 중';
+          btnDl.className = 'px-2.5 py-1 rounded bg-surface-container text-outline opacity-50 cursor-not-allowed transition-all flex items-center gap-1';
+        } else {
+          // 06팀 로보독: 다운로드 숨김
+          btnDl.classList.add('hidden');
+        }
+      }
 
       const promptText = document.getElementById("sim-prompt-text");
       if (promptText) {
@@ -1265,7 +1582,7 @@ function renderTeamCarouselChips() {
             <span class="text-[10px] font-mono text-outline">데이터 탐구</span>
           </div>
           <h4 class="text-xs font-bold text-on-surface">통학 데이터 탐구 웹앱 (v2 교정본)</h4>
-          <p class="text-[11px] text-on-surface-variant leading-relaxed">
+          <p class="text-sm text-on-surface-variant leading-relaxed">
             실습자료 v1 기반 통학 탐구 앱 교정본: 1회성 완료형에서 가설-차트-이상치-판단 5단계 탐구 학습 흐름으로 전환한 웹앱입니다.
           </p>
           <div class="flex items-center justify-between pt-1 border-t border-outline-variant/30 text-[11px]">
@@ -1292,16 +1609,22 @@ function renderTeamCarouselChips() {
             <span class="text-[10px] font-mono text-outline">${t.sideApp.tag}</span>
           </div>
           <h4 class="text-xs font-bold text-on-surface">${t.sideApp.title}</h4>
-          <p class="text-[11px] text-on-surface-variant line-clamp-2 leading-relaxed">${t.sideApp.desc}</p>
+          <p class="text-sm text-on-surface-variant line-clamp-2 leading-relaxed">${t.sideApp.desc}</p>
           <div class="flex items-center justify-between pt-1 border-t border-outline-variant/30 text-[11px]">
             <span class="text-outline font-mono">${t.sideApp.mode}</span>
             <div class="flex items-center gap-1.5">
               <button onclick="loadSideApp('${t.id}')" class="px-2.5 py-1 bg-surface-container hover:bg-surface-container-high text-on-surface rounded text-xs font-medium transition-all flex items-center gap-1">
-                <span class="material-symbols-outlined text-[13px]">play_circle</span> 실행
+                <span class="material-symbols-outlined text-[13px]">info</span> 안내 보기
               </button>
-              <button onclick="handleDownloadSideApp('${t.id}')" class="px-2.5 py-1 ${t.sideApp.appUrl ? 'bg-primary text-white hover:bg-primary/90' : 'bg-surface-container text-outline'} rounded text-xs font-medium transition-all flex items-center gap-1">
-                <span class="material-symbols-outlined text-[13px]">download</span> ${t.sideApp.appUrl ? '내려받기' : '접수 대기'}
-              </button>
+              ${t.id === '06' ? `
+                <button onclick="handleOpenCurrentApp('${t.id}')" class="px-2.5 py-1 bg-primary text-white hover:bg-primary/90 rounded text-xs font-medium transition-all flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[13px]">open_in_new</span> 새 창 열기
+                </button>
+              ` : `
+                <button onclick="handleDownloadSideApp('${t.id}')" class="px-2.5 py-1 ${t.sideApp.appUrl ? 'bg-primary text-white hover:bg-primary/90' : 'bg-surface-container text-outline opacity-50 cursor-not-allowed'} rounded text-xs font-medium transition-all flex items-center gap-1" ${!t.sideApp.appUrl ? 'disabled' : ''}>
+                  <span class="material-symbols-outlined text-[13px]">${t.sideApp.appUrl ? 'download' : 'hourglass_empty'}</span> ${t.sideApp.appUrl ? '내려받기' : '준비 중'}
+                </button>
+              `}
             </div>
           </div>
         </div>
@@ -1311,33 +1634,32 @@ function renderTeamCarouselChips() {
     }
 
     function handleOpenCurrentApp(teamId) {
-      if (teamId === '01') {
-        window.open('apps/질문전후비교_v3.html', '_blank');
-        showToast('01팀 질문 전후 비교 웹앱을 새 창에서 엽니다.');
-      } else if (teamId === '06') {
-        window.open('apps/robotdog_rl/index.html', '_blank');
-        showToast('06팀 로보독 RL Playground로 이동합니다.');
+      const t = TEAMS_DATA.find(x => x.id === teamId);
+      if (t && t.sideApp.appUrl) {
+        window.open(t.sideApp.appUrl, '_blank');
+        showToast(`팀 ${teamId} 실습 앱을 새 창에서 엽니다.`);
       } else {
-        showToast(`팀 ${teamId} 사이드 앱은 9/30 과제 접수 후 연결 예정입니다.`);
+        showToast(`팀 ${teamId} 실습 앱은 준비 중입니다.`);
       }
     }
 
     function handleDownloadSideApp(teamId) {
-      if (teamId === '01') {
-        const url = 'apps/질문전후비교_v3.html';
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = '01팀_질문전후비교_웹앱_v3.html';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        showToast('01팀 질문 전후 비교 웹앱을 내려받습니다.');
-      } else if (teamId === '06') {
-        window.open('apps/robotdog_rl/index.html', '_blank');
-        showToast('06팀 로보독 RL Playground로 이동합니다.');
-      } else {
-        showToast(`팀 ${teamId} 사이드 앱은 9/30 과제 접수 후 제작 및 연결 예정입니다.`);
+      const t = TEAMS_DATA.find(x => x.id === teamId);
+      if (!t || !t.sideApp.appUrl) {
+        showToast(`팀 ${teamId} 실습 앱은 준비 중입니다.`);
+        return;
       }
+      if (teamId === '06') {
+        showToast('로보독은 \'새 창 열기\'로 이용해 주세요.');
+        return;
+      }
+      const a = document.createElement('a');
+      a.href = t.sideApp.appUrl;
+      a.download = t.sideApp.downloadName || `팀${teamId}_실습앱.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast(`팀 ${teamId} 실습 앱을 내려받습니다.`);
     }
 
     function openInstructorApp() {
@@ -1361,7 +1683,7 @@ function renderTeamCarouselChips() {
       renderAppsView(teamId);
       renderTeamCarouselChips();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      showToast(`팀 ${teamId} 사이드 앱이 플레이어에 로드되었습니다.`);
+      showToast(`팀 ${teamId} 실습 앱 안내를 표시했습니다.`);
     }
 
     function toggleViewportMode(mode) {
@@ -1481,7 +1803,7 @@ function renderTeamCarouselChips() {
             </div>
           </div>
 
-          <p class="text-xs text-on-surface leading-relaxed">${n.content}</p>
+          <p class="text-sm text-on-surface leading-relaxed">${n.content}</p>
 
           <div class="flex items-center justify-between pt-1 border-t border-outline-variant/20 text-[11px] text-outline">
             <button type="button" onclick="toggleLike('${n.id}')" class="flex items-center gap-1 hover:text-secondary transition-colors">
